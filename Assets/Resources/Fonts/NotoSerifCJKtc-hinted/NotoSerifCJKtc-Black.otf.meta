@@ -1,0 +1,23 @@
+fileFormatVersion: 2
+guid: 921b42c70fdc3470e9dcfe9b36015f1d
+timeCreated: 1509971360
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Noto Serif CJK TC
+  fontNames:
+  - Noto Serif CJK TC
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 1578e6a2936a343dc8bd064689ec63a0, type: 3}
+  - {fileID: 12800000, guid: 690c4cb7323c942449abe5ae7b946614, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
