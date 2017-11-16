@@ -1,28 +1,28 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public enum UIType
 {
-    INITIAL_INFO_PAGE,
-    GAME_MENU_PAGE,
-    NEW_GAME_PAGE,
-    CONTINUE_PAGE,
-    SETTING_PAGE,
-    WARNING_PAGE,
-    BIDDING_PAGE,
-    MAP_INVESTMENT_PAGE,
-    DICING_BOX,
-    INFO_BAR,
-    GOOD_INVESTMENT_PAGE,
-    DIALOG_BOX,
-    SHIFT_BOX,
-    GAME_INFO_TABLE,
-    BOSS_BUY_STOCK_PAGE,
-    BOAT_TABLE,
-    PLAYER_INVENTORY,
+    INITIAL_INFO_PAGE = 1,
+    GAME_MENU_PAGE = 1 << 2,
+    NEW_GAME_PAGE = 1 << 3,
+    CONTINUE_PAGE = 1 << 4,
+    SETTING_PAGE = 1 << 5,
+    WARNING_PAGE = 1 << 6,
+    BIDDING_PAGE = 1 << 7,
+    MAP_INVESTMENT_PAGE = 1 << 8,
+    DICING_BOX = 1 << 9,
+    INFO_BAR = 1 << 10,
+    GOOD_INVESTMENT_PAGE = 1 << 11,
+    DIALOG_BOX = 1 << 12,
+    SHIFT_BOX = 1 << 13,
+    GAME_INFO_TABLE = 1 << 14,
+    BOSS_BUY_STOCK_PAGE = 1 << 15,
+    BOAT_TABLE = 1 << 16,
+    PLAYER_INVENTORY = 1 << 17,
+    RANK_TABLE = 1 << 18,
 }
 
 public delegate IEnumerator UIBaseCallback();
@@ -33,10 +33,46 @@ public class UIManager : SingletonBase<UIManager>
 {
     //static public UIManager Singleton;
 
-    public Canvas uiCanvas;
+    public Canvas UICanvas
+    {
+        get
+        {
+            return uiCanvas;
+        }
+    }
+    private Canvas uiCanvas;
+    private Image uiMask;
     private Text timerText;
 
     private Dictionary<UIType, UIBase> uiScriptDict = new Dictionary<UIType, UIBase>();
+
+    public void RoundReset()
+    {
+        foreach(KeyValuePair<UIType, UIBase> pair in uiScriptDict)
+        {
+            pair.Value.RoundReset();
+        }
+    }
+
+    public void GameSetReset()
+    {
+		foreach (KeyValuePair<UIType, UIBase> pair in uiScriptDict)
+		{
+            pair.Value.GameSetReset();
+		}
+    }
+
+    public void GameOverClear()
+    {
+		foreach (KeyValuePair<UIType, UIBase> pair in uiScriptDict)
+		{
+            pair.Value.GameOverClear();
+		}
+        uiScriptDict.Clear();
+        uiScriptDict = null;
+        Destroy(uiMask.gameObject);
+        Destroy(timerText.transform.parent.gameObject);
+	}
 
     void Awake()
     {
@@ -45,11 +81,17 @@ public class UIManager : SingletonBase<UIManager>
             uiCanvas = FindObjectOfType<Canvas>();
         }
 
+        if(uiMask == null)
+        {   
+            uiMask = GameObject.FindWithTag("UIMask").GetComponent<Image>();
+        }
+
         if(timerText == null)
         {
             GameObject go = ResourceManager.Singleton.LoadResource<GameObject>(PathConfig.ObjPath("Timer"));
             GameObject timer = Instantiate(go, uiCanvas.transform);
             timerText = GameObject.FindWithTag("Timer").GetComponent<Text>();
+            //timerText = timer.GetComponent<>()
 		}
     }
 
@@ -60,23 +102,57 @@ public class UIManager : SingletonBase<UIManager>
 
     public void UpdateTimer(float time)
     {
+		if (timerText == null)
+		{
+			Debug.LogError("Timer text is NULL at UIManager.cs 69 line.");
+			return;
+		}
+
         float t = Mathf.Round(time * 10.0f) / 10.0f;
         timerText.text = t.ToString();
     }
 
+    public void OpenMask()
+    {
+        uiMask.enabled = true;
+        uiMask.transform.SetAsLastSibling();
+    }
+
+    public void CloseMask()
+    {
+        uiMask.enabled = false;
+    }
+
+
     public void ResetTimer()
     {
+		if (timerText == null)
+		{
+			Debug.LogError("Timer text is NULL at UIManager.cs 76 line.");
+			return;
+		}
+
         timerText.text = "0.0";
     }
 
     public void ShowTimer()
     {
+        if(timerText == null)
+        {
+            Debug.LogError("Timer text is NULL at UIManager.cs 80 line.");
+            return;
+        }
         GameObject go = timerText.transform.parent.gameObject;
         go.SetActive(true);
     }
 
     public void CloseTimer()
     {
+		if (timerText == null)
+		{
+			Debug.LogError("Timer text is NULL at UIManager.cs 90 line.");
+			return;
+		}
         GameObject go = timerText.transform.parent.gameObject;
         go.SetActive(false);
     }
@@ -109,19 +185,30 @@ public class UIManager : SingletonBase<UIManager>
     }
     private string dialogBoxKey = null;
 
-    public void RegisterDialogBoxCallback(string key, DialogCallback yes, DialogCallback no)
+    public Color DialogBoxColor
+	{
+		get
+		{
+            return dialogBoxColor;
+		}
+	}
+    private Color dialogBoxColor = Color.white;
+
+    public void RegisterDialogBoxData(Color color, string key, DialogCallback yes, DialogCallback no)
     {
-        RemoveAllDialogBoxCallback();
+        ClearDialogBoxData();
+        dialogBoxColor = new Color(color.r, color.g, color.b, color.a);
         dialogBoxKey = key;
         yesCallback += yes;
         noCallback += no;
     }
 
-    public void RemoveAllDialogBoxCallback()
+    public void ClearDialogBoxData()
     {
         yesCallback = null;
         noCallback = null;
         dialogBoxKey = null;
+        dialogBoxColor = Color.white;
     }
     #endregion
 
@@ -175,7 +262,7 @@ public class UIManager : SingletonBase<UIManager>
             Debug.LogError("Can't load the gameobject");
         }
 
-        obj = null;
+        //obj = null;
     }
 
     public void InitialUI(UIType type)
@@ -189,11 +276,6 @@ public class UIManager : SingletonBase<UIManager>
         {
             GetUIScript(type, InitialUI);
         }
-    }
-
-    public void ShowUIWithPlayerColor()
-    {
-        //ShowUI();
     }
 
     public void ShowUI(UIType type)

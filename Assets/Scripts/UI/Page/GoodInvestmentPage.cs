@@ -26,6 +26,28 @@ public class GoodInvestmentPage : UIBase
         anim = GetComponent<Animation>();
     }
 
+    public override void RoundReset()
+    {
+        anim.Rewind();
+        base.RoundReset();
+    }
+
+    public override void GameSetReset()
+    {
+        for (int iGood = 0; iGood < goods.Length; ++iGood)
+        {
+            if (goods[iGood] != null)
+                goods[iGood].Reset();
+        }
+        anim.Rewind();
+        base.GameSetReset();
+    }
+
+    public override void GameOverClear()
+    {
+        base.GameOverClear();
+    }
+
     private void SetPageView()
     {
         string[] costs = GoodInvestmentDataSystem.Singleton.GetGoodInvestmentData();
@@ -94,6 +116,8 @@ public class GoodInvestmentPage : UIBase
 
     public override void ShowUI()
     {
+        UIManager.Singleton.OpenMask();
+        
         DelegatePageCallback();
 
         SetPageView();
@@ -109,6 +133,7 @@ public class GoodInvestmentPage : UIBase
         
         anim.Play(show);
         GameManager.Singleton.HideBoat();
+        base.ShowUI();
     }
 
     public override void CloseUI()
@@ -119,8 +144,8 @@ public class GoodInvestmentPage : UIBase
         {
             goods[i].Reset();
         }
-
-        //base.CloseUI();
+        UIManager.Singleton.CloseMask();
+        base.CloseUI();
     }
 
     public void CancelInvestment()

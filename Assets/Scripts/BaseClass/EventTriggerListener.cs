@@ -17,24 +17,18 @@ public class EventTriggerListener : MonoBehaviour, IPointerClickHandler, IPointe
     public virtual void OnPointerClick(PointerEventData data)
     {
         if (onClick != null)
-        {
             onClick();
-        }
     }
 
     public virtual void OnPointerEnter(PointerEventData data)
     {
         if (onEnter != null)
-        {
             onEnter();
-        }
     }
 
 	public virtual void OnPointerExit(PointerEventData data)
 	{
         if (onExit != null)
-        {
             onExit();
-        }
-	}
+    }
 }

@@ -33,7 +33,7 @@ public class InitialScene : SceneBase
     {
         //AsyncOperation asyn = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("");
         GameObject ui = ResourceManager.Singleton.LoadResource<GameObject>(PathConfig.UIPath(UIType.INITIAL_INFO_PAGE));
-        ResourceManager.Instantiate(ui, UIManager.Singleton.uiCanvas.transform);
+        ResourceManager.Instantiate(ui, UIManager.Singleton.UICanvas.transform);
         InitialInfoPage script = ui.GetComponent<InitialInfoPage>();
         script.LoadData();
         //InitialInfoPageDataSystem.Singleton.LoadData();

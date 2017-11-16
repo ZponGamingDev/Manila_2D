@@ -41,7 +41,7 @@ public class Bank : MapInvestmentBase
 
 	protected override void Feedback(Player player)
 	{
-        //Debug.Log(player.GetPlayerColor());
+        Reset();
 	}
 
     public override void OnPointerClick(PointerEventData eventData)

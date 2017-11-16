@@ -11,12 +11,10 @@ public class BossBuyStockPage : UIBase, IPointerClickHandler
     public BuyStockElm jade;
 
     public DecisionBtn buy;
-    //public DecisionBtn sell;
-
     public EventTriggerListener cancelIcon;
 
     private BuyStockElm highlighted = null;
-    private bool setTranstion = false;
+    private bool buyingDone = false;
     private float alpha = 150.0f / 255.0f;
 
     void Start()
@@ -34,6 +32,23 @@ public class BossBuyStockPage : UIBase, IPointerClickHandler
 		silk.onClick += OnClickStock;
 		paddy.onClick += OnClickStock;
 		jade.onClick += OnClickStock;
+    }
+
+    public override void RoundReset()
+    {
+        base.RoundReset();
+    }
+
+    public override void GameSetReset()
+    {
+        ResetPage();
+        base.GameSetReset();
+    }
+
+    public override void GameOverClear()
+    {
+        ResetPage();
+        base.GameOverClear();
     }
 
     private BuyStockElm GetClickedStock()
@@ -58,15 +73,14 @@ public class BossBuyStockPage : UIBase, IPointerClickHandler
         {
             highlighted.TurnOffEffect();
             highlighted = null;
-            //buy.background.color = sell.background.color = Color.white;
             buy.background.color = Color.white;
 		}
     }
 
     public void OnClickStock()
     {
-        if (highlighted != null)
-            ResetPage();
+        //if (highlighted != null)
+        //    ResetPage();
         
         highlighted = GetClickedStock();
         if (highlighted == null)
@@ -89,7 +103,7 @@ public class BossBuyStockPage : UIBase, IPointerClickHandler
         if (highlighted != null)
         {
             InvestmentManager.Singleton.SellStockToBoss(highlighted.good);
-            setTranstion = true;
+            buyingDone = true;
         }
     }
 
@@ -100,20 +114,20 @@ public class BossBuyStockPage : UIBase, IPointerClickHandler
         if (highlighted != null)
         {
             InvestmentManager.Singleton.BuyStockFromPlayer(highlighted.good);
-            setTranstion = true;
+            buyingDone = true;
         }
 	}
 
     private void Pass()
     {
-		setTranstion = true;
+		buyingDone = true;
 		CloseUI();
     }
 
 	private int iTransition = 0;
 	protected override IEnumerator OnUIBaseStart()
     {
-        while(!setTranstion)
+        while(!buyingDone)
         {
             yield return null;
         }
@@ -121,7 +135,7 @@ public class BossBuyStockPage : UIBase, IPointerClickHandler
 
     protected override IEnumerator OnUIBaseEnd()
     {
-        setTranstion = false;
+        buyingDone = false;
         yield return null;
     }
 

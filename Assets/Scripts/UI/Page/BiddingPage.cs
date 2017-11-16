@@ -10,12 +10,10 @@ public class BiddingPage : UIBase
     public AdjustValueBtn plus;
     public AdjustValueBtn minus;
     public DecisionBtn confirm;
-    public float delay = 0.005f;
 
     private int biddingAmount;
     private Animation anim;
     private Player player;
-    private WaitForSeconds onCompleteBiddingDelay;
 
     private string show = "BiddingPageShow";
     private string close = "BiddingPageClose";
@@ -26,23 +24,19 @@ public class BiddingPage : UIBase
 
     void Awake()
     {
-        onCompleteBiddingDelay = new WaitForSeconds(delay);
+        
     }
 
     private void OnEnable()
     {
         if(anim == null)
-        {
 			anim = GetComponent<Animation>();
-		}
     }
 
     void Start()
     {
 		plus.AddListener(IncreaseBid);
 		minus.AddListener(DecreaseBid);
-        //confirm.AddListener(ConfirmAmount);
-        confirm.onClick = null;
         confirm.onClick += ConfirmAmount;
     }
 
@@ -54,6 +48,26 @@ public class BiddingPage : UIBase
             UIManager.Singleton.UpdateTimer(timer);
         }
     }
+
+    public override void RoundReset()
+    {
+        base.RoundReset();
+    }
+
+    public override void GameSetReset()
+    {
+        biddingAmount = GameManager.Singleton.minBiddingAmount;
+        base.GameSetReset();
+    }
+
+    public override void GameOverClear()
+    {
+        plus.RemoveAllListener();
+        minus.RemoveAllListener();
+        confirm.onClick = null;
+        base.GameOverClear();
+    }
+
 
 	private void IncreaseBid()
 	{
@@ -118,11 +132,8 @@ public class BiddingPage : UIBase
             yield return null;
         }
 
-        //player = null;
-
         startCounting = playerCompleteBidding = false;
         UIManager.Singleton.CloseTimer();
-        //biddingAmountText.enabled = false;
     }
 
     protected override IEnumerator OnUIBaseEnd()
@@ -131,8 +142,6 @@ public class BiddingPage : UIBase
         {
             yield return null;
         }
-
-        //yield return null;
     }
 
     private void SetupBidding()

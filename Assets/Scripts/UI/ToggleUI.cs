@@ -31,11 +31,6 @@ public class ToggleUI : MonoBehaviour, IPointerClickHandler
         items = toggleList.GetComponentsInChildren<ToggleItem>();
     }
 
-    void Start()
-    {
-        //for (int i = 0; i < )
-    }
-
     void OnEnable()
     {
         for (int i = 0; i < items.Length; ++i)

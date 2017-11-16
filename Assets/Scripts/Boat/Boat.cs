@@ -47,10 +47,10 @@ public class Boat : MonoBehaviour
     {
         get
         {
-            return landingAtHarbor;
+            return landingOnHarbor;
         }
     }
-    private bool landingAtHarbor = false;
+    private bool landingOnHarbor = false;
 
     public bool IsRobbed
     {
@@ -91,6 +91,11 @@ public class Boat : MonoBehaviour
     private void Start()
     {
 
+    }
+
+    public void Reset()
+    {
+        
     }
 
     void Update()
@@ -290,8 +295,7 @@ public class Boat : MonoBehaviour
         else
         {
             GoToHarbor();
-            landingAtHarbor = true;
-            //moveCallback += GoToHarbor;
+            landingOnHarbor = true;
         }
     }
 

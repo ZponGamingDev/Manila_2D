@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DataSystemBase<T> where T : new()
+public class DataSystemBase<T> where T : class, new()
 {
     protected string path = string.Empty;
     protected TextAsset csvFile = null;
@@ -17,13 +17,16 @@ public class DataSystemBase<T> where T : new()
         get
         {
             if(singleton == null)
-            {
                 singleton = new T();
-                return singleton;
-            }
 
             return singleton;
         }
+    }
+
+    static public void Release()
+    {
+        if (singleton != null)
+            singleton = null;
     }
 
     protected void Parse()

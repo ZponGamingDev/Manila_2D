@@ -20,9 +20,26 @@ public class ShiftBox : UIBase
 
     }
 
+    public override void RoundReset()
+    {
+        shiftValue = 0;
+        base.RoundReset();
+    }
+
+    public override void GameSetReset()
+    {
+		shiftValue = 0;
+		base.GameSetReset();
+    }
+
+    public override void GameOverClear()
+    {
+		shiftValue = 0;
+		base.GameOverClear();
+    }
+
     public override void ShowUI()
     {
-        //anchor = (BoatAnchor)System.Enum.Parse(typeof(BoatAnchor), boat.selectedOption.text);
         if (!int.TryParse(shift.selectedOption.text.Substring(1), out shiftValue))
         {
             Debug.LogError("Error");
@@ -60,10 +77,7 @@ public class ShiftBox : UIBase
 		}
 
 		int val = int.Parse(shift.selectedOption.text);
-		if (shiftValue != val)
-		{
-			shiftValue = val;
-		}
+	    shiftValue = val;
 	}
 
     private void ShiftBoat()

@@ -7,7 +7,7 @@ public class SingletonBase<T> : MonoBehaviour
 {
     static private T singleton = new T();
 
-    public static T Singleton
+    static public T Singleton
     {
         get
         {
@@ -26,4 +26,10 @@ public class SingletonBase<T> : MonoBehaviour
             return singleton;
         }
     }
+
+	static public void Release()
+	{
+		if (singleton != null)
+			singleton = null;
+	}
 }

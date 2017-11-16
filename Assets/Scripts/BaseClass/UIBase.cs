@@ -1,15 +1,30 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 
 public class UIBase : MonoBehaviour
 {
     protected WaitForSeconds onPageEndSec = new WaitForSeconds(2.0f);
-    protected float animationTimer = 0.0f;
 
     public virtual void Initial()
     {
         
+    }
+
+    public virtual void RoundReset()
+    {
+        
+    }
+
+    public virtual void GameSetReset()
+    {
+        
+    }
+
+    public virtual void GameOverClear()
+    {
+        Destroy(this.gameObject);
+        GC.Collect();
     }
 
     /// <summary>
@@ -29,7 +44,8 @@ public class UIBase : MonoBehaviour
 	/// <returns>Base function is yield return null.</returns>
     protected virtual IEnumerator OnUIBaseEnd()
 	{
-        yield return onPageEndSec;
+        System.GC.Collect();
+        yield return null;
 	}
 
 	/// <summary>
@@ -55,15 +71,13 @@ public class UIBase : MonoBehaviour
         {
             gameObject.SetActive(true);
         }
-    }
+
+		gameObject.transform.SetAsLastSibling();
+	}
 
     public virtual void CloseUI()
     {
-        if (!gameObject.activeInHierarchy)
-        {
-            return;
-        }
-
-        gameObject.SetActive(false);
-    }
+        if (gameObject.activeInHierarchy)
+			gameObject.SetActive(false);
+	}
 }

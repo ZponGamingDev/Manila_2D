@@ -5,14 +5,12 @@ using ManilaMapInvestment;
 
 public class Player 
 {
-    //private List<GoodType> stocks = new List<GoodType>();
     public PlayerInventory.BuyStockCallback addOneStock = null;
     public PlayerInventory.BuyStockCallback releaseOneStock = null;
 
 	private Color color = Color.black;
 
     private Dictionary<GoodType, Dictionary<string, int>> stockDictionary = new Dictionary<GoodType, Dictionary<string, int>>();
-	private int soldStockCounter = 0;
 
     private string hold = "HOLD";
     private string sold = "SOLD";
@@ -35,6 +33,23 @@ public class Player
             GoodType good = (GoodType)(1 << shift);
 			CreateStockDictionary(good);
 		}
+    }
+
+    public void RoundReset()
+    {
+        
+    }
+
+    public void GameSetReset()
+    {
+        feedback = null;
+    }
+
+    public void GameOverClear()
+    {
+        stockDictionary.Clear();
+        feedback = null;
+        stockDictionary = null;
     }
 
     private void CreateStockDictionary(GoodType good)
@@ -60,20 +75,11 @@ public class Player
         return stockDictionary[good][sold];
     }
 
-    private Dictionary<MapInvestmentBase, MapInvestmentFeedback> feedbacks 
-            = new Dictionary<MapInvestmentBase, MapInvestmentFeedback>();
-
     public void Feedback()
     {
         if (feedback != null)
             feedback(this);
     }
-
-    /*
-    public void AddFeedbackListener(MapInvestmentBase script, MapInvestmentFeedback feedback)
-    {
-        
-    }*/
 
     public void AddFeedbackListener(MapInvestmentFeedback feedback)
     {
@@ -144,7 +150,7 @@ public class Player
 		addOneStock(good);
     }
 
-	public int SellStock(GoodType good)
+	public int  SellStock(GoodType good)
 	{
         int nHold = stockDictionary[good][hold];
         if (nHold == 0)

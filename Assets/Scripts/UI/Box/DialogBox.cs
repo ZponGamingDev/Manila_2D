@@ -11,6 +11,22 @@ public class DialogBox : UIBase
     public DecisionBtn yes;
     public DecisionBtn no;
 
+    public override void RoundReset()
+    {
+        base.RoundReset();
+    }
+
+    public override void GameSetReset()
+    {
+        base.GameSetReset();
+    }
+
+    public override void GameOverClear()
+    {
+        DialogBoxDataSystem.Release();
+        base.GameOverClear();
+    }
+
     private void No()
     {
         UIManager.Singleton.DialogNo();
@@ -25,15 +41,12 @@ public class DialogBox : UIBase
 
     public override void ShowUI()
     {
-        //yes.AddListener(Yes);
-        //no.AddListener(No);
         no.onClick = yes.onClick = null;
         yes.onClick += Yes;
         no.onClick += No;
 
-
         title.text = DialogBoxDataSystem.Singleton.GetBoxTitle();
-        title.text = DialogBoxDataSystem.Singleton.GetBoxContent();
+        content.text = DialogBoxDataSystem.Singleton.GetBoxContent();
 
         base.ShowUI();
     }

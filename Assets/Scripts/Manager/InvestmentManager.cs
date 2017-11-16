@@ -109,15 +109,36 @@ public class InvestmentManager : SingletonBase<InvestmentManager>
         return goodsSharePriceTable[good];
     }
 
-    void Awake()
-    {
-
-    }
-
     void Start()
     {
         InitialColorTable();
         InitialSharePriceTable();
+    }
+
+    public void RoundReset()
+    {
+        interestedBoat = null;
+    }
+
+    public void GameSetReset()
+    {
+        banker = null;
+        RemovePirate(0);
+		RemovePirate(1);
+		iRobbery = 0;
+        confirmedInvestments.Clear();
+        mapInvestmentConfirm = null;
+    }
+
+    public void GameOverClear()
+    {
+        goodsColorTable.Clear();
+        goodsSharePriceTable.Clear();
+        confirmedInvestments.Clear();
+        mapInvestmentConfirm = null;
+        goodsColorTable = null;
+        goodsSharePriceTable = null;
+        confirmedInvestments = null;
     }
 
     private void InitialColorTable()
@@ -143,13 +164,11 @@ public class InvestmentManager : SingletonBase<InvestmentManager>
         int price = goodsSharePriceTable[good];
 
         if(price > 5)
-        {
             price += 10;
-        }
         else
-        {
             price += 5;
-        }
+        
+        goodsSharePriceTable[good] = price;
     }
 
     public void SellStockToBoss(GoodType good)
@@ -167,11 +186,7 @@ public class InvestmentManager : SingletonBase<InvestmentManager>
         int num = player.SellStock(good);
 
         if (num > 0)
-        {
-			//int price = goodsSharePriceTable[good];
-            //player.Earn(price);
             player.Earn(12);
-        }
     }
 
     public void SetInterestedBoatGood(Boat boat)
@@ -223,7 +238,7 @@ public class InvestmentManager : SingletonBase<InvestmentManager>
         UIManager.Singleton.ShowUI(UIType.MAP_INVESTMENT_PAGE);
         confirmedInvestments.Add(investment);
 
-        Debug.Log(confirmedInvestments.Count);
+        //Debug.Log(confirmedInvestments.Count);
     }
 
     public void CancelMapInvestment()
@@ -261,6 +276,6 @@ public class InvestmentManager : SingletonBase<InvestmentManager>
 	{
 		//CurrentMapInvestmentData = null;
 		//mapInvestmentConfirm = null;
-		//confirmedInvestments.Clear();
+		confirmedInvestments.Clear();
 	}
 }

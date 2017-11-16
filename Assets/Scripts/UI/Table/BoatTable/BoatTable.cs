@@ -14,19 +14,37 @@ public class BoatTable : UIBase
 
     private List<BoatTableElement> highlightedElms = new List<BoatTableElement>();
 
-    void OnEnable()
+    void Start()
     {
-        tomatoBoat.good = GoodType.TOMATO;
-        silkBoat.good = GoodType.SILK;
-        paddyBoat.good = GoodType.PADDY;
-        jadeBoat.good = GoodType.JADE;
+		tomatoBoat.good = GoodType.TOMATO;
+		silkBoat.good = GoodType.SILK;
+		paddyBoat.good = GoodType.PADDY;
+		jadeBoat.good = GoodType.JADE;
 
-        tomatoBoat.onClick += Highlight;
-        silkBoat.onClick += Highlight;
-        paddyBoat.onClick += Highlight;
-        jadeBoat.onClick += Highlight;
+		tomatoBoat.onClick += Highlight;
+		silkBoat.onClick += Highlight;
+		paddyBoat.onClick += Highlight;
+		jadeBoat.onClick += Highlight;
 
-        confirmBtn.onClick += ConfirmBoat;
+		confirmBtn.onClick += ConfirmBoat; 
+    }
+
+    public override void RoundReset()
+    {
+        base.RoundReset();
+    }
+
+    public override void GameSetReset()
+    {
+        highlightedElms.Clear();
+		base.GameSetReset();
+    }
+
+    public override void GameOverClear()
+    {
+        highlightedElms.Clear();
+        highlightedElms = null;
+        base.GameOverClear();
     }
 
     private void ConfirmBoat()
@@ -95,6 +113,12 @@ public class BoatTable : UIBase
 
     public override void CloseUI()
     {
+        for (int iElm = 0; iElm < highlightedElms.Count; ++iElm)
+        {
+            highlightedElms[iElm].UnPicked();
+            highlightedElms[iElm] = null;
+        }
+        highlightedElms.Clear();
         base.CloseUI();
     }
 }

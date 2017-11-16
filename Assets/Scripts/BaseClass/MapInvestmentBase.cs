@@ -112,13 +112,11 @@ namespace ManilaMapInvestment
 
         public virtual void OnPointerClick(PointerEventData eventData)
         {
-			int n1 = (int)GameManager.Singleton.CurrentState >> (int)GameState.BIDDING;
-			if (n1 < 1)
-				return;
+            //int state = (int)(GameManager.Singleton.CurrentState & 
+             //           (GameState.BIDDING | GameState.BIDDING_COMPLETE));
 
-			int n2 = (int)GameManager.Singleton.CurrentState >> (int)GameState.BIDDING_COMPLETE;
-			if (n2 < 1)
-				return;
+           // if (state > 0)
+             //   return;
 
             if(playerSpots.Length == iSpot)
             {
@@ -140,14 +138,6 @@ namespace ManilaMapInvestment
                 }
                 else
                     Debug.LogError("NULL EXCEPTION at MapInvestmentData.cs 118 line");
-                //InvestmentManager.Singleton.Set
-                /*
-                if (onClick != null)
-                    onClick(Data);
-                else
-                    Debug.Log("onClick");
-                    */
-                //UIManager.Singleton.ShowUI(UIType.MAP_INVESTMENT_PAGE);
 			}
         }
 

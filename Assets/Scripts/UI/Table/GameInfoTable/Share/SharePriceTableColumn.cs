@@ -20,29 +20,30 @@ public class SharePriceTableColumn : MonoBehaviour
 
 	void Awake()
     {
-        GameObject go = ResourceManager.Singleton.LoadResource<GameObject>(elmPath);
-
-        for (int iElm = elmNum.Length - 1; iElm >= 0; --iElm)
-		{
-			GameObject elmGo = Instantiate(go);
-			elmGo.transform.SetParent(elmGroup, false);
-            SharePriceTableElement element = elmGo.GetComponent<SharePriceTableElement>();
-            element.numLabel.text = elmNum[iElm].ToString();
-            goodPriceElmTable.Add(elmNum[iElm], element);
-		}
-
-        go = null;
+        
     }
 
     void Start()
     {
-        
-    }
+		GameObject go = ResourceManager.Singleton.LoadResource<GameObject>(elmPath);
 
-    void OnEnable()
+		for (int iElm = elmNum.Length - 1; iElm >= 0; --iElm)
+		{
+			GameObject elmGo = Instantiate(go);
+			elmGo.transform.SetParent(elmGroup, false);
+			SharePriceTableElement element = elmGo.GetComponent<SharePriceTableElement>();
+			element.numLabel.text = elmNum[iElm].ToString();
+			goodPriceElmTable.Add(elmNum[iElm], element);
+		}
+
+		price = 0;
+		goodPriceElmTable[price].TurnOnCoin();
+	}
+
+    public void Reset()
     {
-        price = 0;
-        goodPriceElmTable[price].TurnOnCoin();
+        goodPriceElmTable.Clear();
+        goodPriceElmTable = null;
     }
 
     public void Rise()

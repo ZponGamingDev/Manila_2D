@@ -37,6 +37,25 @@ public class GameInfoTable : UIBase
         coinSpinRate = 0.5f / coinSprites.Length;
 	}
 
+    public override void RoundReset()
+    {
+        base.RoundReset();
+    }
+
+    public override void GameSetReset()
+    {
+        base.GameSetReset();
+    }
+
+    public override void GameOverClear()
+    {
+        tomatoCol.Reset();
+        silkCol.Reset();
+        paddyCol.Reset();
+        jadeCol.Reset();
+        base.GameOverClear();
+    }
+
     void Update()
     {
         coinSpinTimer += Time.deltaTime;

@@ -32,7 +32,7 @@ public class InventoryElement : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData data)
     {
-        UIManager.Singleton.RegisterDialogBoxCallback(dialogBoxKey, DialogBoxYes, DialogBoxNo);
+        UIManager.Singleton.RegisterDialogBoxData(colorImg.color, dialogBoxKey, DialogBoxYes, DialogBoxNo);
         StartCoroutine(InvestmentManager.Singleton.WaitPlayerResponse());
     }
 }

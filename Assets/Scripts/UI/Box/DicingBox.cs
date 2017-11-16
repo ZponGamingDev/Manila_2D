@@ -11,48 +11,65 @@ public class DicingBox : UIBase
     private List<Sprite> rollings = new List<Sprite>();
     private List<Sprite> numbers = new List<Sprite>();
 
-    private DicingPageDataSystem dicingPageDataSystem;
     private Animation anim;
 
+    // Time of animation 
     private float rollingTimer = 0.0f;
-    private bool throwingTrigger = false;
+	private float animationTimer = 0.0f;
+
+    // Animation trigger
+	private bool throwingTrigger = false;
     private bool clickTrigger = false;
     private bool closeTrigger = false;
+
+    // Animation state
     private string show = "DicingPageShowUI";
     private string close = "DicingPageCloseUI";
 
     void Awake()
     {
-        //dicingPageDataSystem = new DicingPageDataSystem();
-        //dicingPageDataSystem.LoadDiceSprites(rollings, numbers);
         DicingPageDataSystem.Singleton.LoadDiceSprites(rollings, numbers);
         anim = GetComponent<Animation>();
     }
 
     void Start()
     {
-		//throwingBtn.AddListener(Throw);
         throwingBtn.onClick += Throw;
+    }
+
+    public override void RoundReset()
+    {
+        base.RoundReset();
+    }
+
+    public override void GameSetReset()
+    {
+        DicingPageDataSystem.Release();
+        base.GameSetReset();
+    }
+
+    public override void GameOverClear()
+    {
+        //Destroy(Dic);
+        //DicingPageDataSystem.Singleton.
+        rollings.Clear();
+        numbers.Clear();
+        rollings = null;
+        numbers = null;
+        dices[0] = null;
+        dices[1] = null;
+        dices[2] = null;
+        throwingBtn.onClick = null;
+        base.GameOverClear();
     }
 
     void Update()
     {
         if(throwingTrigger)
-        {
             rollingTimer += Time.deltaTime;
-        }
-
-        /*
-         * if(closeTrigger)
-         * {
-         *      
-         * }
-         */
 
         if(closeTrigger)
-        {
             animationTimer += Time.deltaTime;
-        }
     }
 
     private IEnumerator Rolling()
@@ -79,10 +96,11 @@ public class DicingBox : UIBase
 
 
         //  Only three dices used in this Game.
+        int exclusive = numbers.Count + 1;
 
-        int left = Random.Range(1, 7);
-        int middle = Random.Range(1, 7);
-        int right = Random.Range(1, 7);
+        int left = Random.Range(1, exclusive);
+        int middle = Random.Range(1, exclusive);
+        int right = Random.Range(1, exclusive);
 
         dices[0].image.sprite = numbers[left - 1];
         dices[1].image.sprite = numbers[middle - 1];
@@ -95,14 +113,6 @@ public class DicingBox : UIBase
     private void Throw()
     {
         StartCoroutine(Rolling());
-    }
-
-    private void SetDiceImage()
-    {
-		for (int i = 0; i < dices.Length; ++i)
-		{
-			dices[i].image.sprite = numbers[0];
-		}
     }
 
     protected override void DelegatePageCallback()
@@ -120,14 +130,9 @@ public class DicingBox : UIBase
 
     protected override IEnumerator OnUIBaseEnd()
     {
-		//yield return StartCoroutine(PlayCloseAnimation(anim.GetClip(close).length + Time.deltaTime));
-		//yield return StartCoroutine(PlayCloseAnimation(2.0f));
-
 		clickTrigger = false;
 		throwingTrigger = false;
 		rollingTimer = 0.0f;
-
-        System.GC.Collect();
 
         yield return StartCoroutine(base.OnUIBaseEnd());
     }
@@ -157,7 +162,6 @@ public class DicingBox : UIBase
         }
 
 		anim.Play(close);
-		//base.CloseUI();
         animationTimer = 0.0f;
         closeTrigger = false;
         GameManager.Singleton.ShowBoat();

@@ -9,21 +9,26 @@ public class InfoBar : UIBase
     public Text infoText;
 
     private int fontSize = 60;
-    private Color fontColor = new Color(1.0f, 69.0f / 255.0f, 0.0f, 1.0f);
-
-    /*
-    private string first = "FIRST ROUND";
-    private string second = "SECOND ROUND";
-    private string final = "FINAL ROUND";
-    private string bidding = "BIDDING";
-    private string dicing = "DICING";
-    */
 
     void Awake()
     {
-        //infoBarDataSystem = new InfoBarDataSystem();
         infoText.fontSize = fontSize;
-        infoText.color = fontColor;
+    }
+
+    public override void RoundReset()
+    {
+        base.RoundReset();
+    }
+
+    public override void GameSetReset()
+    {
+        base.GameSetReset();
+    }
+
+    public override void GameOverClear()
+    {
+        InfoBarDataSystem.Release();
+        base.GameOverClear();
     }
 
     protected override IEnumerator OnUIBaseStart()
@@ -38,15 +43,17 @@ public class InfoBar : UIBase
 
     public override void ShowUI()
     {
-        transform.SetAsLastSibling();
+        //transform.SetAsLastSibling();
         string state = GameManager.Singleton.CurrentState.ToString();
         infoText.text = InfoBarDataSystem.Singleton.GetInfoBarData(state);
 
-        GameState lVal = (GameState.BIDDING_COMPLETE & GameManager.Singleton.CurrentState);
+
+        GameState lVal = GameState.BIDDING_COMPLETE & GameManager.Singleton.CurrentState;
 
         if(lVal == GameState.BIDDING_COMPLETE)
         {
             infoText.color = GameManager.Singleton.CurrentPlayer.GetPlayerColor();
+            //background.color = Color.white;
         }
 
         base.ShowUI();
@@ -54,7 +61,7 @@ public class InfoBar : UIBase
 
     public override void CloseUI()
     {
-        transform.SetAsFirstSibling();
+		transform.SetAsFirstSibling();
 		base.CloseUI();
     }
 }

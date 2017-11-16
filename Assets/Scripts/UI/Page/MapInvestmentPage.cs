@@ -12,42 +12,31 @@ public class MapInvestmentPage : UIBase
     public DecisionBtn confirm;
     public DecisionBtn cancel;
 
-    void OnEnable()
-    {
-        //confirm.AddListener(ConfirmInvestment);
-        //cancel.AddListener(CancelInvestment);
-    }
-
-    /*
-    protected override IEnumerator OnUIBaseStart()
-    {
-        yield return StartCoroutine(base.OnUIBaseStart());
-    }
-
-    protected override IEnumerator OnUIBaseEnd()
-    {
-        yield return StartCoroutine(base.OnUIBaseEnd());
-    }
-
-    protected override void DelegatePageCallback()
-    {
-        base.DelegatePageCallback();
-    }
-    */
-
     void Start()
     {
-        //confirm.AddListener(ConfirmMapInvestment);
-        //cancel.AddListener(CancelInvestment);
-        confirm.onClick = null;
+        //cancel.onClick = confirm.onClick = null;
         confirm.onClick += ConfirmMapInvestment;
         cancel.onClick += CancelInvestment;
+    }
+
+    public override void RoundReset()
+    {
+        base.RoundReset();
+    }
+
+    public override void GameSetReset()
+    {
+        base.GameSetReset();
+    }
+
+    public override void GameOverClear()
+    {
+        base.GameOverClear();
     }
 
     public void ConfirmMapInvestment()
     {
         InvestmentManager.Singleton.MapInvestmentConfirm();
-        //InvestmentManager.Singleton.Reset();
         GameManager.Singleton.PlayerFinishRoundPlay();
         CloseUI();
     }

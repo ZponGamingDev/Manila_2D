@@ -11,62 +11,63 @@ public class PlayerInventory : UIBase
     public ScrollRect table;
     public Text title;
 
-    //private List<InventoryStock> stocks = new List<InventoryStock>();
-    private List<GameObject> elms = new List<GameObject>();
+    private List<GameObject> elementGOs = new List<GameObject>();
 	private string elmPath = PathConfig.UIElementFolder + "InventoryElement";
 
-    private void BuildPlayerInventoryView(GoodType good, int numOfGood)
+    public override void RoundReset()
     {
-		for (int iGood = 0; iGood < numOfGood; ++iGood)
-		{
-			GameObject go = ResourceManager.Singleton.LoadResource<GameObject>(elmPath);
-            GameObject elmGO = Instantiate(go, table.content.transform);
-			InventoryElement stock = elmGO.GetComponent<InventoryElement>();
+        base.RoundReset();
+    }
 
-            if(stock != null)
-            {
-				elms.Add(elmGO);
-				stock.good = good;
-                stock.sold += SoldByPlayer;
-				stock.colorImg.color = InvestmentManager.Singleton.GetGoodColor(good);
-			}
+    public override void GameSetReset()
+    {
+        base.GameSetReset();
+    }
+
+    public override void GameOverClear()
+    {
+		for (int iElm = 0; iElm < elementGOs.Count; ++iElm)
+		{
+            GameObject go = elementGOs[iElm];
+            elementGOs[iElm] = null;
+            Destroy(go);
 		}
+        elementGOs.Clear();
+        elementGOs = null;
+        base.GameOverClear();
+    }
+
+    private void BuildPlayerInventoryView(GoodType good, int numOfGood)
+    {		
+        for (int iGood = 0; iGood < numOfGood; ++iGood)
+        {
+            AddOneStock(good);
+        }
     }
 
     private void AddOneStock(GoodType good)
     {
 		GameObject go = ResourceManager.Singleton.LoadResource<GameObject>(elmPath);
         GameObject elmGO = Instantiate(go, table.content.transform);
-		InventoryElement stock = elmGO.GetComponent<InventoryElement>();
+        InventoryElement ie = elmGO.GetComponent<InventoryElement>();
 
-        elms.Add(elmGO);
-        stock.good = good;
-        stock.sold += SoldByPlayer;
-
-		if (stock.colorImg != null)
-			stock.colorImg.color = InvestmentManager.Singleton.GetGoodColor(good);
+        //if (ie != null)
+        {
+            elementGOs.Add(elmGO);
+            ie.good = good;
+            ie.sold += SoldByPlayer;
+            ie.colorImg.color = InvestmentManager.Singleton.GetGoodColor(good);
+        }
     }
 
     private void SoldByPlayer(InventoryElement element)
 	{
-        if(elms.Contains(element.gameObject))
-            elms.Remove(element.gameObject);
-	}
-
-    private void ReleaseOneStock(GoodType good)
-    {
-        for (int iElm = 0; iElm < elms.Count; --iElm)
+        if (elementGOs.Contains(element.gameObject))
         {
-            InventoryElement stock = elms[iElm].GetComponent<InventoryElement>();
-            if(good == stock.good)
-            {
-                GameObject element = elms[iElm];
-                elms.Remove(element);
-                Destroy(element);
-                break;
-            }
+            elementGOs.Remove(element.gameObject);
+            Destroy(element.gameObject);
         }
-    }
+	}
 
     public override void ShowUI()
     {
@@ -81,29 +82,25 @@ public class PlayerInventory : UIBase
 
 		BuildPlayerInventoryView(GoodType.TOMATO, nTomato);
 		BuildPlayerInventoryView(GoodType.SILK, nSlik);
-		BuildPlayerInventoryView(GoodType.PADDY, nPaddy);
-		BuildPlayerInventoryView(GoodType.JADE, nJade);
+        BuildPlayerInventoryView(GoodType.PADDY, nPaddy);
+        BuildPlayerInventoryView(GoodType.JADE, nJade);
 
 		if (player.addOneStock == null)
 			player.addOneStock += AddOneStock;
-
-		//if (player.releaseOneStock == null)
-        //   player.releaseOneStock += ReleaseOneStock;
         
         base.ShowUI();
-    }
+	}
 
     public override void CloseUI()
     {
-        for (int iElm = 0; iElm < elms.Count; ++iElm)
-		{
-            GameObject element = elms[iElm];
-			elms[iElm] = null;
+        for (int iElm = 0; iElm < elementGOs.Count; ++iElm)
+        {
+			GameObject element = elementGOs[iElm];
+            elementGOs[iElm] = null;
 			Destroy(element);
 		}
 
-        elms.Clear();
-        //stocks.Clear();
+        elementGOs.Clear();
         base.CloseUI();
     }
 }

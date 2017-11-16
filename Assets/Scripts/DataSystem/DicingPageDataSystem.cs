@@ -30,6 +30,7 @@ public class DicingPageDataSystem : DataSystemBase<DicingPageDataSystem>
             rollings.Add(sprites[i]);
         }
 
+        // NOT GOOD
         for (int i = 1; i <= 6; ++i)
         {
             Sprite sprite = ResourceManager.Singleton.LoadSprite(csvData[i.ToString()]["Sprite"]);

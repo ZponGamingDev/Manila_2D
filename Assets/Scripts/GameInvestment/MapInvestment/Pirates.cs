@@ -119,9 +119,11 @@ public class Pirates : MapInvestmentBase
             yield return null;
         }
 
+        // 2nd Pirate
         if(InvestmentManager.Singleton.NumOfCompletedRobbery == 1)
         {
-            UIManager.Singleton.RegisterDialogBoxCallback(requests[2], CommitToShare, RefuseToShare);
+            Player pirate = InvestmentManager.Singleton.GetPirate(1);
+            UIManager.Singleton.RegisterDialogBoxData(pirate.GetPlayerColor(), requests[2], CommitToShare, RefuseToShare);
             StartCoroutine(InvestmentManager.Singleton.WaitPlayerResponse());
         }
     }
@@ -134,7 +136,7 @@ public class Pirates : MapInvestmentBase
         currentPirate = player;
 
         // Show the request of robbery box
-        UIManager.Singleton.RegisterDialogBoxCallback(requests[iRequest], CommitRobbery, RefuseRobbery);
+        UIManager.Singleton.RegisterDialogBoxData(currentPirate.GetPlayerColor(), requests[iRequest], CommitRobbery, RefuseRobbery);
         StartCoroutine(InvestmentManager.Singleton.WaitPlayerResponse());
 
         //  ASK 1st pirate
