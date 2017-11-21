@@ -42,6 +42,14 @@ public class BoatShift : MapInvestmentBase
         Reset();
     }
 
+    private IEnumerator WaitInvestorAction()
+    {
+        while (true)
+        {
+            yield return null;
+        }
+    }
+
     public override void OnPointerClick(UnityEngine.EventSystems.PointerEventData data)
     {
 		base.OnPointerClick(data);

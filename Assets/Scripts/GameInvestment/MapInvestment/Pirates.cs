@@ -32,11 +32,6 @@ public class Pirates : MapInvestmentBase
         SetInvestment();
     }
 
-    void OnEnable()
-    {
-        //Reset();
-    }
-
     protected override void Reset()
     {
         iRequest = 0;

@@ -73,8 +73,9 @@ public class GameInfoTable : UIBase
         
 	}
 
-    private void ChangeBossSignColor()
+    private void ChangeBossSignInfo()
     {
+        bossSignLabel.text = GameManager.Singleton.GameSetBoss.GetPlayerName();
         bossSignLabel.color = GameManager.Singleton.GameSetBoss.GetPlayerColor();
     }
 
@@ -84,12 +85,16 @@ public class GameInfoTable : UIBase
 
         currentPlayerMoney.text = '$' + player.Money.ToString();
 
-        Color color = player.GetPlayerColor();
+        Color c = player.GetPlayerColor();
+        string pName = player.GetPlayerName();
 
         if(currentPlayerMoney.color != player.GetPlayerColor())
             currentPlayerMoney.color 
             = currentPlayerSignLabel.color
-            = color;
+            = c;
+
+        if (currentPlayerSignLabel.text != pName)
+            currentPlayerSignLabel.text = pName;
 	}
 
     private void SharePriceRise(GoodType good)
@@ -118,7 +123,7 @@ public class GameInfoTable : UIBase
 
     public override void ShowUI()
     {
-        UIManager.Singleton.AddBossSignListener(ChangeBossSignColor);
+        UIManager.Singleton.AddBossSignListener(ChangeBossSignInfo);
         UIManager.Singleton.AddCurrentPlayerInfoListener(ChangePlayerInfo);
         GameManager.Singleton.AddSharePriceRiseEvent(SharePriceRise);
 

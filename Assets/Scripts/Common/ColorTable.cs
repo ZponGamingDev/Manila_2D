@@ -11,7 +11,7 @@ static public class ColorTable
     static Color c_DARK_OLIVE_GREEN = new Color(85.0f / 255.0f, 107.0f / 255.0f, 47.0f / 255.0f, 1.0f);
     static Color c_DARK_GOLDEN_ROD = new Color(184.0f / 255.0f, 134.0f / 255.0f, 11.0f / 255.0f, 1.0f);
 
-    public static Color GeneratePlayerColor(int iColor)
+    public static Color GetPlayerSignColor(int iColor)
     {
         switch (iColor)
         {

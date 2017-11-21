@@ -41,6 +41,9 @@ public class Bank : MapInvestmentBase
 
 	protected override void Feedback(Player player)
 	{
+        if (GameManager.Singleton.CurrentState != GameState.SET_OVER)
+            return;
+        
         Reset();
 	}
 

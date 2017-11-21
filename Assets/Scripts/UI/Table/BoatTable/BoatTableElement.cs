@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -9,8 +7,10 @@ public class BoatTableElement : MonoBehaviour, IPointerClickHandler, IPointerEnt
     public GoodType good;
     public Image boatImg;
     public Image border;
+    public InputField field;
+    public RectTransform boatImgRect;
 
-	public delegate void BoatTableElmTrigger(BoatTableElement elm);
+    public delegate void BoatTableElmTrigger(BoatTableElement elm);
     public BoatTableElmTrigger onClick;
 
     private bool borderEffect = false;
@@ -28,9 +28,23 @@ public class BoatTableElement : MonoBehaviour, IPointerClickHandler, IPointerEnt
                                              ColorTable.c_ORANGE_RED.b,
                                              200.0f / 255.0f);
 
-    void OnEnable()
+    private int maxShiftedVal = 9;
+    private int startEditShiftedVal = 0;
+
+    static public int BossShiftedVal
+    {
+        get
+        {
+            return bossShiftedVal;
+        }
+	}
+	static private int bossShiftedVal = 0;
+
+
+	void OnEnable()
     {
         border.color = minHighlighted;
+        field.onEndEdit.AddListener(OnEndBoatShiftEdit);
     }
 
     void Update()
@@ -54,19 +68,33 @@ public class BoatTableElement : MonoBehaviour, IPointerClickHandler, IPointerEnt
 
     public void OnPointerClick(PointerEventData data)
     {
-		picked = !picked;
-		border.enabled = picked;
-		borderEffect = picked;
+        Vector2 local;
+        Vector2 ptr = data.position;
 
-        if(onClick != null)
+        if (RectTransformUtility.ScreenPointToLocalPointInRectangle(boatImgRect, ptr, Camera.main, out local))
         {
-            onClick(this);
+			picked = !picked;
+			border.enabled = picked;
+			borderEffect = picked;
+
+            if (onClick != null)
+                onClick(this);
         }
+
+        if (picked)
+        {
+            field.interactable = true;
+            field.text = "0";
+        }
+        else
+            field.interactable = false;
     }
 
     public void UnPicked()
     {
         picked = border.enabled = borderEffect = false;
+        field.text = "0";
+        field.interactable = false;
     }
 
     public void OnPointerEnter(PointerEventData data)
@@ -84,4 +112,44 @@ public class BoatTableElement : MonoBehaviour, IPointerClickHandler, IPointerEnt
         
         border.enabled = borderEffect = false;
 	}
+
+	public void OnEndBoatShiftEdit(string s)
+	{
+        int val = 0;
+
+        if (!int.TryParse(s, out val))
+        {
+            val = 0;
+            return;
+        }
+
+        if (startEditShiftedVal != 0)
+            bossShiftedVal -= startEditShiftedVal;
+        
+        int sum = bossShiftedVal+val;
+
+        if (sum >= maxShiftedVal)
+		{
+            int subVal = (maxShiftedVal - bossShiftedVal);
+            if(subVal > 5)
+            {
+                field.text = "5";
+                bossShiftedVal += 5;
+            }
+            else
+            {
+                field.text = subVal.ToString();
+                startEditShiftedVal = subVal;
+                bossShiftedVal += subVal;
+            }
+		}
+        else
+        {
+            if (val > 5)
+                val = 5;
+            field.text = val.ToString();
+            startEditShiftedVal = val;
+            bossShiftedVal += val;
+        }
+    }
 }

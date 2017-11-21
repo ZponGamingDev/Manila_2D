@@ -12,7 +12,12 @@ public class BoatTable : UIBase
     public BoatTableElement paddyBoat;
     public BoatTableElement jadeBoat;
 
+    public Text titleLabel;
+    public Image titleBg;
+
     private List<BoatTableElement> highlightedElms = new List<BoatTableElement>();
+    private int totalShift = 0;
+    private int maxShift = 9;
 
     void Start()
     {
@@ -50,16 +55,20 @@ public class BoatTable : UIBase
     private void ConfirmBoat()
     {
         if(highlightedElms.Count < 3)
-        {
             return;
-        }
 
-        GameManager.Singleton.SpawnBoat(highlightedElms[0].good, 0);
-		GameManager.Singleton.SpawnBoat(highlightedElms[1].good, 1);
-		GameManager.Singleton.SpawnBoat(highlightedElms[2].good, 2);
+        if (BoatTableElement.BossShiftedVal != 9)
+            return;
 
-        CloseUI();
-	}
+        int shift0 = int.Parse(highlightedElms[0].field.text);
+        GameManager.Singleton.SpawnBoat(highlightedElms[0].good, 0, shift0);
+
+		int shift1 = int.Parse(highlightedElms[1].field.text);
+		GameManager.Singleton.SpawnBoat(highlightedElms[1].good, 1, shift1);
+
+		int shift2 = int.Parse(highlightedElms[2].field.text);
+		GameManager.Singleton.SpawnBoat(highlightedElms[2].good, 2, shift2);
+    }
 
     private void Highlight(BoatTableElement elm)
     {
@@ -96,8 +105,12 @@ public class BoatTable : UIBase
 
     protected override IEnumerator OnUIBaseEnd()
     {
-        //return base.OnUIBaseEnd();
-        yield return new WaitForSecondsRealtime(0.5f);
+        while(GameManager.Singleton.IsAnyBoatMoving())
+        {
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(1.0f);
     }
 
     protected override void DelegatePageCallback()
@@ -108,6 +121,8 @@ public class BoatTable : UIBase
     public override void ShowUI()
     {
         DelegatePageCallback();
+        titleBg.color = GameManager.Singleton.GameSetBoss.GetPlayerColor();
+        titleLabel.text = GameManager.Singleton.GameSetBoss.GetPlayerName() + "(船老大)選擇商船並輸入商船移動數值";
         base.ShowUI();
     }
 
@@ -120,5 +135,21 @@ public class BoatTable : UIBase
         }
         highlightedElms.Clear();
         base.CloseUI();
+    }
+
+    public void OnEndBoatShiftEdit(string s)
+    {
+        int val = int.Parse(s);
+        if (val > 5)
+        {
+            s = "5";
+        }
+        else
+        {
+            if (totalShift + val > maxShift)
+                s = (maxShift - totalShift).ToString();
+        }
+        
+        totalShift += val;
     }
 }

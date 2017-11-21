@@ -8,6 +8,7 @@ public class Player
     public PlayerInventory.BuyStockCallback addOneStock = null;
     public PlayerInventory.BuyStockCallback releaseOneStock = null;
 
+    private string name = string.Empty;
 	private Color color = Color.black;
 
     private Dictionary<GoodType, Dictionary<string, int>> stockDictionary = new Dictionary<GoodType, Dictionary<string, int>>();
@@ -26,16 +27,29 @@ public class Player
 
     private MapInvestmentFeedback feedback;
 
-    public Player()
+    public Player(Color c)
     {
         for (int shift = 0; shift < 4; ++shift)
 		{
             GoodType good = (GoodType)(1 << shift);
 			CreateStockDictionary(good);
 		}
+
+        this.color = c;
+
+        if (names.ContainsKey(c))
+            this.name = names[c];
+        else
+            this.name = "EMPTY";
     }
 
-    public void RoundReset()
+	static private Dictionary<Color, string> names = new Dictionary<Color, string>();
+    static public void AddPlayerName(Color c, string name)
+    {
+        names.Add(c, name);   
+    }
+
+	public void RoundReset()
     {
         
     }
@@ -48,6 +62,7 @@ public class Player
     public void GameOverClear()
     {
         stockDictionary.Clear();
+        names.Clear();
         feedback = null;
         stockDictionary = null;
     }
@@ -132,17 +147,6 @@ public class Player
         money -= _val;
     }
 
-    /*
-	public void BuyStock(GoodType good)
-	{
-        int price = InvestmentManager.Singleton.GetSharePrice(good);
-        Pay(price);
-        UIManager.Singleton.ChangePlayerSignInfo(); 
-		stockDictionary[good][hold]++;
-        addOneStock(good);
-	}
-	*/
-
     public void BuyStock(GoodType good)
     {
 		//UIManager.Singleton.ChangePlayerSignInfo();
@@ -190,5 +194,15 @@ public class Player
     public Color GetPlayerColor()
     {
         return color;
+    }
+
+    public void SetPlayerName(string name)
+    {
+        this.name = name;
+    }
+
+    public string GetPlayerName()
+    {
+        return name;
     }
 }

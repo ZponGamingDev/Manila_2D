@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class BiddingPage : UIBase 
 {
     public Image playerColor;
+    public Text playerName;
     public Text biddingAmountText;
     public AdjustValueBtn plus;
     public AdjustValueBtn minus;
@@ -144,6 +145,7 @@ public class BiddingPage : UIBase
         }
     }
 
+    private float playerColorAlpha = 150.0f / 255.0f;
     private void SetupBidding()
     {
         biddingAmount = GameManager.Singleton.minBiddingAmount;
@@ -152,7 +154,10 @@ public class BiddingPage : UIBase
         if (GameManager.Singleton.CurrentPlayer != null)
         {
             player = GameManager.Singleton.CurrentPlayer;
-            biddingAmountText.color = playerColor.color = player.GetPlayerColor();
+            playerName.text = player.GetPlayerName();
+            Color c = player.GetPlayerColor();
+            biddingAmountText.color = c;
+            playerColor.color = new Color(c.r, c.g, c.b, playerColorAlpha); 
         }
         else
         {

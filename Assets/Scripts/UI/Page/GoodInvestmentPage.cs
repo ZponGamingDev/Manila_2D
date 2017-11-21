@@ -164,6 +164,9 @@ public class GoodInvestmentPage : UIBase
                 good.Invest(i);
                 break;
 			}
+
+            if (i == goodsCount - 1)
+                return;
         }
         CloseUI();
 		GameManager.Singleton.ShowBoat();

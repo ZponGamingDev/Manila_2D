@@ -43,14 +43,15 @@ public class Boat : MonoBehaviour
     }
     private bool moveTrigger = false;
 
-    public bool LandingOnHarbor
+    public bool IsLandOnHarbor
     {
         get
         {
-            return landingOnHarbor;
+            return isLandingOnHarbor;
         }
     }
-    private bool landingOnHarbor = false;
+    private bool isLandingOnHarbor = false;
+    private bool isLandOnTomb = false;
 
     public bool IsRobbed
     {
@@ -90,12 +91,8 @@ public class Boat : MonoBehaviour
 
     private void Start()
     {
-
-    }
-
-    public void Reset()
-    {
-        
+        isLandOnTomb = false;
+        isLandingOnHarbor = false;
     }
 
     void Update()
@@ -108,7 +105,7 @@ public class Boat : MonoBehaviour
             dir2D.Normalize();
 
             RaycastHit2D hit = Physics2D.Raycast(mos, Vector2.right, Mathf.Infinity, mask);
-            if (hit.collider != null)
+            if (hit.collider != null && !isLandingOnHarbor && !isLandOnTomb)
             {
                 Boat clicked = hit.collider.transform.parent.GetComponent<Boat>();
                 if (clicked != this)
@@ -283,6 +280,7 @@ public class Boat : MonoBehaviour
             if (GameManager.Singleton.CurrentState == GameState.FINAL)
             {
                 GoToTomb();
+                isLandOnTomb = true;
                 //moveCallback += GoToTomb;
             }
             else
@@ -295,7 +293,7 @@ public class Boat : MonoBehaviour
         else
         {
             GoToHarbor();
-            landingOnHarbor = true;
+            isLandingOnHarbor = true;
         }
     }
 

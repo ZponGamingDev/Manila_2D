@@ -23,6 +23,7 @@ public enum UIType
     BOAT_TABLE = 1 << 16,
     PLAYER_INVENTORY = 1 << 17,
     RANK_TABLE = 1 << 18,
+    INPUT_PLAYER_NAME_BOX = 1 << 19,
 }
 
 public delegate IEnumerator UIBaseCallback();
@@ -320,15 +321,15 @@ public class UIManager : SingletonBase<UIManager>
     }
 
 	#region GameInfo
-    private GameInfoTable.ChangeInfoCallback changeBossSignInfoColor;
+    private GameInfoTable.ChangeInfoCallback changeBossSignInfo;
     public void ChangeBossSignInfoColor()
     {
-        changeBossSignInfoColor();
+        changeBossSignInfo();
     }
 	public void AddBossSignListener(GameInfoTable.ChangeInfoCallback callback)
 	{
-		changeBossSignInfoColor = null;
-		changeBossSignInfoColor += callback;
+        changeBossSignInfo = null;
+		changeBossSignInfo += callback;
 	}
     private GameInfoTable.ChangeInfoCallback changePlayerInfo;
 	public void ChangePlayerInfo()

@@ -74,6 +74,7 @@ public class PlayerInventory : UIBase
 		Player player = GameManager.Singleton.CurrentPlayer;
 
 		title.color = player.GetPlayerColor();
+        title.text = player.GetPlayerName() + "股票";
 
 		int nTomato = player.GetNumberOfHoldStock(GoodType.TOMATO);
 		int nSlik = player.GetNumberOfHoldStock(GoodType.SILK);

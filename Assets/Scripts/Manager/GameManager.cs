@@ -166,10 +166,9 @@ public class GameManager : SingletonBase<GameManager>
 
     void Start()
     {
-        InstantiateGameplayObj();
-		LoadGameData();
-        Setup();
-		StartCoroutine(GameLoop());
+        //StartCoroutine(InitialGame());
+        StartCoroutine(StartGame());
+		//StartCoroutine(GameLoop());
     }
 
     private void RoundReset()
@@ -216,8 +215,16 @@ public class GameManager : SingletonBase<GameManager>
 		UIManager.Release();
 		InvestmentManager.Release();
 		ResourceManager.Release();
-		//GameManager.Release();
 		System.GC.Collect();
+	}
+
+    private IEnumerator StartGame()
+	{
+		yield return StartCoroutine(KeyInPlayersName());
+		InstantiateGameplayObj();
+		LoadGameData();
+		CreatePlayer();
+        yield return StartCoroutine(GameLoop());
 	}
 
     private void InstantiateGameplayObj()
@@ -235,13 +242,30 @@ public class GameManager : SingletonBase<GameManager>
         PositionDataSystem.Singleton.LoadPositionData(gameLines, startPositions, harborPositions, tombPositions, coursePoints);
     }
 
-    private void Setup()
+    private bool response = false;
+    public void Response()
+    {
+        response = true;
+    }
+
+    private IEnumerator KeyInPlayersName()
+    {
+		UIManager.Singleton.ShowUI(UIType.INPUT_PLAYER_NAME_BOX);
+		while (!response)
+		{
+			yield return null;
+		}
+		UIManager.Singleton.CloseUI(UIType.INPUT_PLAYER_NAME_BOX);
+		response = false;
+    }
+
+    private void CreatePlayer()
     {
         for (int playerIdx = 0; playerIdx < numOfPlayer; ++playerIdx)
         {
-            Player player = new Player();
+            Color c = ColorTable.GetPlayerSignColor(playerIdx);
+            Player player = new Player(c);
             player.Earn(20);
-            player.SetPlayerColor(ColorTable.GeneratePlayerColor(playerIdx));
             player.GenerateRandomStock();
             players.Add(player);
             ranking.Add(player);
@@ -282,6 +306,8 @@ public class GameManager : SingletonBase<GameManager>
         yield return StartCoroutine(BossBiddingRound());
 
         yield return StartCoroutine(BossPickBoat());
+
+        //while()
 
 		yield return StartCoroutine(ShowGameStateInfo(GameState.FIRST, 1.5f));
 
@@ -347,7 +373,7 @@ public class GameManager : SingletonBase<GameManager>
         for (int playerIdx = 0; playerIdx < players.Count; ++playerIdx)
         {
             players[playerIdx].Feedback();
-            players[playerIdx].RemoveAllFeedbackListener();
+            //players[playerIdx].RemoveAllFeedbackListener();
         }
     }
 
@@ -356,7 +382,7 @@ public class GameManager : SingletonBase<GameManager>
 		for (int iBoat = 0; iBoat < boats.Length; ++iBoat)
 		{
 			Boat boat = boats[iBoat];
-			if (boat.LandingOnHarbor)
+			if (boat.IsLandOnHarbor)
 			{
 				riseEvent(boat.goodType);
                 boat.InvestorFeedback();
@@ -509,7 +535,7 @@ public class GameManager : SingletonBase<GameManager>
     //LEFT,MID,RIGHT
     private Boat[] boats = new Boat[3];
 
-    public void SpawnBoat(GoodType good, int num)
+    public void SpawnBoat(GoodType good, int num, int shift)
     {
         Sprite sprite = ResourceManager.Singleton.LoadSprite(PathConfig.BoatSprite(good));
         GameObject go = ResourceManager.Singleton.LoadResource<GameObject>(PathConfig.ObjPath("Boat"));
@@ -520,6 +546,9 @@ public class GameManager : SingletonBase<GameManager>
         boats[num] = boat.GetComponent<Boat>();
         boats[num].goodType = good;
         boats[num].anchor = (BoatAnchor)num;
+
+        if (shift != 0)
+            StartCoroutine(BoatMoving(boats[num], shift));
     }
 
     public void ShowBoat()
@@ -557,15 +586,15 @@ public class GameManager : SingletonBase<GameManager>
 
 	public void ShiftBoat(BoatAnchor anchor, int shift)
 	{
+        UIManager.Singleton.OpenMask();
 		Boat shifted = null;
-		for (int i = 0; i < boats.Length; ++i)
-		{
-			if (boats[i].anchor == anchor)
-			{
-				shifted = boats[i];
-				break;
-			}
-		}
+
+        if (anchor == BoatAnchor.LEFT)
+            shifted = boats[0];
+        else if (anchor == BoatAnchor.MIDDLE)
+            shifted = boats[1];
+        else if (anchor == BoatAnchor.RIGHT)
+            shifted = boats[2];
 
 		shifted.isShifted = true;
 		StartCoroutine(BoatMoving(shifted, shift));
@@ -574,6 +603,11 @@ public class GameManager : SingletonBase<GameManager>
 	private IEnumerator BoatMoving(Boat boat, int movement)
 	{
 		WaitForSeconds interval = new WaitForSeconds(boat.speed * Time.fixedDeltaTime);
+
+        while(IsAnyBoatMoving())
+        {
+            yield return null;
+        }
 		boat.move(movement);
 
 		while (boat.IsMoving)
@@ -581,6 +615,20 @@ public class GameManager : SingletonBase<GameManager>
 			yield return interval;
 		}
 	}
+
+    public bool IsAnyBoatMoving()
+    {
+        for (int iBoat = 0; iBoat < boats.Length; ++iBoat)
+        {
+            if (boats[iBoat] != null)
+            {
+                if (boats[iBoat].IsMoving)
+                    return true;
+            }
+        }
+
+        return false;
+    }
     #endregion
 
     private IEnumerator BossBuyStock()
@@ -624,8 +672,8 @@ public class GameManager : SingletonBase<GameManager>
 
     private IEnumerator RoundPlay()
     {
-		if (currentState != GameState.FIRST)
-			MapInvestmentFeedback();
+		//if (currentState != GameState.FIRST)
+		//	MapInvestmentFeedback();
 
         while (iRoundPlayer < numOfPlayer)
         {
@@ -633,7 +681,7 @@ public class GameManager : SingletonBase<GameManager>
             UIManager.Singleton.ChangePlayerInfo();
 			UIManager.Singleton.ShowUI(UIType.PLAYER_INVENTORY);
 
-            if(currentPlayer == gameSetBoss)
+            if (currentPlayer == gameSetBoss && currentState == GameState.FIRST)
                 yield return StartCoroutine(BossBuyStock());
 
             yield return StartCoroutine(PlayerInvestment());
@@ -643,11 +691,17 @@ public class GameManager : SingletonBase<GameManager>
 			gameSetQueue.Enqueue(currentPlayer);
 		}
 
+        MapInvestmentFeedback();
 		yield return StartCoroutine(ThrowDices());
 
-        yield return StartCoroutine(BoatMoving(boats[0], leftMovementVal));
-        yield return StartCoroutine(BoatMoving(boats[1], midMovementVal));
-        yield return StartCoroutine(BoatMoving(boats[2], rightMovementVal));
+        if(!boats[0].IsLandOnHarbor)
+            yield return StartCoroutine(BoatMoving(boats[0], leftMovementVal));
+
+        if(!boats[1].IsLandOnHarbor)
+            yield return StartCoroutine(BoatMoving(boats[1], midMovementVal));
+
+        if(!boats[2].IsLandOnHarbor)
+            yield return StartCoroutine(BoatMoving(boats[2], rightMovementVal));
 
         //if(currentState != GameState.FINAL)
         RoundReset();

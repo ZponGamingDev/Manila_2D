@@ -60,12 +60,10 @@ namespace ManilaMapInvestment
         {
             Player player = GameManager.Singleton.CurrentPlayer;
             Color color = player.GetPlayerColor();
-            //Color color = GameManager.Singleton.CurrentPlayer.GetPlayerColor();
             playerSpots[iSpot].enabled = true;
             playerSpots[iSpot].color = player.GetPlayerColor();
             player.Pay(Data.Value.cost);
             player.AddFeedbackListener(Feedback);
-            //player.AddFeedbackListener(this, Feedback);
             iSpot++;
         }
 
