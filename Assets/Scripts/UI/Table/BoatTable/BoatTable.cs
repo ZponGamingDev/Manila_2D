@@ -16,8 +16,6 @@ public class BoatTable : UIBase
     public Image titleBg;
 
     private List<BoatTableElement> highlightedElms = new List<BoatTableElement>();
-    private int totalShift = 0;
-    private int maxShift = 9;
 
     void Start()
     {
@@ -121,6 +119,7 @@ public class BoatTable : UIBase
     public override void ShowUI()
     {
         DelegatePageCallback();
+        BoatTableElement.ZeroShiftedVal();
         titleBg.color = GameManager.Singleton.GameSetBoss.GetPlayerColor();
         titleLabel.text = GameManager.Singleton.GameSetBoss.GetPlayerName() + "(船老大)選擇商船並輸入商船移動數值";
         base.ShowUI();
@@ -135,21 +134,5 @@ public class BoatTable : UIBase
         }
         highlightedElms.Clear();
         base.CloseUI();
-    }
-
-    public void OnEndBoatShiftEdit(string s)
-    {
-        int val = int.Parse(s);
-        if (val > 5)
-        {
-            s = "5";
-        }
-        else
-        {
-            if (totalShift + val > maxShift)
-                s = (maxShift - totalShift).ToString();
-        }
-        
-        totalShift += val;
     }
 }

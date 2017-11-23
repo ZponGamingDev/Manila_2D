@@ -25,6 +25,28 @@ public class Player
     }
     private int money = 0;
 
+    public int RankPoint
+    {
+        get
+        {
+			return
+			CalculateGoodPoint(GoodType.TOMATO) +
+			CalculateGoodPoint(GoodType.SILK) +
+			CalculateGoodPoint(GoodType.JADE) +
+			CalculateGoodPoint(GoodType.PADDY) +
+			money;
+        }
+    }
+
+    private int CalculateGoodPoint(GoodType good)
+    {
+        int price = InvestmentManager.Singleton.GetSharePrice(good);
+        int hNum = stockDictionary[good][hold];
+        int sNum = stockDictionary[good][sold];
+
+        return (price * hNum) - (15 * sNum);
+    }
+
     private MapInvestmentFeedback feedback;
 
     public Player(Color c)
@@ -32,7 +54,7 @@ public class Player
         for (int shift = 0; shift < 4; ++shift)
 		{
             GoodType good = (GoodType)(1 << shift);
-			CreateStockDictionary(good);
+            CreateStockDictionary(good);
 		}
 
         this.color = c;

@@ -37,9 +37,8 @@ public class GameManager : SingletonBase<GameManager>
     }
     private Player currentPlayer = null;
     private List<Player> players;
-
 	private List<Player> ranking = new List<Player>();
-
+	private GameObject map = null;
 
 
 	public GameState CurrentState
@@ -166,9 +165,9 @@ public class GameManager : SingletonBase<GameManager>
 
     void Start()
     {
-        //StartCoroutine(InitialGame());
+        //StartCoroutine(KeyInPlayersName());
+        //UIManager.Singleton.ShowUI(UIType.RANK_TABLE);
         StartCoroutine(StartGame());
-		//StartCoroutine(GameLoop());
     }
 
     private void RoundReset()
@@ -224,13 +223,14 @@ public class GameManager : SingletonBase<GameManager>
 		InstantiateGameplayObj();
 		LoadGameData();
 		CreatePlayer();
-        yield return StartCoroutine(GameLoop());
+        UIManager.Singleton.ShowUI(UIType.RANK_TABLE);
+        //yield return StartCoroutine(GameLoop());
 	}
 
     private void InstantiateGameplayObj()
     {
         GameObject go = ResourceManager.Singleton.LoadResource<GameObject>(PathConfig.ObjPath("Map"));
-        GameObject map = Instantiate(go, UIManager.Singleton.UICanvas.transform);
+        map = Instantiate(go, UIManager.Singleton.UICanvas.transform);
         map.transform.SetSiblingIndex(1);
 
 		go = ResourceManager.Singleton.LoadResource<GameObject>(PathConfig.ObjPath("PirateTracker"));
@@ -270,6 +270,17 @@ public class GameManager : SingletonBase<GameManager>
             players.Add(player);
             ranking.Add(player);
         }
+    }
+
+    public RankTable.RankStat? GetPlayerStat(int iPlayer)
+    {
+        Player player = players[iPlayer];
+        RankTable.RankStat stat;
+        stat.name = player.GetPlayerName();
+        stat.color = player.GetPlayerColor();
+        stat.pts = player.RankPoint;
+
+        return stat;
     }
 
     private void GameOver()
@@ -328,6 +339,7 @@ public class GameManager : SingletonBase<GameManager>
 		GameSetReset();
 
         GameOverCheck();
+        //UIManager.SIn
         //RANK TABLE
         if (gameWinner != null)
         {
@@ -340,21 +352,18 @@ public class GameManager : SingletonBase<GameManager>
     #endregion
 
     #region Game Info Update Function
-    private void SortRank()
+    private void GetWinner()
     {
-        for (int i = 0; i < numOfPlayer; ++i)
+        int winnerPt = int.MinValue;
+        for (int iPlayer = 0; iPlayer < numOfPlayer; ++iPlayer)
         {
-            for (int j = ranking.Count; j <= i; --j)
+            int rankPt = players[iPlayer].RankPoint;
+            if(rankPt > winnerPt)
             {
-                if (ranking[i].Money < ranking[j].Money)
-                {
-                    Player player = ranking[i];
-                    ranking[i] = ranking[j];
-                    ranking[j] = player;
-                }
+                gameWinner = players[iPlayer];
+                winnerPt = rankPt;
             }
         }
-        gameWinner = ranking[0];
     }
 
     private void GameOverCheck()
@@ -365,7 +374,7 @@ public class GameManager : SingletonBase<GameManager>
         int pJade = InvestmentManager.Singleton.GetSharePrice(GoodType.JADE);
 
         if(pTomato == 30 || pSilk == 30 || pPaddy == 30 || pJade == 30)
-            SortRank();
+            GetWinner();
 	}
 
     private void MapInvestmentFeedback()
@@ -373,7 +382,6 @@ public class GameManager : SingletonBase<GameManager>
         for (int playerIdx = 0; playerIdx < players.Count; ++playerIdx)
         {
             players[playerIdx].Feedback();
-            //players[playerIdx].RemoveAllFeedbackListener();
         }
     }
 
@@ -494,9 +502,7 @@ public class GameManager : SingletonBase<GameManager>
 			yield return StartCoroutine(ShowGameStateInfo(GameState.BIDDING_COMPLETE, 1.0f));
 
             if(iBid < numOfPlayer)
-            {
 				currentPlayer = players[iBid];
-			}
             else
             {
 				currentPlayer = null;
@@ -672,9 +678,6 @@ public class GameManager : SingletonBase<GameManager>
 
     private IEnumerator RoundPlay()
     {
-		//if (currentState != GameState.FIRST)
-		//	MapInvestmentFeedback();
-
         while (iRoundPlayer < numOfPlayer)
         {
             currentPlayer = gameSetQueue.Dequeue();

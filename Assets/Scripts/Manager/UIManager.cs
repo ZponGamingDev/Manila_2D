@@ -22,8 +22,8 @@ public enum UIType
     BOSS_BUY_STOCK_PAGE = 1 << 15,
     BOAT_TABLE = 1 << 16,
     PLAYER_INVENTORY = 1 << 17,
-    RANK_TABLE = 1 << 18,
-    INPUT_PLAYER_NAME_BOX = 1 << 19,
+    INPUT_PLAYER_NAME_BOX = 1 << 18,
+	RANK_TABLE = 1 << 19,
 }
 
 public delegate IEnumerator UIBaseCallback();
@@ -92,7 +92,6 @@ public class UIManager : SingletonBase<UIManager>
             GameObject go = ResourceManager.Singleton.LoadResource<GameObject>(PathConfig.ObjPath("Timer"));
             GameObject timer = Instantiate(go, uiCanvas.transform);
             timerText = GameObject.FindWithTag("Timer").GetComponent<Text>();
-            //timerText = timer.GetComponent<>()
 		}
     }
 

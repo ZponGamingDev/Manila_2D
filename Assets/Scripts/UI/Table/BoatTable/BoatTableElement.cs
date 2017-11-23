@@ -28,7 +28,6 @@ public class BoatTableElement : MonoBehaviour, IPointerClickHandler, IPointerEnt
                                              ColorTable.c_ORANGE_RED.b,
                                              200.0f / 255.0f);
 
-    private int maxShiftedVal = 9;
     private int startEditShiftedVal = 0;
 
     static public int BossShiftedVal
@@ -39,12 +38,18 @@ public class BoatTableElement : MonoBehaviour, IPointerClickHandler, IPointerEnt
         }
 	}
 	static private int bossShiftedVal = 0;
+	static private int maxShiftedVal = 9;
 
+	static public void ZeroShiftedVal()
+    {
+        bossShiftedVal = 0;
+    }
 
 	void OnEnable()
     {
         border.color = minHighlighted;
         field.onEndEdit.AddListener(OnEndBoatShiftEdit);
+        startEditShiftedVal = 0;
     }
 
     void Update()
