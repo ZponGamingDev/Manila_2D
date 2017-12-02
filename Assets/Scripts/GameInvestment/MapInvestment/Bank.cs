@@ -44,7 +44,7 @@ public class Bank : MapInvestmentBase
         if (GameManager.Singleton.CurrentState != GameState.SET_OVER)
             return;
         
-        Reset();
+        //Reset();
 	}
 
     public override void OnPointerClick(PointerEventData eventData)

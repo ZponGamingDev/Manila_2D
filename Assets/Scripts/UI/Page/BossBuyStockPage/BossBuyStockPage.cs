@@ -55,10 +55,8 @@ public class BossBuyStockPage : UIBase, IPointerClickHandler
     {
         if(tomato.border.enabled)
             return tomato;
-
         if (silk.border.enabled)
             return silk;
-
         if (paddy.border.enabled)
             return paddy;
         if (jade.border.enabled)
@@ -81,6 +79,9 @@ public class BossBuyStockPage : UIBase, IPointerClickHandler
     {
         //if (highlighted != null)
         //    ResetPage();
+
+        if(highlighted != null)
+            highlighted.TurnOffEffect();
         
         highlighted = GetClickedStock();
         if (highlighted == null)

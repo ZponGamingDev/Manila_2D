@@ -23,12 +23,11 @@ public class AdjustValueBtn : MonoBehaviour, IPointerClickHandler
     public void OnPointerClick(PointerEventData data)
     {
         RectTransform rect = image.rectTransform;
-		Vector2 screen = data.position;
+		Vector2 ptr = data.position;
         Vector2 local;
 
-        if (RectTransformUtility.ScreenPointToLocalPointInRectangle(rect, screen, Camera.main, out local))
-		{
+        if (RectTransformUtility.RectangleContainsScreenPoint(rect, ptr, Camera.main))
             OnClick();
-		}
+        //if (RectTransformUtility.ScreenPointToLocalPointInRectangle(rect, ptr, Camera.main, out local))
     }
 }

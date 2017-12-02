@@ -74,13 +74,12 @@ public class BuyStockElm : EventTriggerListener
     public override void OnPointerExit(UnityEngine.EventSystems.PointerEventData data)
     {
         if (!borderEffect)
-        {
             border.enabled = false;
-        }
     }
 
     public override void OnPointerClick(UnityEngine.EventSystems.PointerEventData data)
     {
+        border.enabled = true;
         base.OnPointerClick(data);
     }
 }

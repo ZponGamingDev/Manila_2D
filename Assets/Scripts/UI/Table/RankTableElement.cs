@@ -13,6 +13,7 @@ public class RankTableElement : EventTriggerListener
     public Image background;
 	public Image rankUpTri;
 	public Image rankDownTri;
+    public Image winnerCrown;
 
     public int CurrentRanking
     {

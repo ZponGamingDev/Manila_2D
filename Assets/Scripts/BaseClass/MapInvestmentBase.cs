@@ -77,7 +77,6 @@ namespace ManilaMapInvestment
 			//Data = InvestmentManager.Singleton.GetInvestmentData(gameObject.name, Feedback);
 			//Data = MapInvestmentDataSystem.Singleton.GetMapInvestmentData(gameObject.name, Feedback);
 			Data = MapInvestmentDataSystem.Singleton.GetMapInvestmentData(gameObject.name);
-
             //NOT GOOD, IF REMOVE THIS CODE THE GAME WILL NOT RUN.
             //InvestmentManager.Singleton.RegisterMapInvestmentCallback(ConfirmInvestment);
 
@@ -125,13 +124,13 @@ namespace ManilaMapInvestment
 			Vector2 screenPoint = eventData.position;
 			Vector2 local;
 
-            //if(RectTransformUtility.RectangleContainsScreenPoint(rect, screenPoint))
-			if (RectTransformUtility.ScreenPointToLocalPointInRectangle(rect, screenPoint,
-																	   Camera.main, out local))
+            if(RectTransformUtility.RectangleContainsScreenPoint(rect, screenPoint, Camera.main))
+			//if (RectTransformUtility.ScreenPointToLocalPointInRectangle(rect, screenPoint,
+			//														   Camera.main, out local))
 			{
                 if (Data != null)
                 {
-                    InvestmentManager.Singleton.RegisterMapInvestmentCallback(ConfirmInvestment);
+                    InvestmentManager.Singleton.RegisterMapInvestmentCallback(ConfirmInvestment, Reset);
                     InvestmentManager.Singleton.ShowMapInvestmentInfo(Data);
                 }
                 else

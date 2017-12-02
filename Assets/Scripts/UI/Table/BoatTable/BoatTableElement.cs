@@ -60,23 +60,20 @@ public class BoatTableElement : MonoBehaviour, IPointerClickHandler, IPointerEnt
 
 			fade += Time.deltaTime * dir;
 			if (fade >= 1.0f)
-			{
 				dir = -1;
-			}
 
 			if (fade <= 0.0)
-			{
 				dir = 1;
-			}
 		}
     }
 
     public void OnPointerClick(PointerEventData data)
     {
-        Vector2 local;
+        //Vector2 local;
         Vector2 ptr = data.position;
 
-        if (RectTransformUtility.ScreenPointToLocalPointInRectangle(boatImgRect, ptr, Camera.main, out local))
+        if(RectTransformUtility.RectangleContainsScreenPoint(boatImgRect, ptr, Camera.main))
+        //if (RectTransformUtility.ScreenPointToLocalPointInRectangle(boatImgRect, ptr, Camera.main, out local))
         {
 			picked = !picked;
 			border.enabled = picked;
@@ -125,6 +122,7 @@ public class BoatTableElement : MonoBehaviour, IPointerClickHandler, IPointerEnt
         if (!int.TryParse(s, out val))
         {
             val = 0;
+            field.text = "0";
             return;
         }
 

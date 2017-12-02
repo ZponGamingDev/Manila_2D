@@ -36,7 +36,7 @@ public class MapInvestmentPage : UIBase
 
     public void ConfirmMapInvestment()
     {
-        InvestmentManager.Singleton.MapInvestmentConfirm();
+        InvestmentManager.Singleton.MapInvestmentConfirmFunc();
         GameManager.Singleton.PlayerFinishRoundPlay();
         CloseUI();
     }

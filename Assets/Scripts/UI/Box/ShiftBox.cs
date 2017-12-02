@@ -14,6 +14,7 @@ public class ShiftBox : UIBase
 
     private BoatAnchor anchor = BoatAnchor.LEFT;
     private int shiftValue = 0;
+    private bool response = false;
 
     void Update()
     {
@@ -58,8 +59,27 @@ public class ShiftBox : UIBase
         shift.SetItem(plus, minus);
 
         confirm.onClick += ShiftBoat;
+        UIManager.Singleton.RegisterUIBaseCallback(OnUIBaseStart, OnUIBaseEnd);
 
 		base.ShowUI();
+    }
+
+    protected override IEnumerator OnUIBaseStart()
+    {
+        GameManager.Singleton.HideBoat();
+        while(!response)
+        {
+            yield return null;
+        }
+    }
+
+    protected override IEnumerator OnUIBaseEnd()
+    {
+        response = false;
+        while(GameManager.Singleton.IsAnyBoatMoving())
+        {
+            yield return null;
+        }
     }
 
     public override void CloseUI()
@@ -67,7 +87,7 @@ public class ShiftBox : UIBase
         base.CloseUI();
     }
 
-	private void GetValueFromToggle()
+	private bool GetValueFromToggle()
 	{
 		string boatOpt = boat.selectedOption.text;
 		if (boatOpt != anchor.ToString())
@@ -76,13 +96,27 @@ public class ShiftBox : UIBase
 			anchor = opt;
 		}
 
+        Boat boatObj = GameManager.Singleton.GetBoat((int)anchor);
+
 		int val = int.Parse(shift.selectedOption.text);
+        if (val < 0)
+        {
+            if (boatObj.OnLineNumber < Math.Abs(val))
+                return false;
+        }
+
 	    shiftValue = val;
+        return true;
 	}
 
     private void ShiftBoat()
     {
-        GetValueFromToggle();
+        if (!GetValueFromToggle())
+            return;
+
+		response = true;
+		CloseUI();
+        GameManager.Singleton.ShowBoat();
         GameManager.Singleton.ShiftBoat(anchor, shiftValue);
     }
 }

@@ -30,6 +30,10 @@ public class Pirates : MapInvestmentBase
     void Start()
     {
         SetInvestment();
+        GameObject trackerObj = GameObject.FindWithTag("PirateTracker");
+
+        if(trackerObj != null)
+            tracker = trackerObj.GetComponent<PirateTracker>();
     }
 
     protected override void Reset()
@@ -125,6 +129,12 @@ public class Pirates : MapInvestmentBase
 
     protected override void Feedback(Player player)
     {
+        if (tracker == null)
+        {
+            Debug.LogError("Tracker is null.");
+            return;
+        }
+        
         if (!tracker.OnBoatEnter)
             return;
 
@@ -139,8 +149,8 @@ public class Pirates : MapInvestmentBase
         {
             StartCoroutine(Ask1stPirate());
         }
-        //player.RemoveFeedbackListener(Feedback);
 
-        Reset();
+        player.RemoveFeedbackListener(Feedback);
+        //Reset();
 	}
 }

@@ -37,17 +37,8 @@ public class BoatShift : MapInvestmentBase
         Color color = player.GetPlayerColor();
         InvestmentManager.Singleton.SetFeedbackData(Data);
         UIManager.Singleton.ShowUI(UIType.SHIFT_BOX);
-
         player.RemoveFeedbackListener(Feedback);
-        Reset();
-    }
-
-    private IEnumerator WaitInvestorAction()
-    {
-        while (true)
-        {
-            yield return null;
-        }
+        //Reset();
     }
 
     public override void OnPointerClick(UnityEngine.EventSystems.PointerEventData data)

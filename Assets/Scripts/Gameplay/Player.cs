@@ -98,6 +98,15 @@ public class Player
         stockDictionary.Add(good, d);
     }
 
+    public int GetTotalHoldStock()
+    {
+        return 
+            GetNumberOfHoldStock(GoodType.TOMATO) + 
+            GetNumberOfHoldStock(GoodType.SILK)   +
+            GetNumberOfHoldStock(GoodType.PADDY)  + 
+            GetNumberOfHoldStock(GoodType.JADE);
+    }
+
     public int GetNumberOfHoldStock(GoodType good)
     {
         //return stockDictionary[good];

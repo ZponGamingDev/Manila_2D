@@ -106,7 +106,6 @@ public class GoodInvestmentPage : UIBase
         {
             yield return null;
         }
-        //yield return StartCoroutine(base.OnUIBaseEnd());
     }
 
     protected override void DelegatePageCallback()

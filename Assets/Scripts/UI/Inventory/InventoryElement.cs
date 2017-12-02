@@ -9,6 +9,7 @@ public class InventoryElement : MonoBehaviour, IPointerClickHandler
     public Image colorImg;
     public GoodType good = GoodType.NONE;
     public PlayerInventory.SoldByPlayerCallback sold;
+    public Text label;
 
 	private string dialogBoxKey = "STOCK_SELLING";
 

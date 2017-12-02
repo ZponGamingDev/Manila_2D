@@ -58,6 +58,22 @@ public class PlayerInventory : UIBase
             ie.sold += SoldByPlayer;
             ie.colorImg.color = InvestmentManager.Singleton.GetGoodColor(good);
         }
+
+        switch(ie.good)
+        {
+            case GoodType.TOMATO:
+                ie.label.text = "番茄";
+                break;
+            case GoodType.SILK:
+                ie.label.text = "絲綢";
+                break;
+            case GoodType.PADDY:
+                ie.label.text = "稻米";
+                break;
+            case GoodType.JADE:
+                ie.label.text = "翠玉";
+                break;
+        }
     }
 
     private void SoldByPlayer(InventoryElement element)
@@ -74,7 +90,7 @@ public class PlayerInventory : UIBase
 		Player player = GameManager.Singleton.CurrentPlayer;
 
 		title.color = player.GetPlayerColor();
-        title.text = player.GetPlayerName() + "股票";
+        title.text = player.GetPlayerName();
 
 		int nTomato = player.GetNumberOfHoldStock(GoodType.TOMATO);
 		int nSlik = player.GetNumberOfHoldStock(GoodType.SILK);

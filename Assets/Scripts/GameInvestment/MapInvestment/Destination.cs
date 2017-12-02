@@ -67,7 +67,7 @@ public class Destination : MapInvestmentBase
         }
 
         player.RemoveFeedbackListener(Feedback);
-        Reset();
+        //Reset();
     }
 
     public override void OnPointerClick(PointerEventData eventData)

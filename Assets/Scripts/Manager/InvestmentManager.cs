@@ -127,7 +127,9 @@ public class InvestmentManager : SingletonBase<InvestmentManager>
 		RemovePirate(1);
 		iRobbery = 0;
         confirmedInvestments.Clear();
-        mapInvestmentConfirm = null;
+        mapInvestmentResetFunc();
+        mapInvestmentResetFunc = null;
+        mapInvestmentConfirmFunc = null;
     }
 
     public void GameOverClear()
@@ -135,7 +137,7 @@ public class InvestmentManager : SingletonBase<InvestmentManager>
         goodsColorTable.Clear();
         goodsSharePriceTable.Clear();
         confirmedInvestments.Clear();
-        mapInvestmentConfirm = null;
+        mapInvestmentConfirmFunc = null;
         goodsColorTable = null;
         goodsSharePriceTable = null;
         confirmedInvestments = null;
@@ -195,14 +197,15 @@ public class InvestmentManager : SingletonBase<InvestmentManager>
     }
 
     #region MAP INVESTMENT
-    public MapInvestmentCallback MapInvestmentConfirm
+    public MapInvestmentCallback MapInvestmentConfirmFunc
     {
         get
         {
-            return mapInvestmentConfirm;
+            return mapInvestmentConfirmFunc;
         }
     }
-    private MapInvestmentCallback mapInvestmentConfirm;
+    private MapInvestmentCallback mapInvestmentConfirmFunc;
+    private MapInvestmentCallback mapInvestmentResetFunc;
 
 	public void SetFeedbackData(MapInvestmentData? investment)
     {
@@ -223,10 +226,11 @@ public class InvestmentManager : SingletonBase<InvestmentManager>
         private set;
     }
 
-    public void RegisterMapInvestmentCallback(MapInvestmentCallback confirm)
+    public void RegisterMapInvestmentCallback(MapInvestmentCallback confirm, MapInvestmentCallback reset)
     {
-        mapInvestmentConfirm = null;
-        mapInvestmentConfirm += confirm;
+        mapInvestmentConfirmFunc = null;
+        mapInvestmentConfirmFunc += confirm;
+        mapInvestmentResetFunc += reset;
     }
 
     public void ShowMapInvestmentInfo(MapInvestmentData? investment)
@@ -237,8 +241,6 @@ public class InvestmentManager : SingletonBase<InvestmentManager>
         CurrentMapInvestmentData = investment;
         UIManager.Singleton.ShowUI(UIType.MAP_INVESTMENT_PAGE);
         confirmedInvestments.Add(investment);
-
-        //Debug.Log(confirmedInvestments.Count);
     }
 
     public void CancelMapInvestment()

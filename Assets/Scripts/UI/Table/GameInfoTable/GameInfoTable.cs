@@ -7,12 +7,25 @@ using UnityEngine.UI;
 public class GameInfoTable : UIBase
 {
     public delegate void ChangeInfoCallback();
-    
-    public Text currentPlayerSignLabel;
-    public Text bossSignLabel;
-	public Text currentPlayerMoney;
-	public Image coinImg;
 
+	public Image coinImg;
+	private float coinSpinTimer = 0.0f;
+	private float coinSpinRate = 0.0f;
+	private int iCoin = 0;
+
+    public EventTriggerListener signDemonstration;
+    public EventTriggerListener tableDemonstration;
+    public Image demonstrationMask;
+    private Text dmLabel;
+
+    public EventTriggerListener bossSignETL;
+    public EventTriggerListener currentPlayerSignETL;
+    public EventTriggerListener currentPlayerMoneyETL;
+	private Text currentPlayerSignLabel;
+	private Text bossSignLabel;
+	private Text currentPlayerMoney;
+
+    public EventTriggerListener shareTableETL;
     public SharePriceTableColumn tomatoCol;
 	public SharePriceTableColumn silkCol;
 	public SharePriceTableColumn paddyCol;
@@ -23,18 +36,25 @@ public class GameInfoTable : UIBase
 
     public Sprite[] coinSprites;
 
-    private float coinSpinTimer = 0.0f;
-    private float coinSpinRate = 0.0f;
-    private int iCoin = 0;
-
     void Awake()
     {
         rect = GetComponent<RectTransform>();
+		currentPlayerMoney = currentPlayerMoneyETL.gameObject.GetComponentInChildren<Text>();
+		currentPlayerSignLabel = currentPlayerSignETL.gameObject.GetComponentInChildren<Text>();
+		bossSignLabel = bossSignETL.gameObject.GetComponentInChildren<Text>();
+        dmLabel = signDemonstration.GetComponentInChildren<Text>();
 	}
 
     void Start()
     {
         coinSpinRate = 0.5f / coinSprites.Length;
+
+        bossSignETL.onEnter += ShowBossSignDemonstration;
+        currentPlayerMoneyETL.onEnter += ShowCurrentPlayerMoneyDemonstration;
+        currentPlayerSignETL.onEnter += ShowCurrentPlayerSignDemonstration;
+        signDemonstration.onExit += CloseSignDemonstration;
+        shareTableETL.onEnter += ShowShareTableDemonstration;
+        tableDemonstration.onExit += CloseTableDemonstration;
 	}
 
     public override void RoundReset()
@@ -68,9 +88,55 @@ public class GameInfoTable : UIBase
         }
     }
 
-    void OnEnable()
+	private void CloseSignDemonstration()
+	{
+		demonstrationMask.enabled = false;
+		signDemonstration.gameObject.SetActive(false);
+	}
+
+    private void CloseTableDemonstration()
     {
+		demonstrationMask.enabled = false;
+        tableDemonstration.gameObject.SetActive(false);
+    }
+
+    private void ShowShareTableDemonstration()
+    {
+        if (signDemonstration.gameObject.activeInHierarchy)
+            return;
+
+		Vector2 ptr = Input.mousePosition;
+        Vector3 world;
+        if (!RectTransformUtility.ScreenPointToWorldPointInRectangle(shareTableETL.transform as RectTransform,
+                                                                   ptr, Camera.main, out world))
+            return;
         
+		demonstrationMask.enabled = true;
+		tableDemonstration.gameObject.SetActive(true);        
+    }
+
+    private void ShowBossSignDemonstration()
+    {
+        signDemonstration.transform.position = bossSignETL.transform.position;
+        demonstrationMask.enabled = true;
+        dmLabel.text = "此回合遊戲船老大";
+        signDemonstration.gameObject.SetActive(true);
+    }
+
+    private void ShowCurrentPlayerSignDemonstration()
+    {
+        signDemonstration.transform.position = currentPlayerSignETL.transform.position;
+        demonstrationMask.enabled = true;
+        dmLabel.text = "目前玩家";
+        signDemonstration.gameObject.SetActive(true);
+    }
+
+	private void ShowCurrentPlayerMoneyDemonstration()
+	{
+        signDemonstration.transform.position = currentPlayerMoneyETL.transform.position;
+		demonstrationMask.enabled = true;
+		dmLabel.text = "目前玩家金錢";
+		signDemonstration.gameObject.SetActive(true);
 	}
 
     private void ChangeBossSignInfo()

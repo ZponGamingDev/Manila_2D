@@ -1,4 +1,4 @@
-﻿using System;
+﻿ ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,10 +17,22 @@ public enum BoatAnchor
 public class Boat : MonoBehaviour
 {
     public float speed = 1.0f;
+
+    /// <summary>
+    /// Anchor position(LEFT, MID, RIGHT).
+    /// </summary>
     public BoatAnchor anchor = BoatAnchor.NONE;
     public GoodType goodType = GoodType.NONE;
-    public bool isShifted = false;
 
+	/// <summary>
+	/// Used to be checked by PIRATE TRACKER.
+	/// </summary>
+	public bool isShifted = false;
+
+    /// <summary>
+    /// Gets the on line number of boat.
+    /// </summary>
+    /// <value>The on line number.</value>
     public int OnLineNumber
     {
         get
@@ -104,7 +116,7 @@ public class Boat : MonoBehaviour
 
             dir2D.Normalize();
 
-            RaycastHit2D hit = Physics2D.Raycast(mos, Vector2.right, Mathf.Infinity, mask);
+            RaycastHit2D hit = Physics2D.Raycast(mos, Vector2.right, 1.0f, mask);
             if (hit.collider != null && !isLandingOnHarbor && !isLandOnTomb)
             {
                 Boat clicked = hit.collider.transform.parent.GetComponent<Boat>();
@@ -233,13 +245,9 @@ public class Boat : MonoBehaviour
 	private Vector2 GetControlPoint()
     {
         if (anchor == BoatAnchor.LEFT)
-        {
             return GameManager.Singleton.GetCoursePointVec2(0);
-        }
         else if (anchor == BoatAnchor.MIDDLE)
-        {
             return GameManager.Singleton.GetCoursePointVec2(1);
-        }
 
         return GameManager.Singleton.GetCoursePointVec2(2);
     }
@@ -275,7 +283,7 @@ public class Boat : MonoBehaviour
     {
         timer = 0.0f;
         course.Reset();
-        if (onLineNumber < 13)
+        if (onLineNumber < 14)
         {
             if (GameManager.Singleton.CurrentState == GameState.FINAL)
             {
