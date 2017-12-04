@@ -71,8 +71,10 @@ public class Pirates : MapInvestmentBase
         InvestmentManager.Singleton.CompleteOneRobbery();
 		InvestmentManager.Singleton.RemovePirate(iPirate);
 		InvestmentManager.Singleton.Response();
-        currentPirate.RemoveFeedbackListener(Feedback);
         iPirate++;
+
+        if (iPirate > 2)
+            GameManager.Singleton.BoatisRobbed();
 	}
 
     private void RefuseRobbery()
@@ -88,6 +90,7 @@ public class Pirates : MapInvestmentBase
                 Debug.LogError("NULL EXCEPTION at Pirates.cs 71 line.");
 		}
 		InvestmentManager.Singleton.Response();
+		//GameManager.Singleton.Response();
 	}
 
     private void CommitToShare()
@@ -102,28 +105,35 @@ public class Pirates : MapInvestmentBase
             else
                 Debug.LogError("Pirate is null at Pirates.cs 86 line.");
         }
-        
+
 		InvestmentManager.Singleton.Response();
 	}
 
     private void RefuseToShare()
     {
 		InvestmentManager.Singleton.Response();
+        GameManager.Singleton.BoatisRobbed();
 	}
 
     private IEnumerator Ask1stPirate()
     {
         while(!InvestmentManager.Singleton.GetPlayerResponse())
+        //while(!GameManager.Singleton.GetPlayerResponse())
         {
             yield return null;
         }
 
         // 2nd Pirate
-        if(InvestmentManager.Singleton.NumOfCompletedRobbery == 1)
+        if (InvestmentManager.Singleton.NumOfCompletedRobbery == 1)
         {
             Player pirate = InvestmentManager.Singleton.GetPirate(1);
-            UIManager.Singleton.RegisterDialogBoxData(pirate.GetPlayerColor(), requests[2], CommitToShare, RefuseToShare);
-            StartCoroutine(InvestmentManager.Singleton.WaitPlayerResponse());
+            if (pirate != null)
+            {
+                UIManager.Singleton.RegisterDialogBoxData(pirate.GetPlayerColor(), requests[2], CommitToShare, RefuseToShare);
+                StartCoroutine(InvestmentManager.Singleton.WaitInvestmentReseponse());
+            }
+            else
+                GameManager.Singleton.BoatisRobbed();
         }
     }
 
@@ -135,22 +145,19 @@ public class Pirates : MapInvestmentBase
             return;
         }
         
-        if (!tracker.OnBoatEnter)
+        if (!tracker.TrackBoat)
             return;
 
         currentPirate = player;
 
         // Show the request of robbery box
         UIManager.Singleton.RegisterDialogBoxData(currentPirate.GetPlayerColor(), requests[iRequest], CommitRobbery, RefuseRobbery);
-        StartCoroutine(InvestmentManager.Singleton.WaitPlayerResponse());
+        StartCoroutine(InvestmentManager.Singleton.WaitInvestmentReseponse());
 
         //  ASK 1st pirate
         if(iRequest < 1)
-        {
             StartCoroutine(Ask1stPirate());
-        }
 
         player.RemoveFeedbackListener(Feedback);
-        //Reset();
 	}
 }

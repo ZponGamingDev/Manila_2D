@@ -64,18 +64,16 @@ public class InvestmentManager : SingletonBase<InvestmentManager>
     public void AddPirate(Player player)
     {
         if (pirates[0] == null)
-        {
             pirates[0] = player;
-        }
         else
-        {
             pirates[1] = player;
-        }
     }
     public void RemovePirate(int iPirate)
     {
         pirates[iPirate] = null;
     }
+    public bool pirateRobBoat = false;
+
 
     public Color PlayerInterestedGoodColor
     {
@@ -262,7 +260,7 @@ public class InvestmentManager : SingletonBase<InvestmentManager>
     }
     private bool playerResponse = false;
 
-    public IEnumerator WaitPlayerResponse()
+    public IEnumerator WaitInvestmentReseponse()
     {
         UIManager.Singleton.ShowUI(UIType.DIALOG_BOX);
         while (!playerResponse)
@@ -272,6 +270,7 @@ public class InvestmentManager : SingletonBase<InvestmentManager>
         UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
         playerResponse = false;
     }
+
 	#endregion
 
 	public void Reset()

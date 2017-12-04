@@ -13,34 +13,40 @@ public class PirateTracker : MonoBehaviour
     }
     private Boat boat = null;
 
-    public bool OnBoatEnter
+    public bool TrackBoat
     {
         get
         {
-            return onBoatEnter;
+            return trackBoat;
         }
     }
-    private bool onBoatEnter = false;
+    private bool trackBoat = false;
+
+    public void UnTrackBoat()
+    {
+        trackBoat = false;
+    }
 
     private IEnumerator WaitOtherBoatMoving(Collider2D collision)
     {
-        while(GameManager.Singleton.IsAnyBoatMoving())
-        {
-            yield return null;
-        }
-
 		Player p0 = InvestmentManager.Singleton.GetPirate(0);
 		Player p1 = InvestmentManager.Singleton.GetPirate(1);
 		if (p0 == null && p1 == null)
-		{
 			yield break;
-		}
+
+        //UIManager.Singleton.RemoveAllUIBaseCallback();
 
 		boat = collision.GetComponent<Boat>();
 		if (boat.isShifted)
 			yield break;
 
-		onBoatEnter = true;
+		trackBoat = true;
+        /*
+		while (GameManager.Singleton.IsAnyBoatMoving())
+		{
+			yield return null;
+		}*/
+
 		if (p0 != null)
 			p0.Feedback();
 		else if (p1 != null)
@@ -73,6 +79,6 @@ public class PirateTracker : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        onBoatEnter = false;
+        trackBoat = false;
     }
 }

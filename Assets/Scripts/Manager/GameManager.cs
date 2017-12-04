@@ -654,6 +654,14 @@ public class GameManager : SingletonBase<GameManager>
 
         if (boat.OnLineNumber != 13)
             boat.isShifted = false;
+        else
+        {
+            // For The Pirate
+            while(pirateTracker.TrackBoat)
+            {
+                yield return null;
+            }
+        }
 	}
 
     public bool IsAnyBoatMoving()
@@ -738,18 +746,20 @@ public class GameManager : SingletonBase<GameManager>
         if(!boats[2].IsLandOnHarbor)
             yield return StartCoroutine(BoatMoving(boats[2], rightMovementVal));
 
-
-		MapInvestmentFeedback();
-		if (UIManager.Singleton.OnUIBaseStart != null && UIManager.Singleton.OnUIBaseEnd != null)
-		{
-			yield return StartCoroutine(UIManager.Singleton.OnUIBaseStart());
-			yield return StartCoroutine(UIManager.Singleton.OnUIBaseEnd());
-		}
+        while(pirateTracker.TrackBoat)
+        {
+            yield return null;
+        }
 
         RoundReset();
     }
 
-    private void BackToGameMenu()
+    public void BoatisRobbed()
+    {
+        pirateTracker.UnTrackBoat();
+    }
+
+	private void BackToGameMenu()
     {
         Destroy(Singleton);
     }

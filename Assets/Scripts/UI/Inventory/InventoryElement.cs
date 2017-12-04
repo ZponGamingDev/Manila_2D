@@ -34,6 +34,6 @@ public class InventoryElement : MonoBehaviour, IPointerClickHandler
     public void OnPointerClick(PointerEventData data)
     {
         UIManager.Singleton.RegisterDialogBoxData(colorImg.color, dialogBoxKey, DialogBoxYes, DialogBoxNo);
-        StartCoroutine(InvestmentManager.Singleton.WaitPlayerResponse());
+        StartCoroutine(InvestmentManager.Singleton.WaitInvestmentReseponse());
     }
 }
