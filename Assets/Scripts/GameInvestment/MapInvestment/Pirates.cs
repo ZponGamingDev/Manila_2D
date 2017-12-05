@@ -8,8 +8,6 @@ using UnityEngine.UI;
 
 public class Pirates : MapInvestmentBase
 {
-    public PirateTracker tracker;
-
     //private string[] requests = { "Request_Pirate_1st", "Request_Pirate_2nd", "Request_Pirate_1st_Shared" };
     private string[] requests = {
         "PIRATE_ROBBERY_1st", 
@@ -30,10 +28,10 @@ public class Pirates : MapInvestmentBase
     void Start()
     {
         SetInvestment();
-        GameObject trackerObj = GameObject.FindWithTag("PirateTracker");
+        //GameObject trackerObj = GameObject.FindWithTag("PirateTracker");
 
-        if(trackerObj != null)
-            tracker = trackerObj.GetComponent<PirateTracker>();
+        //if(trackerObj != null)
+        //    tracker = trackerObj.GetComponent<PirateTracker>();
     }
 
     protected override void Reset()
@@ -59,22 +57,20 @@ public class Pirates : MapInvestmentBase
         base.OnPointerClick(eventData);
     }
 
+    public bool pirate_1_Response = false;
     private void CommitRobbery()
     {
-        if(tracker == null)
-        {
-            Debug.LogError("NULL EXCEPTION at Pirate.cs 60 line.");
-            return;
-        }
-
-        tracker.DetectedBoat.Robbed(iPirate);
+        //tracker.DetectedBoat.Robbed(iPirate);
+        GameManager.Singleton.PirateTracker.DetectedBoat.Robbed(iPirate);
         InvestmentManager.Singleton.CompleteOneRobbery();
 		InvestmentManager.Singleton.RemovePirate(iPirate);
 		InvestmentManager.Singleton.Response();
-        iPirate++;
 
         if (iPirate > 2)
             GameManager.Singleton.BoatisRobbed();
+        if(iPirate == 0)
+            pirate_1_Response = true;
+        iPirate++;
 	}
 
     private void RefuseRobbery()
@@ -88,14 +84,14 @@ public class Pirates : MapInvestmentBase
                 pirate.Feedback();
             else
                 Debug.LogError("NULL EXCEPTION at Pirates.cs 71 line.");
+            pirate_1_Response = true;
 		}
 		InvestmentManager.Singleton.Response();
-		//GameManager.Singleton.Response();
 	}
 
     private void CommitToShare()
     {
-        if (iPirate < 1)
+        //if (iPirate < 1)
         {
             iRequest = 1;
             Player pirate = InvestmentManager.Singleton.GetPirate(iPirate);
@@ -105,7 +101,6 @@ public class Pirates : MapInvestmentBase
             else
                 Debug.LogError("Pirate is null at Pirates.cs 86 line.");
         }
-
 		InvestmentManager.Singleton.Response();
 	}
 
@@ -117,11 +112,12 @@ public class Pirates : MapInvestmentBase
 
     private IEnumerator Ask1stPirate()
     {
-        while(!InvestmentManager.Singleton.GetPlayerResponse())
-        //while(!GameManager.Singleton.GetPlayerResponse())
+        while(!pirate_1_Response)
         {
             yield return null;
         }
+
+        pirate_1_Response = false;
 
         // 2nd Pirate
         if (InvestmentManager.Singleton.NumOfCompletedRobbery == 1)
@@ -138,15 +134,17 @@ public class Pirates : MapInvestmentBase
     }
 
     protected override void Feedback(Player player)
-    {
+    {/*
         if (tracker == null)
         {
             Debug.LogError("Tracker is null.");
             return;
         }
-        
-        if (!tracker.TrackBoat)
+     */
+        if (!GameManager.Singleton.PirateTracker.TrackBoat)
             return;
+        //if (!tracker.TrackBoat)
+            //return;
 
         currentPirate = player;
 

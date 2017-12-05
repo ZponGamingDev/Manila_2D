@@ -26,6 +26,14 @@ public class GoodInvestmentPage : UIBase
         anim = GetComponent<Animation>();
     }
 
+    void Start()
+    {
+		for (int i = 0; i < goodsCount; ++i)
+		{
+			goods[i].onClick += OnGoodInvestmentClick;
+		}
+    }
+
     public override void RoundReset()
     {
         anim.Rewind();
@@ -120,10 +128,6 @@ public class GoodInvestmentPage : UIBase
         DelegatePageCallback();
 
         SetPageView();
-        for (int i = 0; i < goodsCount; ++i)
-        {
-            goods[i].onClick += OnGoodInvestmentClick;
-        }
 
         if (confirm.onClick == null)
             confirm.onClick += ConfirmInvestment;
@@ -168,6 +172,7 @@ public class GoodInvestmentPage : UIBase
                 return;
         }
         CloseUI();
+        currentPlayerSelected = null;
 		GameManager.Singleton.ShowBoat();
 		GameManager.Singleton.PlayerFinishRoundPlay();
 	}

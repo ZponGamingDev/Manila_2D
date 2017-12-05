@@ -31,4 +31,26 @@ public class DialogBoxDataSystem : DataSystemBase<DialogBoxDataSystem>
 
 		return string.Empty;
 	}
+
+    public string GetYesBtnLabel()
+    {
+		string key = UIManager.Singleton.DialogBoxKey;
+		string label = csvData[key]["Yes"];
+
+		if (label != null)
+			return label;
+
+		return string.Empty;
+    }
+
+    public string GetNoBtnLabel()
+    {
+		string key = UIManager.Singleton.DialogBoxKey;
+		string label = csvData[key]["No"];
+
+		if (label != null)
+			return label;
+
+		return string.Empty;
+    }
 }

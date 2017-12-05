@@ -11,6 +11,15 @@ public class DialogBox : UIBase
     public DecisionBtn yes;
     public DecisionBtn no;
 
+    private Text yesBtnLabel;
+    private Text noBtnLabel;
+
+    void Awake()
+    {
+        yesBtnLabel = yes.GetComponentInChildren<Text>();
+        noBtnLabel = no.GetComponentInChildren<Text>();
+    }
+
     public override void RoundReset()
     {
         base.RoundReset();
@@ -47,6 +56,8 @@ public class DialogBox : UIBase
 
         title.text = DialogBoxDataSystem.Singleton.GetBoxTitle();
         content.text = DialogBoxDataSystem.Singleton.GetBoxContent();
+        yesBtnLabel.text = DialogBoxDataSystem.Singleton.GetYesBtnLabel();
+        noBtnLabel.text = DialogBoxDataSystem.Singleton.GetNoBtnLabel();
 
         base.ShowUI();
     }

@@ -153,6 +153,13 @@ public class GameManager : SingletonBase<GameManager>
     // Playing queue
     private Queue<Player> gameSetQueue = new Queue<Player>();
 
+    public PirateTracker PirateTracker
+    {
+        get
+        {
+            return pirateTracker;
+        }
+    }
     private PirateTracker pirateTracker;
 
 
@@ -187,6 +194,7 @@ public class GameManager : SingletonBase<GameManager>
         Destroy(boats[1].gameObject);
         Destroy(boats[2].gameObject);
         boats[0] = boats[1] = boats[2] = null;
+        pirateTracker.UnTrackBoat();
 
 		UIManager.Singleton.GameSetReset();
 		InvestmentManager.Singleton.GameSetReset();
@@ -703,11 +711,7 @@ public class GameManager : SingletonBase<GameManager>
         yield return StartCoroutine(UIManager.Singleton.OnUIBaseEnd());
     }
 
-    private IEnumerator ShowRankTable()
-    {
-        yield return null;
-    }
-
+    #region ROUND PLAY
     private IEnumerator RoundPlay()
     {
         //UIManager.Singleton.RemoveAllUIBaseCallback();
@@ -753,6 +757,7 @@ public class GameManager : SingletonBase<GameManager>
 
         RoundReset();
     }
+#endregion
 
     public void BoatisRobbed()
     {

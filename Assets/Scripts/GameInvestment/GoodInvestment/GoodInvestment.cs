@@ -63,7 +63,8 @@ public class GoodInvestment : MonoBehaviour, IPointerClickHandler
     public void UnSelected()
     {
         selected = false;
-    }
+		background.color = Color.white;
+	}
 
     public void Invest(int index)
     {
@@ -82,9 +83,12 @@ public class GoodInvestment : MonoBehaviour, IPointerClickHandler
 
         if(selected)
         {
-            background.color = Color.white;
+            UnSelected();
             return;
         }
+
+        if (onClick == null)
+            return;
 
         onClick(this);
 
