@@ -68,9 +68,7 @@ public class UIBase : MonoBehaviour
     public virtual void ShowUI()
     {
         if (!gameObject.activeInHierarchy)
-        {
             gameObject.SetActive(true);
-        }
 
 		gameObject.transform.SetAsLastSibling();
 	}

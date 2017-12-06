@@ -183,22 +183,20 @@ public class Boat : MonoBehaviour
 
     public void Robbed(int iPirate)
     {
-        if (iPirate < 1)
+        if (!isRobbed)
         {
-            RemoveAllInvestedPlayer();
-        }
-        else
-        {
-            if(investors.Count > 1)
-            {
-                RemoveAllInvestedPlayer();
-            }
+            investors.Clear();
+            investments.Clear();
         }
 
         Player pirate = InvestmentManager.Singleton.GetPirate(iPirate);
 
         if (pirate != null)
-            investors.Add(pirate);
+        {
+			investments.Add(new GoodInvestmentRecord(investors.Count, pirate.GetPlayerColor()));
+			investors.Add(pirate);
+            isRobbed = true;
+        }
         else
             Debug.LogError("Pirate is null at Boat.cs 184 line.");
     }
@@ -232,7 +230,7 @@ public class Boat : MonoBehaviour
 
     public void InvestorFeedback()
     {
-        int interest = reward / investors.Count;
+		int interest = reward / investors.Count;
         for (int i = 0; i < investors.Count; ++i)
         {
             investors[i].Earn(interest);

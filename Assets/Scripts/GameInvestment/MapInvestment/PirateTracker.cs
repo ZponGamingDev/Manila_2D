@@ -34,8 +34,6 @@ public class PirateTracker : MonoBehaviour
 		if (p0 == null && p1 == null)
 			yield break;
 
-        //UIManager.Singleton.RemoveAllUIBaseCallback();
-
         boat = collision.GetComponentInParent<Boat>();
 		if (boat.isShifted)
 			yield break;
@@ -66,15 +64,14 @@ public class PirateTracker : MonoBehaviour
         boat = collision.GetComponentInParent<Boat>();
         //boat = collision.GetComponent<Boat>();
 
-        if (boat.isShifted)
+        if (boat.isShifted || boat.IsRobbed)
             return;
 
         trackBoat = true;
         if (p0 != null)
             p0.Feedback();
         else if (p1 != null)
-            p1.Feedback();
-           */ 
+            p1.Feedback();*/
     }
 
     private void OnTriggerExit2D(Collider2D collision)

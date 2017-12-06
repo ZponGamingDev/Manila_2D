@@ -260,7 +260,7 @@ public class InvestmentManager : SingletonBase<InvestmentManager>
     }
     private bool playerResponse = false;
 
-    public IEnumerator WaitInvestmentReseponse()
+    public IEnumerator WaitInvestmentDialogReseponse()
     {
         UIManager.Singleton.ShowUI(UIType.DIALOG_BOX);
         while (!playerResponse)

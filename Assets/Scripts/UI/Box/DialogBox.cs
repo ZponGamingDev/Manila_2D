@@ -39,18 +39,17 @@ public class DialogBox : UIBase
     private void No()
     {
         UIManager.Singleton.DialogNo();
-        CloseUI();
     }
 
     private void Yes()
     {
         UIManager.Singleton.DialogYes();
-        CloseUI();
     }
 
     public override void ShowUI()
     {
-        no.onClick = yes.onClick = null;
+        no.onClick = null;
+        yes.onClick = null;
         yes.onClick += Yes;
         no.onClick += No;
 
@@ -60,6 +59,7 @@ public class DialogBox : UIBase
         noBtnLabel.text = DialogBoxDataSystem.Singleton.GetNoBtnLabel();
 
         base.ShowUI();
+        //gameObject.SetActive(true);
     }
 
     public override void  CloseUI()

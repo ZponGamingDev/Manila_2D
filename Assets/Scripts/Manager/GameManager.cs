@@ -741,10 +741,11 @@ public class GameManager : SingletonBase<GameManager>
 		yield return StartCoroutine(ThrowDices());
 
         if (!boats[0].IsLandOnHarbor)
-            yield return StartCoroutine(BoatMoving(boats[0], 13));
-            //yield return StartCoroutine(BoatMoving(boats[0], leftMovementVal));
+            //yield return StartCoroutine(BoatMoving(boats[0], 13));
+            yield return StartCoroutine(BoatMoving(boats[0], leftMovementVal));
 
-        if(!boats[1].IsLandOnHarbor)
+        if (!boats[1].IsLandOnHarbor)
+            //yield return StartCoroutine(BoatMoving(boats[1], 8));
             yield return StartCoroutine(BoatMoving(boats[1], midMovementVal));
 
         if(!boats[2].IsLandOnHarbor)

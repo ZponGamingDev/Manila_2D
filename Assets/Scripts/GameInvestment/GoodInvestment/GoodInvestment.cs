@@ -76,10 +76,11 @@ public class GoodInvestment : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData data)
     {
-        if(hold)
-        {
+        if (InvestmentManager.Singleton.PlayerInterestedBoat.IsRobbed)
             return;
-        }
+
+        if(hold)
+            return;
 
         if(selected)
         {

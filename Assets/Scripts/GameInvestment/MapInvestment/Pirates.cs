@@ -28,10 +28,6 @@ public class Pirates : MapInvestmentBase
     void Start()
     {
         SetInvestment();
-        //GameObject trackerObj = GameObject.FindWithTag("PirateTracker");
-
-        //if(trackerObj != null)
-        //    tracker = trackerObj.GetComponent<PirateTracker>();
     }
 
     protected override void Reset()
@@ -57,104 +53,92 @@ public class Pirates : MapInvestmentBase
         base.OnPointerClick(eventData);
     }
 
-    public bool pirate_1_Response = false;
+    private void RobberyDone()
+    {
+		GameManager.Singleton.BoatisRobbed();
+		UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
+    }
+
     private void CommitRobbery()
     {
-        //tracker.DetectedBoat.Robbed(iPirate);
         GameManager.Singleton.PirateTracker.DetectedBoat.Robbed(iPirate);
         InvestmentManager.Singleton.CompleteOneRobbery();
 		InvestmentManager.Singleton.RemovePirate(iPirate);
-		InvestmentManager.Singleton.Response();
 
-        if (iPirate > 2)
-            GameManager.Singleton.BoatisRobbed();
-        if(iPirate == 0)
-            pirate_1_Response = true;
+        if (iPirate < 1)
+        {
+            Player pirate = InvestmentManager.Singleton.GetPirate(1);
+            if (pirate != null)
+                SharingRequest(pirate.GetPlayerColor());
+            else
+                RobberyDone();
+        }
+        else
+            RobberyDone();
+
         iPirate++;
 	}
 
     private void RefuseRobbery()
     {
-        if(iPirate < 1)
+		UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
+		if(iPirate < 1)
         {
             iRequest = 2;
-            Player pirate = InvestmentManager.Singleton.GetPirate(iPirate);
+            Player pirate = InvestmentManager.Singleton.GetPirate(1);
 
             if (pirate != null)
                 pirate.Feedback();
             else
                 Debug.LogError("NULL EXCEPTION at Pirates.cs 71 line.");
-            pirate_1_Response = true;
 		}
-		InvestmentManager.Singleton.Response();
 	}
 
-    private void CommitToShare()
+    private void AgreeToShare()
     {
-        //if (iPirate < 1)
-        {
+        UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
+		{
             iRequest = 1;
             Player pirate = InvestmentManager.Singleton.GetPirate(iPirate);
 
-            if (pirate != null)
-                pirate.Feedback();
+            if(pirate != null)
+				pirate.Feedback();
             else
                 Debug.LogError("Pirate is null at Pirates.cs 86 line.");
         }
-		InvestmentManager.Singleton.Response();
 	}
 
     private void RefuseToShare()
     {
-		InvestmentManager.Singleton.Response();
+        UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
         GameManager.Singleton.BoatisRobbed();
+		iRequest = 1;
 	}
 
-    private IEnumerator Ask1stPirate()
+    private void SharingRequest(Color color)
     {
-        while(!pirate_1_Response)
-        {
-            yield return null;
-        }
-
-        pirate_1_Response = false;
-
-        // 2nd Pirate
-        if (InvestmentManager.Singleton.NumOfCompletedRobbery == 1)
-        {
-            Player pirate = InvestmentManager.Singleton.GetPirate(1);
-            if (pirate != null)
-            {
-                UIManager.Singleton.RegisterDialogBoxData(pirate.GetPlayerColor(), requests[2], CommitToShare, RefuseToShare);
-                StartCoroutine(InvestmentManager.Singleton.WaitInvestmentReseponse());
-            }
-            else
-                GameManager.Singleton.BoatisRobbed();
-        }
+		/*
+		Player pirate = InvestmentManager.Singleton.GetPirate(1);
+		if (pirate != null)
+		{
+			UIManager.Singleton.RegisterDialogBoxData(pirate.GetPlayerColor(), requests[2], AgreeToShare, RefuseToShare);
+			UIManager.Singleton.ShowUI(UIType.DIALOG_BOX);
+		}
+		else
+			GameManager.Singleton.BoatisRobbed();
+			*/
+		UIManager.Singleton.RegisterDialogBoxData(color, requests[2], AgreeToShare, RefuseToShare);
+		UIManager.Singleton.ShowUI(UIType.DIALOG_BOX);
     }
 
     protected override void Feedback(Player player)
-    {/*
-        if (tracker == null)
-        {
-            Debug.LogError("Tracker is null.");
-            return;
-        }
-     */
+    {
         if (!GameManager.Singleton.PirateTracker.TrackBoat)
             return;
-        //if (!tracker.TrackBoat)
-            //return;
 
         currentPirate = player;
-
-        // Show the request of robbery box
         UIManager.Singleton.RegisterDialogBoxData(currentPirate.GetPlayerColor(), requests[iRequest], CommitRobbery, RefuseRobbery);
-        StartCoroutine(InvestmentManager.Singleton.WaitInvestmentReseponse());
-
-        //  ASK 1st pirate
-        if(iRequest < 1)
-            StartCoroutine(Ask1stPirate());
+        UIManager.Singleton.ShowUI(UIType.DIALOG_BOX);
 
         player.RemoveFeedbackListener(Feedback);
 	}

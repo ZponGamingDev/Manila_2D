@@ -165,6 +165,7 @@ public class DicingBox : UIBase
         animationTimer = 0.0f;
         closeTrigger = false;
         GameManager.Singleton.ShowBoat();
+        base.CloseUI();
     }
 
     public override void CloseUI()

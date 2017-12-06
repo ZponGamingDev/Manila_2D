@@ -159,6 +159,9 @@ public class GoodInvestmentPage : UIBase
 
     public void ConfirmInvestment()
     {
+        if (InvestmentManager.Singleton.PlayerInterestedBoat.IsRobbed)
+            return;
+        
         for (int i = 0; i < goodsCount; ++i)
         {
             GoodInvestment good = goods[i];
