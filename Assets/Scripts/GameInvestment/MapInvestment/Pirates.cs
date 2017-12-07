@@ -12,7 +12,9 @@ public class Pirates : MapInvestmentBase
     private string[] requests = {
         "PIRATE_ROBBERY_1st", 
         "PIRATE_ROBBERY_2nd", 
-        "SHARE_ROBBERY" 
+        "SHARE_ROBBERY",
+        "DESTINATION_1st",
+        "DESTINATION_2nd",
     };
 
 	private int iPirate = 0;
@@ -55,29 +57,42 @@ public class Pirates : MapInvestmentBase
 
     private void RobberyDone()
     {
-		GameManager.Singleton.BoatisRobbed();
-		UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
-    }
+		//GameManager.Singleton.RobbedBoatLeaves();
+        GameManager.Singleton.ShowBoat();
+		iPirate++;
+        if (iPirate == 1)
+            iRequest = 1;
+	}
 
     private void CommitRobbery()
     {
-        GameManager.Singleton.PirateTracker.DetectedBoat.Robbed(iPirate);
-        InvestmentManager.Singleton.CompleteOneRobbery();
-		InvestmentManager.Singleton.RemovePirate(iPirate);
+		UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
 
-        if (iPirate < 1)
+		Boat boat = GameManager.Singleton.PirateTracker.DetectedBoat;
+        if (GameManager.Singleton.CurrentState == GameState.SECOND)
         {
-            Player pirate = InvestmentManager.Singleton.GetPirate(1);
-            if (pirate != null)
-                SharingRequest(pirate.GetPlayerColor());
+            boat.SecondRoundRobbed(iPirate, requests[iRequest + 3]);
+            InvestmentManager.Singleton.RemovePirate(iPirate);
+            RobberyDone();
+        }
+        else if (GameManager.Singleton.CurrentState == GameState.FINAL)
+        {
+
+            GameManager.Singleton.PirateTracker.DetectedBoat.FinalRoundRobbed(iPirate);
+            InvestmentManager.Singleton.RemovePirate(iPirate);
+
+            if (iPirate < 1)
+            {
+                Player pirate = InvestmentManager.Singleton.GetPirate(1);
+                if (pirate != null)
+                    SharingRequest(pirate.GetPlayerColor());
+                else
+                    RobberyDone();
+            }
             else
                 RobberyDone();
         }
-        else
-            RobberyDone();
-
-        iPirate++;
-	}
+    }
 
     private void RefuseRobbery()
     {
@@ -110,8 +125,9 @@ public class Pirates : MapInvestmentBase
 
     private void RefuseToShare()
     {
-        UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
-        GameManager.Singleton.BoatisRobbed();
+        //UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
+        //GameManager.Singleton.BoatisRobbed();
+        RobberyDone();
 		iRequest = 1;
 	}
 
@@ -133,10 +149,14 @@ public class Pirates : MapInvestmentBase
 
     protected override void Feedback(Player player)
     {
+        //if (GameManager.Singleton.CurrentState == GameState.FIRST)
+        //    return;
+
         if (!GameManager.Singleton.PirateTracker.TrackBoat)
             return;
 
         currentPirate = player;
+        GameManager.Singleton.HideBoat();
         UIManager.Singleton.RegisterDialogBoxData(currentPirate.GetPlayerColor(), requests[iRequest], CommitRobbery, RefuseRobbery);
         UIManager.Singleton.ShowUI(UIType.DIALOG_BOX);
 

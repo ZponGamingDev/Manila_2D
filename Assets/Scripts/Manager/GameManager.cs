@@ -741,8 +741,8 @@ public class GameManager : SingletonBase<GameManager>
 		yield return StartCoroutine(ThrowDices());
 
         if (!boats[0].IsLandOnHarbor)
-            //yield return StartCoroutine(BoatMoving(boats[0], 13));
-            yield return StartCoroutine(BoatMoving(boats[0], leftMovementVal));
+            yield return StartCoroutine(BoatMoving(boats[0], 4));
+            //yield return StartCoroutine(BoatMoving(boats[0], leftMovementVal));
 
         if (!boats[1].IsLandOnHarbor)
             //yield return StartCoroutine(BoatMoving(boats[1], 8));
@@ -760,7 +760,7 @@ public class GameManager : SingletonBase<GameManager>
     }
 #endregion
 
-    public void BoatisRobbed()
+    public void RobbedBoatLeaves()
     {
         pirateTracker.UnTrackBoat();
     }

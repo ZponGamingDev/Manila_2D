@@ -1,5 +1,4 @@
-﻿ ﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -181,15 +180,91 @@ public class Boat : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
     }
 
-    public void Robbed(int iPirate)
+    private void RobToHarbor()
     {
+		GameManager.Singleton.RobbedBoatLeaves();
+		GoToHarbor();
+		moveTrigger = true;
+        isLandingOnHarbor = true;
+		course.Reset();
+		UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
+    }
+
+    private void RobToTomb()
+    {
+		GameManager.Singleton.RobbedBoatLeaves();
+        UIManager.Singleton.ShowUI(UIType.DIALOG_BOX);
+        moveTrigger = true;
+		isLandOnTomb = true;
+        course.Reset();
+		GoToTomb();
+		UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
+	}
+
+    public void SecondRoundRobbed(int iPirate, string key)
+    {
+		Player pirate = InvestmentManager.Singleton.GetPirate(iPirate);
+		if (pirate == null)
+			Debug.LogError("Pirate is null at Boat.cs 186 line.");
+
+        UIManager.Singleton.RegisterDialogBoxData(pirate.GetPlayerColor(), key, RobToHarbor, RobToTomb);
+		//if (GameManager.Singleton.CurrentState == GameState.SECOND)
+		{
+			int totalInvestment = (goodType == GoodType.JADE) ? 4 : 3;
+			if (!investors.Contains(pirate))
+			{
+				if (investors.Count < totalInvestment)
+				{
+					investments.Add(new GoodInvestmentRecord(investors.Count, pirate.GetPlayerColor()));
+					investors.Add(pirate);
+				}
+				else
+				{
+					int random = Random.Range(0, totalInvestment);
+                    int index = investments[random].index;
+
+					investors[random] = pirate;
+					investments.RemoveAt(random);
+					investments.Add(new GoodInvestmentRecord(index, pirate.GetPlayerColor()));
+				}
+			}
+			else
+			{
+				if (investors.Count < totalInvestment)
+				{
+					investments.Add(new GoodInvestmentRecord(investors.Count, pirate.GetPlayerColor()));
+					investors.Add(pirate);
+				}
+				else
+				{
+					int random = 0;
+                    do
+                    {
+                        random = Random.Range(0, totalInvestment);
+                    } while (investors[random] == pirate);
+
+					int index = investments[random].index;
+					investors[random] = pirate;
+					investments.RemoveAt(random);
+					investments.Add(new GoodInvestmentRecord(index, pirate.GetPlayerColor()));
+				}
+			}
+		}
+    }
+
+    public void FinalRoundRobbed(int iPirate)
+    {
+		Player pirate = InvestmentManager.Singleton.GetPirate(iPirate);
+        if (pirate == null)
+            Debug.LogError("Pirate is null at Boat.cs 186 line.");
+        
         if (!isRobbed)
         {
             investors.Clear();
             investments.Clear();
         }
 
-        Player pirate = InvestmentManager.Singleton.GetPirate(iPirate);
+        //Player pirate = InvestmentManager.Singleton.GetPirate(iPirate);
 
         if (pirate != null)
         {
