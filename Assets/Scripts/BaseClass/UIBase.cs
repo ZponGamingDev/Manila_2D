@@ -62,6 +62,7 @@ public class UIBase : MonoBehaviour
 
         //GameManager.Singleton.RemoveAllUIBaseCallback();
         //GameManager.Singleton.RegisterUIBaseCallback(OnPageStart, OnPageEnd);
+        UIManager.Singleton.RemoveAllUIBaseCallback();
         UIManager.Singleton.RegisterUIBaseCallback(OnUIBaseStart, OnUIBaseEnd);
     }
 

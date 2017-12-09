@@ -57,8 +57,6 @@ public class Pirates : MapInvestmentBase
 
     private void RobberyDone()
     {
-		//GameManager.Singleton.RobbedBoatLeaves();
-        GameManager.Singleton.ShowBoat();
 		iPirate++;
         if (iPirate == 1)
             iRequest = 1;
@@ -77,13 +75,12 @@ public class Pirates : MapInvestmentBase
         }
         else if (GameManager.Singleton.CurrentState == GameState.FINAL)
         {
-
-            GameManager.Singleton.PirateTracker.DetectedBoat.FinalRoundRobbed(iPirate);
+            GameManager.Singleton.PirateTracker.DetectedBoat.FinalRoundRobbed(iPirate, requests[iRequest + 3]);
             InvestmentManager.Singleton.RemovePirate(iPirate);
 
             if (iPirate < 1)
             {
-                Player pirate = InvestmentManager.Singleton.GetPirate(1);
+                Player pirate = InvestmentManager.Singleton.GetPirate(++iPirate);
                 if (pirate != null)
                     SharingRequest(pirate.GetPlayerColor());
                 else
@@ -99,13 +96,14 @@ public class Pirates : MapInvestmentBase
 		UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
 		if(iPirate < 1)
         {
-            iRequest = 2;
+            iRequest = 1;
             Player pirate = InvestmentManager.Singleton.GetPirate(1);
 
             if (pirate != null)
                 pirate.Feedback();
             else
                 Debug.LogError("NULL EXCEPTION at Pirates.cs 71 line.");
+            iRequest = 0;
 		}
 	}
 
@@ -125,8 +123,6 @@ public class Pirates : MapInvestmentBase
 
     private void RefuseToShare()
     {
-        //UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
-        //GameManager.Singleton.BoatisRobbed();
         RobberyDone();
 		iRequest = 1;
 	}
@@ -149,9 +145,6 @@ public class Pirates : MapInvestmentBase
 
     protected override void Feedback(Player player)
     {
-        //if (GameManager.Singleton.CurrentState == GameState.FIRST)
-        //    return;
-
         if (!GameManager.Singleton.PirateTracker.TrackBoat)
             return;
 

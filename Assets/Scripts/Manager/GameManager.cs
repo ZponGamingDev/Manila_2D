@@ -37,11 +37,10 @@ public class GameManager : SingletonBase<GameManager>
     }
     private Player currentPlayer = null;
     private List<Player> players;
-	private List<Player> ranking = new List<Player>();
-	private GameObject map = null;
+    private List<Player> ranking = new List<Player>();
+    private GameObject map = null;
 
-
-	public GameState CurrentState
+    public GameState CurrentState
     {
         get
         {
@@ -53,10 +52,18 @@ public class GameManager : SingletonBase<GameManager>
     public int numOfPlayer = 4;
     public int minBiddingAmount = 5;
 
-#region UIBaseCallback
-    //private UIBaseCallback onPageStart;
-    //private UIBaseCallback onPageEnd;
-#endregion
+    #region HUDUI Update
+    public delegate void UpdateHUDUICallback();
+    public UpdateHUDUICallback UpdateHUDUI
+    {
+        set
+        {
+            if(updateHUDUI == null)
+                updateHUDUI += value;
+        }
+    }
+    private UpdateHUDUICallback updateHUDUI;
+    #endregion
 
     private int leftMovementVal = 0;
     private int midMovementVal = 0;
@@ -181,13 +188,15 @@ public class GameManager : SingletonBase<GameManager>
     {
         leftMovementVal = midMovementVal = rightMovementVal = 0;
         iRoundPlayer = 0;
+        UIManager.Singleton.CloseUI(UIType.HUD_UI);
         UIManager.Singleton.RoundReset();
         InvestmentManager.Singleton.RoundReset();
     }
 
     private void GameSetReset()
     {
-        gameSetBoss = null;
+		UIManager.Singleton.CloseUI(UIType.HUD_UI);
+		gameSetBoss = null;
         gameSetQueue.Clear();
         iHarbor = 0;
         Destroy(boats[0].gameObject);
@@ -315,19 +324,15 @@ public class GameManager : SingletonBase<GameManager>
     void Update()
     {
         if (showInfoBar)
-        {
             infoBarTimer += Time.deltaTime;
-        }
     }
 
     #region GameLoop
     private IEnumerator GameLoop()
     {
-       // Setup();
+		UIManager.Singleton.ShowUI(UIType.HUD_UI);
 
-        //  Show GameStateInfoPage (NOT IMPLEMENTED)
-
-        yield return StartCoroutine(ShowGameStateInfo(GameState.BIDDING, 1.5f));
+		yield return StartCoroutine(ShowGameStateInfo(GameState.BIDDING, 1.5f));
 
         yield return StartCoroutine(BossBiddingRound());
 
@@ -555,6 +560,7 @@ public class GameManager : SingletonBase<GameManager>
 
 		yield return StartCoroutine(UIManager.Singleton.OnUIBaseEnd());
 
+        updateHUDUI();
 		UIManager.Singleton.ShowUI(UIType.GAME_INFO_TABLE);
 		UIManager.Singleton.ChangeBossSignInfoColor();
 		UIManager.Singleton.CloseMask();
@@ -578,6 +584,7 @@ public class GameManager : SingletonBase<GameManager>
 
     #region Boat
     //LEFT,MID,RIGHT
+    public float boatSpeed = 1.0f;
     private Boat[] boats = new Boat[3];
 
     public void SpawnBoat(GoodType good, int num, int shift)
@@ -647,7 +654,7 @@ public class GameManager : SingletonBase<GameManager>
 
 	private IEnumerator BoatMoving(Boat boat, int movement)
 	{
-		WaitForSeconds interval = new WaitForSeconds(boat.speed * Time.fixedDeltaTime);
+        WaitForSeconds interval = new WaitForSeconds(boatSpeed * Time.fixedDeltaTime);
 
         while(IsAnyBoatMoving())
         {
@@ -703,18 +710,36 @@ public class GameManager : SingletonBase<GameManager>
 
     private IEnumerator PlayerInvestment()
     {
+        //if(UIManager.Singleton.OnUIBaseStart != null)
+        //    yield return StartCoroutine(UIManager.Singleton.OnUIBaseStart());
+        
         while (!currentPlayerRoundOver)
         {
             yield return null;
         }
 
-        yield return StartCoroutine(UIManager.Singleton.OnUIBaseEnd());
+        //if(UIManager.Singleton.OnUIBaseEnd != null)
+        //    yield return StartCoroutine(UIManager.Singleton.OnUIBaseEnd());
+    }
+
+    private IEnumerator PlayerRoundOver()
+    {
+		WaitForSeconds interval = new WaitForSeconds(1.0f);
+		UIManager.Singleton.ChangePlayerInfo();
+		UIManager.Singleton.CloseUI(UIType.PLAYER_INVENTORY);
+        UIManager.Singleton.OpenMask();
+
+        yield return interval;
+
+		currentPlayerRoundOver = false;
+		gameSetQueue.Enqueue(currentPlayer);
+        UIManager.Singleton.CloseMask();
     }
 
     #region ROUND PLAY
     private IEnumerator RoundPlay()
     {
-        //UIManager.Singleton.RemoveAllUIBaseCallback();
+        UIManager.Singleton.RemoveAllUIBaseCallback();
         while (iRoundPlayer < numOfPlayer)
         {
             currentPlayer = gameSetQueue.Dequeue();
@@ -725,10 +750,12 @@ public class GameManager : SingletonBase<GameManager>
                 yield return StartCoroutine(BossBuyStock());
 
             yield return StartCoroutine(PlayerInvestment());
-
+            yield return StartCoroutine(PlayerRoundOver());
+            /*
             UIManager.Singleton.CloseUI(UIType.PLAYER_INVENTORY);
             currentPlayerRoundOver = false;
 			gameSetQueue.Enqueue(currentPlayer);
+			UIManager.Singleton.ChangePlayerInfo();*/
 		}
 
         MapInvestmentFeedback();
@@ -745,11 +772,13 @@ public class GameManager : SingletonBase<GameManager>
             //yield return StartCoroutine(BoatMoving(boats[0], leftMovementVal));
 
         if (!boats[1].IsLandOnHarbor)
-            //yield return StartCoroutine(BoatMoving(boats[1], 8));
-            yield return StartCoroutine(BoatMoving(boats[1], midMovementVal));
+            yield return StartCoroutine(BoatMoving(boats[1], 3));
+            //yield return StartCoroutine(BoatMoving(boats[1], midMovementVal));
 
         if(!boats[2].IsLandOnHarbor)
             yield return StartCoroutine(BoatMoving(boats[2], rightMovementVal));
+
+        updateHUDUI();
 
         while(pirateTracker.TrackBoat)
         {

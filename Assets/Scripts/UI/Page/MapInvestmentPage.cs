@@ -36,6 +36,10 @@ public class MapInvestmentPage : UIBase
 
     public void ConfirmMapInvestment()
     {
+        int costVal = int.Parse(cost.text);
+        if (costVal > GameManager.Singleton.CurrentPlayer.Money)
+            return;
+        
         InvestmentManager.Singleton.MapInvestmentConfirmFunc();
         GameManager.Singleton.PlayerFinishRoundPlay();
         CloseUI();

@@ -24,6 +24,7 @@ public enum UIType
     PLAYER_INVENTORY = 1 << 17,
     INPUT_PLAYER_NAME_BOX = 1 << 18,
 	RANK_TABLE = 1 << 19,
+    HUD_UI = 1 << 20,
 }
 
 public delegate IEnumerator UIBaseCallback();

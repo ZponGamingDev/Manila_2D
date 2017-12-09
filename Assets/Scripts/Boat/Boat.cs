@@ -15,7 +15,7 @@ public enum BoatAnchor
 
 public class Boat : MonoBehaviour
 {
-    public float speed = 1.0f;
+    //public float speed = 1.0f;
 
     /// <summary>
     /// Anchor position(LEFT, MID, RIGHT).
@@ -23,10 +23,6 @@ public class Boat : MonoBehaviour
     public BoatAnchor anchor = BoatAnchor.NONE;
     public GoodType goodType = GoodType.NONE;
 
-	/// <summary>
-	/// Used to be checked by PIRATE TRACKER.
-	/// </summary>
-	public bool isShifted = false;
 
     /// <summary>
     /// Gets the on line number of boat.
@@ -62,6 +58,14 @@ public class Boat : MonoBehaviour
         }
     }
     private bool isLandingOnHarbor = false;
+
+    public bool IsLandOnTomb
+    {
+        get
+        {
+            return isLandOnTomb;
+        }
+    }
     private bool isLandOnTomb = false;
 
     public bool IsRobbed
@@ -116,7 +120,7 @@ public class Boat : MonoBehaviour
             dir2D.Normalize();
 
             RaycastHit2D hit = Physics2D.Raycast(mos, Vector2.right, 1.0f, mask);
-            if (hit.collider != null && !isLandingOnHarbor && !isLandOnTomb)
+            if (hit.collider != null/* && !isLandingOnHarbor && !isLandOnTomb*/)
             {
                 Boat clicked = hit.collider.transform.parent.GetComponent<Boat>();
                 if (clicked != this)
@@ -133,7 +137,7 @@ public class Boat : MonoBehaviour
         {
             timer += Time.fixedDeltaTime;
 
-            float t = speed * timer;
+            float t = GameManager.Singleton.boatSpeed * timer;
             if (t >= 1.0f)
             {
                 t = 1.0f;
@@ -180,24 +184,41 @@ public class Boat : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
     }
 
+    #region PirateFunction
+    private bool protect = false;
+    public bool IsProtected()
+    {
+        return protect;
+    }
+    public void Protect()
+    {
+        protect = true;
+    }
+
+	/// <summary>
+	/// Used to be checked by PIRATE TRACKER.
+	/// </summary>
+	public bool isShifted = false;
+
     private void RobToHarbor()
     {
-		GameManager.Singleton.RobbedBoatLeaves();
-		GoToHarbor();
-		moveTrigger = true;
-        isLandingOnHarbor = true;
 		course.Reset();
+		moveTrigger = true;
+		GoToHarbor();
+		isLandingOnHarbor = true;
+		GameManager.Singleton.ShowBoat();
+		GameManager.Singleton.RobbedBoatLeaves();
 		UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
     }
 
     private void RobToTomb()
     {
-		GameManager.Singleton.RobbedBoatLeaves();
-        UIManager.Singleton.ShowUI(UIType.DIALOG_BOX);
-        moveTrigger = true;
-		isLandOnTomb = true;
-        course.Reset();
+		course.Reset();
+		moveTrigger = true;
 		GoToTomb();
+		isLandOnTomb = true;
+        GameManager.Singleton.ShowBoat();
+		GameManager.Singleton.RobbedBoatLeaves();
 		UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
 	}
 
@@ -207,7 +228,9 @@ public class Boat : MonoBehaviour
 		if (pirate == null)
 			Debug.LogError("Pirate is null at Boat.cs 186 line.");
 
-        UIManager.Singleton.RegisterDialogBoxData(pirate.GetPlayerColor(), key, RobToHarbor, RobToTomb);
+		UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
+		UIManager.Singleton.RegisterDialogBoxData(pirate.GetPlayerColor(), key, RobToHarbor, RobToTomb);
+        UIManager.Singleton.ShowUI(UIType.DIALOG_BOX);
 		//if (GameManager.Singleton.CurrentState == GameState.SECOND)
 		{
 			int totalInvestment = (goodType == GoodType.JADE) ? 4 : 3;
@@ -252,19 +275,24 @@ public class Boat : MonoBehaviour
 		}
     }
 
-    public void FinalRoundRobbed(int iPirate)
+    public void FinalRoundRobbed(int iPirate, string key)
     {
 		Player pirate = InvestmentManager.Singleton.GetPirate(iPirate);
         if (pirate == null)
             Debug.LogError("Pirate is null at Boat.cs 186 line.");
-        
+
         if (!isRobbed)
         {
             investors.Clear();
             investments.Clear();
         }
 
-        //Player pirate = InvestmentManager.Singleton.GetPirate(iPirate);
+        if(iPirate > 0)
+        {
+			UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
+			UIManager.Singleton.RegisterDialogBoxData(pirate.GetPlayerColor(), key, RobToHarbor, RobToTomb);
+			UIManager.Singleton.ShowUI(UIType.DIALOG_BOX);
+        }
 
         if (pirate != null)
         {
@@ -275,33 +303,7 @@ public class Boat : MonoBehaviour
         else
             Debug.LogError("Pirate is null at Boat.cs 184 line.");
     }
-
-    /*
-    public void Robbed(string shareRequest)
-    {
-        // Pirate count <= 2;
-        Player pirate1st = InvestmentManager.Singleton.GetPirate(0);
-        Player pirate2nd = InvestmentManager.Singleton.GetPirate(1);
-
-        if (pirate1st != null)
-        {
-            RemoveAllInvestedPlayer();
-
-            // 1st pirate
-            investors.Add(pirate1st);
-
-            if(pirate2nd != null)
-            {
-				// Ask 1st pirate, "2nd pirate get on the boat" Yes or No
-
-				UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
-                UIManager.Singleton.RegisterDialogBoxCallback(null, null);
-                StartCoroutine(InvestmentManager.Singleton.RequestFromInvesment(shareRequest));
-			}
-            UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
-        }
-    }
-    */
+    #endregion
 
     public void InvestorFeedback()
     {
@@ -360,16 +362,17 @@ public class Boat : MonoBehaviour
         {
             if (GameManager.Singleton.CurrentState == GameState.FINAL)
             {
-                GoToTomb();
-                isLandOnTomb = true;
+                if (onLineNumber != 13)
+                {
+                    GoToTomb();
+                    isLandOnTomb = true;
+                }
+                else
+                    GoToLine();
                 //moveCallback += GoToTomb;
             }
             else
-            {
                 GoToLine();
-                //moveCallback += GoToLine;
-                //course.SetCourseDataD1(transform.position, destination);
-            }
         }
         else
         {
@@ -386,6 +389,4 @@ public class Boat : MonoBehaviour
         DoMovement();
     }
     #endregion
-
-
 }

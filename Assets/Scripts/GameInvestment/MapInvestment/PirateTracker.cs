@@ -31,11 +31,15 @@ public class PirateTracker : MonoBehaviour
     {
 		Player p0 = InvestmentManager.Singleton.GetPirate(0);
 		Player p1 = InvestmentManager.Singleton.GetPirate(1);
-		if (p0 == null && p1 == null)
-			yield break;
+		boat = collision.GetComponentInParent<Boat>();
 
-        boat = collision.GetComponentInParent<Boat>();
-		if (boat.isShifted)
+        if (p0 == null && p1 == null)
+        {
+            boat.Protect();
+            yield break;
+        }
+
+        if (boat.isShifted || boat.IsProtected())
 			yield break;
 
 		trackBoat = true;

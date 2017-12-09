@@ -159,7 +159,7 @@ public class GameInfoTable : UIBase
             = currentPlayerSignLabel.color
             = c;
 
-        if (currentPlayerSignLabel.text != pName)
+        //if (currentPlayerSignLabel.text != pName)
             currentPlayerSignLabel.text = pName;
 	}
 

@@ -1,4 +1,4 @@
-"(Rows, Cols) = (20, 2)",,,,,,
+"(Rows, Cols) = (21, 2)",,,,,,
 ,Key,Script,,,,
 ,INITIAL_INFO_PAGE,InitialInfoPage,,,,
 ,GAME_MENU_PAGE,GameMenu,,,,
@@ -19,3 +19,7 @@
 ,DIALOG_BOX,DialogBox,,,,
 ,INPUT_PLAYER_NAME_BOX,InputPlayerNameBox,,,,
 ,RANK_TABLE,RankTable,,,,
+,HUD_UI,HUDUI,,,,
+,,,,,,
+,,,,,,
+,,,,,,

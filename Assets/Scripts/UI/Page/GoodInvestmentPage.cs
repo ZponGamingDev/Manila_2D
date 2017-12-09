@@ -5,9 +5,9 @@ using UnityEngine.UI;
 
 public class GoodInvestmentPage : UIBase
 {
-	public delegate void GoodInvestmentCallback(GoodInvestment investment);
+    public delegate void GoodInvestmentCallback(GoodInvestment investment);
 
-	public Image rewardAmountBackground;
+    public Image rewardAmountBackground;
     public Text rewardAmount;
 
     public DecisionBtn confirm;
@@ -28,10 +28,10 @@ public class GoodInvestmentPage : UIBase
 
     void Start()
     {
-		for (int i = 0; i < goodsCount; ++i)
-		{
-			goods[i].onClick += OnGoodInvestmentClick;
-		}
+        for (int i = 0; i < goodsCount; ++i)
+        {
+            goods[i].onClick += OnGoodInvestmentClick;
+        }
     }
 
     public override void RoundReset()
@@ -59,24 +59,24 @@ public class GoodInvestmentPage : UIBase
     private void SetPageView()
     {
         string[] costs = GoodInvestmentDataSystem.Singleton.GetGoodInvestmentData();
-		rewardAmountBackground.color = InvestmentManager.Singleton.PlayerInterestedGoodColor;
-		rewardAmount.text = InvestmentManager.Singleton.PlayerInterestedBoat.Reward.ToString();
+        rewardAmountBackground.color = InvestmentManager.Singleton.PlayerInterestedGoodColor;
+        rewardAmount.text = InvestmentManager.Singleton.PlayerInterestedBoat.Reward.ToString();
 
-		if (costs.Length < goods.Length)
-		{
-			goodsCount = goods.Length - 1;
+        if (costs.Length < goods.Length)
+        {
+            goodsCount = goods.Length - 1;
             goods[goodsCount].gameObject.SetActive(false);
-		}
-		else
-		{
-			goodsCount = goods.Length;
-			goods[goods.Length - 1].gameObject.SetActive(true);
-		}
+        }
+        else
+        {
+            goodsCount = goods.Length;
+            goods[goods.Length - 1].gameObject.SetActive(true);
+        }
 
-		for (int i = 0; i < costs.Length; ++i)
-		{
+        for (int i = 0; i < costs.Length; ++i)
+        {
             goods[i].cost.text = costs[i];
-		}
+        }
 
         List<GoodInvestmentRecord> records = InvestmentManager.Singleton.PlayerInterestedBoat.GetInvestmentRecord;
 
@@ -93,10 +93,17 @@ public class GoodInvestmentPage : UIBase
 
     private void OnGoodInvestmentClick(GoodInvestment investment)
     {
+        if (InvestmentManager.Singleton.PlayerInterestedBoat.IsLandOnHarbor ||
+            InvestmentManager.Singleton.PlayerInterestedBoat.IsLandOnTomb)
+            return;
+
+        int cost = int.Parse(investment.cost.text);
+        if (GameManager.Singleton.CurrentPlayer.Money < cost)
+            return;
+
         if (currentPlayerSelected != null)
             currentPlayerSelected.UnSelected();
-
-
+        
         currentPlayerSelected = investment;
     }
 
