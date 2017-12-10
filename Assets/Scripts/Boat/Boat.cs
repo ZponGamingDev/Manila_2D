@@ -368,7 +368,8 @@ public class Boat : MonoBehaviour
                 {
                     GoToTomb();
                     isLandOnTomb = true;
-                }
+                    InvestmentManager.Singleton.EnterTomb();
+				}
             }
             else
                 GoToLine();
@@ -377,6 +378,7 @@ public class Boat : MonoBehaviour
         {
             GoToHarbor();
             isLandingOnHarbor = true;
+            InvestmentManager.Singleton.EnterHarbor();
         }
     }
 

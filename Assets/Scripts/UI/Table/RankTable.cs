@@ -16,7 +16,7 @@ public class RankTable : UIBase
         public string name;
         public Color color;
         public int pts;
-        public bool isWinner;
+        //public bool isWinner;
     }
 
     private string elmPath = PathConfig.UIElementFolder + "RankTableElement";
@@ -56,14 +56,12 @@ public class RankTable : UIBase
 				if (stat.HasValue)
 				{
 					elm.nameLabel.text = stat.Value.name;
-					//elm.rankPoints.text = "積分 " + stat.Value.pts;
                     Color c = stat.Value.color;
                     elm.background.color = new Color(c.r, c.g, c.b, elmAlpha);
-                    elm.rankUpTri.enabled = true;
+                    //elm.rankUpTri.enabled = true;
                     elm.onClick += ShowDemonstration;
 					elmsTable.Add(stat.Value.color, elm);
-                    if (stat.Value.isWinner)
-                        elm.winnerCrown.enabled = true;
+                    elm.winnerCrown.enabled = false;
 				}
 			}
 			else
@@ -83,18 +81,6 @@ public class RankTable : UIBase
         mask.enabled = false;
     }
 
-    /*
-    public void OnPointerClick()
-    {
-        RectTransform rect = demonstration.GetComponent<RectTransform>();
-        Vector2 ptr = data.position;
-        if (RectTransformUtility.RectangleContainsScreenPoint(rect, data.position, Camera.main))
-            CloseDemonstration();
-        //if(RectTransformUtility.ScreenPointToLocalPointInRectangle(demonstration.transform as RectTransform
-        //                                                           ,screen, Camera.main, out local))
-    }*/
-
-
     private void Rank()
     {
         int num = GameManager.Singleton.numOfPlayer;
@@ -108,25 +94,33 @@ public class RankTable : UIBase
                 return;
             }
 
-            for (int ptr = num - 1; ptr >= iPlayer + 1; --ptr)
+            for (int ptr = num - 1; ptr > iPlayer; --ptr)
             {
                 RankStat? s2 = GameManager.Singleton.GetPlayerStat(ptr);
-				if (!s2.HasValue)
-				{
-					Debug.LogError("PLAYER STAT IS NULL !!!");
-					return;
-				}
+                if (!s2.HasValue)
+                {
+                    Debug.LogError("PLAYER STAT IS NULL !!!");
+                    return;
+                }
 
-                if(s2.Value.pts > s1.Value.pts)
+                if (s2.Value.pts > s1.Value.pts)
                 {
                     elmsTable[s2.Value.color].gameObject.transform.SetSiblingIndex(iPlayer);
                     elmsTable[s1.Value.color].gameObject.transform.SetSiblingIndex(ptr);
-                    elmsTable[s2.Value.color].CurrentRanking = iPlayer;
-                    elmsTable[s1.Value.color].CurrentRanking = ptr;
+
+                    elmsTable[s2.Value.color].CurrentRanking = iPlayer + 1;
+                    elmsTable[s1.Value.color].CurrentRanking = ptr + 1;
+                    RankStat? sTemp = s2;
+                    s2 = s1;
+                    s1 = sTemp;
+                    elmsTable[s2.Value.color].UpdateRank(s2.Value.pts);
                 }
-            }
+			}
             elmsTable[s1.Value.color].UpdateRank(s1.Value.pts);
         }
+
+        if (GameManager.Singleton.Winner != null)
+            elmsTable[GameManager.Singleton.Winner.GetPlayerColor()].winnerCrown.enabled = true;
     }
 
     public override void ShowUI()

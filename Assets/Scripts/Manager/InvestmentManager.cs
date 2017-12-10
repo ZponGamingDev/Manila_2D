@@ -36,9 +36,7 @@ public class InvestmentManager : SingletonBase<InvestmentManager>
         set
         {
             if (banker == null)
-            {
                 banker = value;
-            }
         }
     }
     private Player banker;
@@ -63,18 +61,33 @@ public class InvestmentManager : SingletonBase<InvestmentManager>
 
 	private Dictionary<string, bool> boatOnDestination = new Dictionary<string, bool>();
 
-    /*
-	private string[] harborName = new string[3];
-	private string[] tombName = new string[3]; 
-    public void AddDestination(string name)
+    public int NumOfBoatOnHarbor
     {
-        boatOnDestination.Add(name, false);
+        get
+        {
+            return numOfBoatOnHarbor;
+        }
+    }
+    private int numOfBoatOnHarbor = 0;
+
+	public int NumOfBoatOnTomb
+	{
+		get
+		{
+			return numOfBoatOnTomb;
+		}
+	}
+    private int numOfBoatOnTomb = 0;
+
+    public void EnterHarbor()
+    {
+        numOfBoatOnHarbor++;
     }
 
-    public void OnDestination(string name)
+    public void EnterTomb()
     {
-        boatOnDestination[name] = true;
-    }*/
+        numOfBoatOnTomb++;
+    }
 
 
 	public Color PlayerInterestedGoodColor
@@ -129,6 +142,8 @@ public class InvestmentManager : SingletonBase<InvestmentManager>
         mapInvestmentResetFunc();
         mapInvestmentResetFunc = null;
         mapInvestmentConfirmFunc = null;
+        numOfBoatOnTomb = 0;
+        numOfBoatOnHarbor = 0;
     }
 
     public void GameOverClear()

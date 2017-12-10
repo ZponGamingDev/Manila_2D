@@ -133,14 +133,14 @@ public class GameManager : SingletonBase<GameManager>
     /// Left(0), Middle(1), Right(2)
     /// </summary>
     private List<Vector2> tombPositions = new List<Vector2>();
-    private int tombsIdx = 0;
+    private int iTomb = 0;
     /// <summary>
     /// Gets the tomb vec2.
     /// </summary>
     /// <returns>The tomb vec2.</returns>
 	public Vector2 GetTombVec2()
     {
-        return tombPositions[tombsIdx++];
+        return tombPositions[iTomb++];
     }
 #endregion
 
@@ -153,6 +153,13 @@ public class GameManager : SingletonBase<GameManager>
     }
     private Player gameSetBoss = null;
 
+    public Player Winner
+    {
+        get
+        {
+            return gameWinner;
+        }
+    }
     private Player gameWinner = null;
 
     private bool showInfoBar = false;
@@ -197,13 +204,17 @@ public class GameManager : SingletonBase<GameManager>
     private void GameSetReset()
     {
 		UIManager.Singleton.CloseUI(UIType.HUD_UI);
+		UIManager.Singleton.CloseUI(UIType.GAME_INFO_TABLE);
+		map.SetActive(false);
 		gameSetBoss = null;
         gameSetQueue.Clear();
-        iHarbor = 0;
+        iTomb = iHarbor = 0;
+
         Destroy(boats[0].gameObject);
         Destroy(boats[1].gameObject);
         Destroy(boats[2].gameObject);
         boats[0] = boats[1] = boats[2] = null;
+
         pirateTracker.UnTrackBoat();
 
 		UIManager.Singleton.GameSetReset();
@@ -310,13 +321,6 @@ public class GameManager : SingletonBase<GameManager>
         stat.color = player.GetPlayerColor();
         stat.pts = player.RankPoint;
 
-        stat.isWinner = false;
-        if (gameWinner != null)
-        {
-            if (gameWinner == player)
-                stat.isWinner = true;
-        }
-
         return stat;
     }
 
@@ -372,31 +376,22 @@ public class GameManager : SingletonBase<GameManager>
 
         yield return StartCoroutine(ShowGameStateInfo(currentState, 1.5f));
 
-        SetOver();
-		yield return StartCoroutine(ShowMoneyTable());
-        yield return StartCoroutine(ShowRankTable());
-
 		GameSetReset();
         GameOverCheck();
+
+		yield return StartCoroutine(ShowMoneyTable());
+		yield return StartCoroutine(ShowRankTable());
 
         if (gameWinner != null)
         {
             GameOverClear();
             yield return StartCoroutine(ShowGameStateInfo(GameState.GAME_OVER, 1.5f));
-        }
+		}
         else
         {
             map.SetActive(true);
             StartCoroutine(GameLoop());
         }
-    }
-
-    private void SetOver()
-    {
-        HideBoat();
-		map.SetActive(false);
-		UIManager.Singleton.CloseUI(UIType.GAME_INFO_TABLE);
-        UIManager.Singleton.CloseUI(UIType.HUD_UI);
     }
     #endregion
 

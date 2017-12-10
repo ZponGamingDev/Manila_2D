@@ -36,6 +36,7 @@ public class Bank : MapInvestmentBase
         }
 
         GameManager.Singleton.CurrentPlayer.Earn(Data.Value.reward);
+        InvestmentManager.Singleton.Banker = GameManager.Singleton.CurrentPlayer;
         base.ConfirmInvestment();
     }
 

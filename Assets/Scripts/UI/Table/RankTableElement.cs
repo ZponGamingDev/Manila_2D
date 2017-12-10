@@ -28,6 +28,7 @@ public class RankTableElement : EventTriggerListener
     public void UpdateRank(int pts)
     {
         int rankGap = currRank - prevRank;
+
         if(rankGap < 0)
         {
             rankUpTri.enabled = false;

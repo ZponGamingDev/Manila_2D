@@ -8,12 +8,7 @@ using System;
 
 public class Destination : MapInvestmentBase
 {
-    //public Text cost;
-    //public Text reward;
-
-    //public string description = string.Empty;
-
-    //private RectTransform rect;
+    private int index = 0;
 
     void Awake()
     {
@@ -26,6 +21,7 @@ public class Destination : MapInvestmentBase
     void Start()
     {
         SetInvestment();
+        index = (int.Parse(cost.text) - 4) * (-1);
     }
 
     protected override void SetInvestment()
@@ -53,11 +49,19 @@ public class Destination : MapInvestmentBase
         {
             if(gameObject.name.Contains("Tomb"))
             {
-                Player bank = InvestmentManager.Singleton.Banker;
-                if (bank != null)
-					InvestmentManager.Singleton.Banker.Pay(val);
+                if (index < InvestmentManager.Singleton.NumOfBoatOnTomb)
+                {
+                    Player banker = InvestmentManager.Singleton.Banker;
+                    if (banker != null)
+                        banker.Pay(val);
+					player.Earn(val);
+				}
             }
-            player.Earn(val);
+            else
+            {
+                if (index < InvestmentManager.Singleton.NumOfBoatOnHarbor)
+                    player.Earn(val);
+            }
         }
         else
             Debug.LogError("ERROR EXCEPTION at " + gameObject.name + "'s Destination.cs 87 line.");
