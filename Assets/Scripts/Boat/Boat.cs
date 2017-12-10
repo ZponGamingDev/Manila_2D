@@ -362,14 +362,13 @@ public class Boat : MonoBehaviour
         {
             if (GameManager.Singleton.CurrentState == GameState.FINAL)
             {
-                if (onLineNumber != 13)
+                if (isShifted || onLineNumber == 13)
+                    GoToLine();
+                else
                 {
                     GoToTomb();
                     isLandOnTomb = true;
                 }
-                else
-                    GoToLine();
-                //moveCallback += GoToTomb;
             }
             else
                 GoToLine();

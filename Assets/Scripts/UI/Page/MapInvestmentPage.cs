@@ -12,6 +12,8 @@ public class MapInvestmentPage : UIBase
     public DecisionBtn confirm;
     public DecisionBtn cancel;
 
+    private int costVal = 0;
+
     void Start()
     {
         //cancel.onClick = confirm.onClick = null;
@@ -36,7 +38,6 @@ public class MapInvestmentPage : UIBase
 
     public void ConfirmMapInvestment()
     {
-        int costVal = int.Parse(cost.text);
         if (costVal > GameManager.Singleton.CurrentPlayer.Money)
             return;
         
@@ -54,6 +55,7 @@ public class MapInvestmentPage : UIBase
     private void SetPageView()
     {
         MapInvestmentData? data = InvestmentManager.Singleton.CurrentMapInvestmentData;
+        costVal = data.Value.cost;
         cost.text = "花費 : $" + data.Value.cost.ToString();
         reward.text = "獎勵 : $" + data.Value.reward.ToString();
         description.text = data.Value.description;

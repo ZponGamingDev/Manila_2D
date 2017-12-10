@@ -9,6 +9,7 @@ public class RankTable : UIBase
     public GameObject demonstration;
     public Image mask;
     public EventTriggerListener dmCloseIcon;
+    public EventTriggerListener tbCloseIcon;
 
     public struct RankStat
     {
@@ -19,12 +20,12 @@ public class RankTable : UIBase
     }
 
     private string elmPath = PathConfig.UIElementFolder + "RankTableElement";
-	private List<RankTableElement> elms = new List<RankTableElement>();
     private Dictionary<Color, RankTableElement> elmsTable = new Dictionary<Color, RankTableElement>();
 
     void Start()
     {
         dmCloseIcon.onClick += CloseDemonstration;
+        tbCloseIcon.onClick += GameManager.Singleton.Response;
     }
 
     public override void RoundReset()
@@ -96,8 +97,6 @@ public class RankTable : UIBase
 
     private void Rank()
     {
-        if (elmsTable.Count == 0)
-            InitialTable();
         int num = GameManager.Singleton.numOfPlayer;
 
         for (int iPlayer = 0; iPlayer < num; ++iPlayer)
@@ -132,8 +131,11 @@ public class RankTable : UIBase
 
     public override void ShowUI()
     {
-        Rank();
-        base.ShowUI();
+		if (elmsTable.Count < 1)
+		    InitialTable();
+        
+		Rank();
+		base.ShowUI();
     }
 
     public override void CloseUI()

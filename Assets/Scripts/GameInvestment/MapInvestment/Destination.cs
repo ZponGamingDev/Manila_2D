@@ -55,19 +55,14 @@ public class Destination : MapInvestmentBase
             {
                 Player bank = InvestmentManager.Singleton.Banker;
                 if (bank != null)
-                {
 					InvestmentManager.Singleton.Banker.Pay(val);
-				}
             }
             player.Earn(val);
         }
         else
-        {
             Debug.LogError("ERROR EXCEPTION at " + gameObject.name + "'s Destination.cs 87 line.");
-        }
 
         player.RemoveFeedbackListener(Feedback);
-        //Reset();
     }
 
     public override void OnPointerClick(PointerEventData eventData)

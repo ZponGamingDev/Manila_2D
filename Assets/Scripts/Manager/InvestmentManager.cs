@@ -43,20 +43,7 @@ public class InvestmentManager : SingletonBase<InvestmentManager>
     }
     private Player banker;
 
-    public int NumOfCompletedRobbery
-    {
-        get
-        {
-            return iRobbery;
-        }
-    }
-    public void CompleteOneRobbery()
-    {
-        pirates[iRobbery++] = null;
-    }
-    private int iRobbery = 0;
     private Player[] pirates = new Player[2];
-
     public Player GetPirate(int iPirate)
     {
         return pirates[iPirate];
@@ -74,8 +61,23 @@ public class InvestmentManager : SingletonBase<InvestmentManager>
     }
     public bool pirateRobBoat = false;
 
+	private Dictionary<string, bool> boatOnDestination = new Dictionary<string, bool>();
 
-    public Color PlayerInterestedGoodColor
+    /*
+	private string[] harborName = new string[3];
+	private string[] tombName = new string[3]; 
+    public void AddDestination(string name)
+    {
+        boatOnDestination.Add(name, false);
+    }
+
+    public void OnDestination(string name)
+    {
+        boatOnDestination[name] = true;
+    }*/
+
+
+	public Color PlayerInterestedGoodColor
     {
         get
         {
@@ -123,7 +125,6 @@ public class InvestmentManager : SingletonBase<InvestmentManager>
         banker = null;
         RemovePirate(0);
 		RemovePirate(1);
-		iRobbery = 0;
         confirmedInvestments.Clear();
         mapInvestmentResetFunc();
         mapInvestmentResetFunc = null;

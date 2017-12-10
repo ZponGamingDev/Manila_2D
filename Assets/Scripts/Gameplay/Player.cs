@@ -79,6 +79,7 @@ public class Player
     public void GameSetReset()
     {
         feedback = null;
+        moneyLog = money.ToString();
     }
 
     public void GameOverClear()
@@ -166,6 +167,7 @@ public class Player
     public void Earn(int _val)
     {
         money += _val;
+        UpdateMoneyLog(_val);
     }
 
     /// <summary>
@@ -176,6 +178,23 @@ public class Player
     public void Pay(int _val)
     {
         money -= _val;
+        UpdateMoneyLog(_val * -1);
+    }
+
+    public string MoneyLog
+    {
+        get
+        {
+            return moneyLog;
+        }
+    }
+    private string moneyLog = string.Empty;
+    private void UpdateMoneyLog(int val)
+    {
+        if (val < 0)
+            moneyLog = moneyLog + val.ToString();
+        else
+            moneyLog = moneyLog + "+" + val.ToString();
     }
 
     public void BuyStock(GoodType good)

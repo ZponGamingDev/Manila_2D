@@ -11,8 +11,22 @@ public class PlayerInventory : UIBase
     public ScrollRect table;
     public Text title;
 
+    public EventTriggerListener passBtn;
+
     private List<GameObject> elementGOs = new List<GameObject>();
 	private string elmPath = PathConfig.UIElementFolder + "InventoryElement";
+
+    void Start()
+    {
+        passBtn.onClick += PassRound;
+    }
+
+    private void PassRound()
+    {
+        CloseUI();
+        GameManager.Singleton.PlayerFinishRoundPlay();
+    }
+
 
     public override void RoundReset()
     {
