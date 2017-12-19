@@ -55,8 +55,6 @@ public class StageFSM : FSMBase<StageEventHandler, StageCommand>
         }
     }
 
-    private float progress = 0.0f;
-
     public StageFSM()
     {
         transitions.Add(new StateTransition(_None, StageCommand.START), _Loading);
@@ -142,16 +140,6 @@ public class StageManager : SingletonBase<StageManager>
 
     void Awake()
     {
-		/*if (Singleton)
-		{
-			Destroy(this);
-		}
-		else
-		{
-			Singleton = this;
-		}
-
-		DontDestroyOnLoad(Singleton);*/
 		fsm = new StageFSM();
     }
 

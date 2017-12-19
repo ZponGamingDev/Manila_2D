@@ -37,7 +37,7 @@ public class GameManager : SingletonBase<GameManager>
         }
     }
     private Player currentPlayer = null;
-    private List<Player> players;
+    private List<Player> players = new List<Player>();
     private List<Player> ranking = new List<Player>();
     private GameObject map = null;
 
@@ -51,6 +51,7 @@ public class GameManager : SingletonBase<GameManager>
     private GameState currentState = GameState.NONE;
 
     public int numOfPlayer = 4;
+    public int startMoney = 20;
     public int minBiddingAmount = 5;
 
     #region HUDUI Update
@@ -177,26 +178,17 @@ public class GameManager : SingletonBase<GameManager>
     }
     private PirateTracker pirateTracker;
 
-
-    void Awake()
-    {
-        players = new List<Player>();
-        gameLines = new List<Vector2>();
-        DontDestroyOnLoad(gameObject);
-    }
-
     void Start()
     {
         //StartCoroutine(KeyInPlayersName());
         //UIManager.Singleton.ShowUI(UIType.RANK_TABLE);
-        StartCoroutine(StartGame());
+        //StartCoroutine(StartGame());
     }
 
     private void RoundReset()
     {
         leftMovementVal = midMovementVal = rightMovementVal = 0;
         iRoundPlayer = 0;
-        UIManager.Singleton.CloseUI(UIType.HUD_UI);
         UIManager.Singleton.RoundReset();
         InvestmentManager.Singleton.RoundReset();
     }
@@ -246,13 +238,18 @@ public class GameManager : SingletonBase<GameManager>
 		System.GC.Collect();
 	}
 
-    private IEnumerator StartGame()
+    public void LoadGameSetting(int numOfPlayer, int money)
+    {
+        this.numOfPlayer = numOfPlayer;
+        startMoney = money;
+    }
+
+    public IEnumerator StartGame()
 	{
 		yield return StartCoroutine(KeyInPlayersName());
 		InstantiateGameplayObj();
 		LoadGameData();
 		CreatePlayer();
-        //UIManager.Singleton.ShowUI(UIType.RANK_TABLE);
         yield return StartCoroutine(GameLoop());
 	}
 
@@ -294,7 +291,7 @@ public class GameManager : SingletonBase<GameManager>
         {
             Color c = ColorTable.GetPlayerSignColor(playerIdx);
             Player player = new Player(c);
-            player.Earn(20);
+            player.Earn(startMoney);
             player.GenerateRandomStock();
             players.Add(player);
             ranking.Add(player);

@@ -5,27 +5,24 @@ using UnityEngine.UI;
 
 public enum UIType
 {
-    INITIAL_INFO_PAGE = 1,
-    GAME_MENU_PAGE = 1 << 2,
-    NEW_GAME_PAGE = 1 << 3,
-    CONTINUE_PAGE = 1 << 4,
-    SETTING_PAGE = 1 << 5,
-    WARNING_PAGE = 1 << 6,
-    BIDDING_PAGE = 1 << 7,
-    MAP_INVESTMENT_PAGE = 1 << 8,
-    DICING_BOX = 1 << 9,
-    INFO_BAR = 1 << 10,
-    GOOD_INVESTMENT_PAGE = 1 << 11,
-    DIALOG_BOX = 1 << 12,
-    SHIFT_BOX = 1 << 13,
-    GAME_INFO_TABLE = 1 << 14,
-    BOSS_BUY_STOCK_PAGE = 1 << 15,
-    BOAT_TABLE = 1 << 16,
-    PLAYER_INVENTORY = 1 << 17,
-    INPUT_PLAYER_NAME_BOX = 1 << 18,
-    MONEY_TABLE = 1 << 19,
-	RANK_TABLE = 1 << 20,
-    HUD_UI = 1 << 21,
+    INITIAL_INFO_PAGE,
+    GAME_MENU_PAGE,
+    GAME_SETTING_PAGE,
+    BIDDING_PAGE,
+    MAP_INVESTMENT_PAGE,
+    DICING_BOX,
+    INFO_BAR,
+    GOOD_INVESTMENT_PAGE,
+    DIALOG_BOX,
+    SHIFT_BOX,
+    GAME_INFO_TABLE,
+    BOSS_BUY_STOCK_PAGE,
+    BOAT_TABLE,
+    PLAYER_INVENTORY,
+    INPUT_PLAYER_NAME_BOX,
+    MONEY_TABLE,
+	RANK_TABLE,
+    HUD_UI,
 }
 
 public delegate IEnumerator UIBaseCallback();
@@ -40,6 +37,9 @@ public class UIManager : SingletonBase<UIManager>
     {
         get
         {
+            if(uiCanvas == null)
+				uiCanvas = FindObjectOfType<Canvas>();
+            
             return uiCanvas;
         }
     }
@@ -79,27 +79,58 @@ public class UIManager : SingletonBase<UIManager>
 
     void Awake()
     {
-        if(uiCanvas == null)
-        {
-            uiCanvas = FindObjectOfType<Canvas>();
-        }
-
+		DontDestroyOnLoad(gameObject);
+        uiCanvas = FindObjectOfType<Canvas>();
+            //DontDestroyOnLoad(uiCanvas.gameObject);
+        /*
         if(uiMask == null)
-        {   
             uiMask = GameObject.FindWithTag("UIMask").GetComponent<Image>();
-        }
 
         if(timerText == null)
         {
             GameObject go = ResourceManager.Singleton.LoadResource<GameObject>(PathConfig.ObjPath("Timer"));
             GameObject timer = Instantiate(go, uiCanvas.transform);
             timerText = GameObject.FindWithTag("Timer").GetComponent<Text>();
-		}
+		}*/
+    }
+
+    void Start()
+    {
+        //ShowUI(UIType.GAME_MENU_PAGE);
     }
 
     void OnEnable()
     {
-        ResetTimer();
+        //ResetTimer();
+    }
+
+    public void OnLoadScene()
+    {
+        uiScriptDict.Clear();
+
+        if (uiCanvas == null)
+        {
+            Canvas script = FindObjectOfType<Canvas>();
+            if(script != null)
+                uiCanvas = script;
+        }
+
+        if (uiMask == null)
+        {
+            GameObject maskGO = GameObject.FindWithTag("UIMask");
+            if (maskGO != null)
+                uiMask = maskGO.GetComponent<Image>();
+        }
+
+		if (timerText == null)
+		{
+			//GameObject go = ResourceManager.Singleton.LoadResource<GameObject>(PathConfig.ObjPath("Timer"));
+			//GameObject timer = Instantiate(go, uiCanvas.transform);
+			GameObject timerGO = GameObject.FindWithTag("Timer");
+			//Text script = GameObject.FindWithTag("Timer").GetComponent<Text>();
+            if (timerGO != null)
+                timerText = timerGO.GetComponent<Text>();
+		}
     }
 
     public void UpdateTimer(float time)
@@ -288,9 +319,7 @@ public class UIManager : SingletonBase<UIManager>
             ShowUI(script);
         }
         else
-        {
             GetUIScript(type, ShowUI);
-        }
     }
 
     public void CloseUI(UIType type)
@@ -301,9 +330,7 @@ public class UIManager : SingletonBase<UIManager>
             CloseUI(script);
         }
         else
-        {
             GetUIScript(type, CloseUI);
-        }
     }
 
     private void InitialUI(UIBase script)

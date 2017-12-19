@@ -8,7 +8,6 @@ using ManilaFSM;
 public class GameMenuStateMachine : FSMBase<MenuOption, GameMenuStateMachine.Command>
 {
     public MenuOption newGameOpt;
-    public MenuOption continueOpt;
     public MenuOption settingOpt;
     public MenuOption exitOpt;
 
@@ -47,24 +46,26 @@ public class GameMenuStateMachine : FSMBase<MenuOption, GameMenuStateMachine.Com
 
 public class GameMenu : UIBase
 {
-    public MenuOption[] options;
+    public MenuOption startGame;
+    public MenuOption gameSetting;
+    public MenuOption quitGame;
+
     public float interval = 0.1f;
 
     private GameMenuStateMachine stateMachine;
     private float timer = 0.0f;
 
-    void OnEnable()
-    {
-        RemoveAllCallback();
-        RegisterCallback();
-    }
-
     void Start()
     {
-        if (stateMachine == null)
-        {
-            stateMachine = new GameMenuStateMachine(options);
-        }
+		MenuOption[] options = { startGame, gameSetting, quitGame };
+		stateMachine = new GameMenuStateMachine(options);
+		RegisterCallback();
+    }
+
+    void OnEnable()
+    {
+        if(stateMachine != null)
+            stateMachine.Current.Active();
     }
 
     void Update()
@@ -73,24 +74,17 @@ public class GameMenu : UIBase
 
         if (Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.Return) || Input.GetKey(KeyCode.KeypadEnter))
         {
-            // New Game
-            // Continue
-            // Setting
-            // Exit
-            GoToOptionPage();
-            //timer = 0.0f;
+            ExecuteCallbackFunction();
         }
 
         if (Input.GetKey(KeyCode.DownArrow) && timer > interval)
         {
-            //stateMachine.Current.Inactive();
             stateMachine.MoveNext(GameMenuStateMachine.Command.Down).Active();
             timer = 0.0f;
         }
 
         if (Input.GetKey(KeyCode.UpArrow) && timer > interval)
         {
-			//stateMachine.Current.Inactive();
 			stateMachine.MoveNext(GameMenuStateMachine.Command.Up).Active();
             timer = 0.0f;
         }
@@ -98,52 +92,45 @@ public class GameMenu : UIBase
 
     private void RemoveAllCallback()
     {
-		options[0].callbackFunc += null;
-		options[1].callbackFunc += null;
-		options[2].callbackFunc += null;
-        options[3].callbackFunc += null;
+        
     }
 
     private void RegisterCallback()
     {
-        options[0].callbackFunc += ShowNewGamePage;
-        options[1].callbackFunc += ShowContinuePage;
-        options[2].callbackFunc += ShowSettingPage;
-        options[3].callbackFunc += ShowExitWarningPage;
+        startGame.callbackFunc += StartGame;
+        gameSetting.callbackFunc += ShowSettingPage;
+        quitGame.callbackFunc += QuitGame;
     }
 
-    private void GoToOptionPage()
+    private void ExecuteCallbackFunction()
     {
         MenuOption current = stateMachine.Current;
         if (current.callbackFunc != null)
-        {
             current.callbackFunc();
-        }
     }
 
-    private void ShowNewGamePage()
+    private void StartGame()
     {
-        UIManager.Singleton.ShowUI(UIType.NEW_GAME_PAGE);
-    }
-           
-    private void ShowContinuePage()
+        SceneManager.Singleton.GoToNextSceneAsync(SceneCommand.START);
+        CloseUI();
+	}
+
+    private void QuitGame()
     {
-        UIManager.Singleton.ShowUI(UIType.CONTINUE_PAGE);
+        Application.Quit();
+        Debug.Log("Quit Game");
     }
 
     private void ShowSettingPage()
     {
-        UIManager.Singleton.ShowUI(UIType.SETTING_PAGE);
-    }
-
-    private void ShowExitWarningPage()
-    {
-        UIManager.Singleton.ShowUI(UIType.WARNING_PAGE);
+        CloseUI();
+        UIManager.Singleton.ShowUI(UIType.GAME_SETTING_PAGE);
+        Debug.Log("Setting");
     }
 
     public override void ShowUI()
     {
-        base.ShowUI();
+		base.ShowUI();
     }
 
     public override void CloseUI()

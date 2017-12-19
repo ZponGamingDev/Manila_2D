@@ -4,24 +4,18 @@ using UnityEngine;
 using System.Linq;
 using UnityEngine.UI;
 
-public class InitialInfoPageDataSystem
+public class InitialInfoPageDataSystem : DataSystemBase<InitialInfoPageDataSystem>
 {
-    //static public InitialInfoPageDataSystem singleton = new InitialInfoPageDataSystem();
-
-    private string path = PathConfig.CSVFolder + "InitialInfoPageDataSystem";
-    private Dictionary<string, List<string>> csvData = new Dictionary<string, List<string>>();
-
-    private List<Sprite> sprites;
-
-    private TextAsset csvFile;
-
-    private CSVReader reader;
+    private List<Sprite> sprites = new List<Sprite>();
 
     public InitialInfoPageDataSystem()
     {
-        Parse();
+
+		path = PathConfig.CSVFolder + "InitialInfoPageDataSystem";
+		Parse();
     }
 
+    /*
     public void Parse()
     {
 		csvFile = ResourceManager.Singleton.LoadResource<TextAsset>(path);
@@ -37,7 +31,7 @@ public class InitialInfoPageDataSystem
             }
             csvData.Add(_key, _val);
         }
-    }
+    }*/
 
     public void LoadData()
     {

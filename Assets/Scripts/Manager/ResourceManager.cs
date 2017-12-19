@@ -10,6 +10,7 @@ public class ResourceManager : SingletonBase<ResourceManager>
     void Awake()
     {
         //uiBaseDataSystem = new UIBaseDataSystem();
+        DontDestroyOnLoad(gameObject);
     }
 
     public T LoadResource<T>(string path) where T : class

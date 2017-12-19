@@ -8,10 +8,10 @@ namespace ManilaSceneBase
         public string name;
         public int index;
 
-        public abstract void Loading();
-        public abstract void Initializing();
-        public abstract void Active();
-        public abstract void Inactive();
-        public abstract void ChangeScene();
+
+        public abstract void LoadSceneInitialObj();
+        public abstract IEnumerator LoadScene();
+        public abstract IEnumerator Active();
+        public abstract IEnumerator UnloadScene();
     }
 }

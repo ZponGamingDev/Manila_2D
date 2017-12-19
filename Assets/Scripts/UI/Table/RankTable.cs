@@ -113,8 +113,8 @@ public class RankTable : UIBase
                     RankStat? sTemp = s2;
                     s2 = s1;
                     s1 = sTemp;
-                    elmsTable[s2.Value.color].UpdateRank(s2.Value.pts);
                 }
+				elmsTable[s2.Value.color].UpdateRank(s2.Value.pts);
 			}
             elmsTable[s1.Value.color].UpdateRank(s1.Value.pts);
         }

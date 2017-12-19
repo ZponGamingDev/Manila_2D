@@ -14,15 +14,15 @@ public enum SceneCommand
 
 public class SceneFSM : FSMBase<SceneBase, SceneCommand>
 {
-    private InitialScene _InitialScene = new InitialScene();
-    private SceneBase _GameMenuScene = null;
-    private SceneBase _GameplayScene = null;
+	private SceneBase _InitialScene = new InitialScene("InitialScene", 0); 
+    private SceneBase _GameMenuScene = new GameMenuScene("GameMenuScene", 1);
+    private SceneBase _GameplayScene = new GameplayScene("GameplayScene", 2);
 
 	public SceneFSM()
 	{
         transitions.Add(new StateTransition(_InitialScene, SceneCommand.OPEN), _GameMenuScene);
         transitions.Add(new StateTransition(_GameMenuScene, SceneCommand.START), _GameplayScene);
-        transitions.Add(new StateTransition(_GameplayScene, SceneCommand.END), _GameMenuScene);
+        transitions.Add(new StateTransition(_GameplayScene, SceneCommand.END), _InitialScene);
 
         Current = _InitialScene;
 	}
@@ -49,32 +49,29 @@ public class SceneFSM : FSMBase<SceneBase, SceneCommand>
 
 public class SceneManager : SingletonBase<SceneManager> 
 {
-    static public SceneManager Singleton;
-
     [HideInInspector]
     public SceneFSM fsm;
 
+    void Awake()
+    {
+        DontDestroyOnLoad(gameObject);
+	}
+
     void Start()
     {
-		/*
-        if(Singleton)
-        {
-            Destroy(this);
-        }
-        else
-        {
-            Singleton = this;   
-        }
-
-        DontDestroyOnLoad(Singleton);
-
-       */
 		fsm = new SceneFSM();
+        StartCoroutine(fsm.Current.Active());
+	}
+
+    public void GoToNextSceneAsync(SceneCommand command)
+    {
+        StartCoroutine(NextSceneAsync(command));
     }
 
-    public void GoToNextScene(SceneCommand command)
+    public IEnumerator NextSceneAsync(SceneCommand command)
     {
-        fsm.Current.Inactive();
         fsm.MoveNext(command);
-    }
+		yield return StartCoroutine(fsm.Current.LoadScene());
+        yield return StartCoroutine(fsm.Current.Active());
+	}
 }

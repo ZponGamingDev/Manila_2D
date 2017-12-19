@@ -22,6 +22,11 @@ public class HUDUI : UIBase
         }
     }
 
+    public void Reset()
+    {
+        leftLineNumber.text = midLineNumber.text = rightLineNumber.text = "0";
+    }
+
     public void UpdateUIInfos()
     {
         int left = GameManager.Singleton.GetBoat(0).OnLineNumber;

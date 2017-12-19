@@ -4,38 +4,48 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using ManilaSceneBase;
-using InitialSceneUI;
 
 public class InitialScene : SceneBase
 {
-    public override void Active()
+    private InitialInfoPage script;
+
+    public InitialScene(string name, int index)
     {
-        UIManager.Singleton.ShowUI(UIType.INITIAL_INFO_PAGE);
+        this.name = name;
+        this.index = index;
     }
 
-    public override void ChangeScene()
+    public override IEnumerator Active()
     {
-        
+		SceneManager.Singleton.GoToNextSceneAsync(SceneCommand.OPEN);
+        yield return null;
+	}
+
+    public override IEnumerator LoadScene()
+    {
+		AsyncOperation asyncLoad = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(name);
+		UIManager.Singleton.ShowUI(UIType.INITIAL_INFO_PAGE);
+		while (!asyncLoad.isDone)
+        {
+            yield return null;
+        }
     }
 
-    public override void Inactive()
+    public override IEnumerator UnloadScene()
     {
-        UIManager.Singleton.CloseUI(UIType.INITIAL_INFO_PAGE);
-        SceneManager.Singleton.GoToNextScene(SceneCommand.OPEN);
+        AsyncOperation asyncUnload = UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(name);
+        while(!asyncUnload.isDone)
+        {
+            yield return null;
+        }
     }
 
-    public override void Initializing()
+    public override void LoadSceneInitialObj()
     {
-        UIManager.Singleton.InitialUI(UIType.INITIAL_INFO_PAGE);
-    }
+		//UIManager.Singleton.ShowUI(UIType.INITIAL_INFO_PAGE);
 
-    public override void Loading()
-    {
-        //AsyncOperation asyn = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("");
-        GameObject ui = ResourceManager.Singleton.LoadResource<GameObject>(PathConfig.UIPath(UIType.INITIAL_INFO_PAGE));
-        ResourceManager.Instantiate(ui, UIManager.Singleton.UICanvas.transform);
-        InitialInfoPage script = ui.GetComponent<InitialInfoPage>();
-        script.LoadData();
-        //InitialInfoPageDataSystem.Singleton.LoadData();
-    }
+		//GameObject ui = ResourceManager.Singleton.LoadResource<GameObject>(PathConfig.UIPath(UIType.INITIAL_INFO_PAGE));
+		//GameObject.Instantiate(ui, UIManager.Singleton.UICanvas.transform);
+		//script = ui.GetComponent<InitialInfoPage>();
+	}
 }

@@ -5,34 +5,38 @@ using UnityEngine.UI;
 
 public class MenuOption : MonoBehaviour
 {
-    public Image mark;
-	public Animation anim;
+    public GameObject arrow;
 	public Text label;
     [HideInInspector]
     public System.Action callbackFunc;
 
-    void Start()
+    private Image arrowImg;
+    private Animation arrowAnim;
+
+    void Awake()
     {
-        //anim = GetComponent<Animation>();    
+        arrowImg = arrow.GetComponent<Image>();
+        arrowAnim = arrow.GetComponent<Animation>();
     }
 
     public void Active()
     {
+        arrowImg.enabled = true;
+        arrowAnim.Play();
+        label.color = Color.red;
+        /*
         if (mark && anim && label)
         {
             mark.enabled = true;
             anim.Play();
             label.color = Color.red;
-        }
+        }*/
     }
 
     public void Inactive()
     {
-        if (mark && anim && label) 
-        {
-            mark.enabled = false;
-            anim.Stop();
-            label.color = Color.black;
-        }
+        arrowImg.enabled = false;
+        arrowAnim.Stop();
+        label.color = Color.black;
 	}
 }
