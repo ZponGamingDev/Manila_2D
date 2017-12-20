@@ -76,7 +76,7 @@ public class DicingBox : UIBase
     {
         int rollingIdx = 0;
 
-        while (rollingTimer < 1.5f)
+        while (rollingTimer < 1.0f)
         {
             throwingTrigger = true;
             Sprite sprite = rollings[rollingIdx++];

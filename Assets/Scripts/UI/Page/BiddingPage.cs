@@ -57,7 +57,7 @@ public class BiddingPage : UIBase
 
     public override void GameSetReset()
     {
-        biddingAmount = GameManager.Singleton.minBiddingAmount;
+        biddingAmount = GameManager.Singleton.startBiddingAmount;
         base.GameSetReset();
     }
 
@@ -123,7 +123,7 @@ public class BiddingPage : UIBase
                 int amount = player.GetBiddingAmount();
                 if (amount == -1)
                 {
-                    player.ConfirmBiddingAmount(GameManager.Singleton.minBiddingAmount);
+                    player.ConfirmBiddingAmount(GameManager.Singleton.startBiddingAmount);
                     playerCompleteBidding = true;
                     timer = 0.0f;
                     UIManager.Singleton.ResetTimer();
@@ -148,7 +148,7 @@ public class BiddingPage : UIBase
     private float playerColorAlpha = 150.0f / 255.0f;
     private void SetupBidding()
     {
-        biddingAmount = GameManager.Singleton.minBiddingAmount;
+        biddingAmount = GameManager.Singleton.startBiddingAmount;
 		biddingAmountText.text = biddingAmount.ToString();
 
         if (GameManager.Singleton.CurrentPlayer != null)

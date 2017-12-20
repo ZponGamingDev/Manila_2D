@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -52,7 +52,7 @@ public class GameManager : SingletonBase<GameManager>
 
     public int numOfPlayer = 4;
     public int startMoney = 20;
-    public int minBiddingAmount = 5;
+    public int startBiddingAmount = 5;
 
     #region HUDUI Update
     public delegate void UpdateHUDUICallback();
@@ -60,11 +60,11 @@ public class GameManager : SingletonBase<GameManager>
     {
         set
         {
-            if(updateHUDUI == null)
-                updateHUDUI += value;
+            if(updateHUDUICallback == null)
+                updateHUDUICallback += value;
         }
     }
-    private UpdateHUDUICallback updateHUDUI;
+    private UpdateHUDUICallback updateHUDUICallback;
     #endregion
 
     private int leftMovementVal = 0;
@@ -182,7 +182,8 @@ public class GameManager : SingletonBase<GameManager>
     {
         //StartCoroutine(KeyInPlayersName());
         //UIManager.Singleton.ShowUI(UIType.RANK_TABLE);
-        //StartCoroutine(StartGame());
+        UIManager.Singleton.OnLoadScene();
+        StartCoroutine(StartGame());
     }
 
     private void RoundReset()
@@ -381,8 +382,10 @@ public class GameManager : SingletonBase<GameManager>
 
         if (gameWinner != null)
         {
-            GameOverClear();
+            //GameOverClear();
+            GameOver();
             yield return StartCoroutine(ShowGameStateInfo(GameState.GAME_OVER, 1.5f));
+            SceneManager.Singleton.GoToNextSceneAsync(SceneCommand.END);
 		}
         else
         {
@@ -596,7 +599,7 @@ public class GameManager : SingletonBase<GameManager>
 
 		yield return StartCoroutine(UIManager.Singleton.OnUIBaseEnd());
 
-        updateHUDUI();
+        updateHUDUICallback();
 		UIManager.Singleton.ShowUI(UIType.GAME_INFO_TABLE);
 		UIManager.Singleton.ChangeBossSignInfoColor();
 		UIManager.Singleton.CloseMask();
@@ -812,18 +815,18 @@ public class GameManager : SingletonBase<GameManager>
 		yield return StartCoroutine(ThrowDices());
 
         if (!boats[0].IsLandOnHarbor)
-            yield return StartCoroutine(BoatMoving(boats[0], 1));
+            yield return StartCoroutine(BoatMoving(boats[0], 10));
             //yield return StartCoroutine(BoatMoving(boats[0], leftMovementVal));
 
         if (!boats[1].IsLandOnHarbor)
-            yield return StartCoroutine(BoatMoving(boats[1], 1));
+            yield return StartCoroutine(BoatMoving(boats[1], 4));
             //yield return StartCoroutine(BoatMoving(boats[1], midMovementVal));
 
         if(!boats[2].IsLandOnHarbor)
-			yield return StartCoroutine(BoatMoving(boats[2], 1));
-		//yield return StartCoroutine(BoatMoving(boats[2], rightMovementVal));
+			//yield return StartCoroutine(BoatMoving(boats[2], 1));
+		    yield return StartCoroutine(BoatMoving(boats[2], rightMovementVal));
 
-		updateHUDUI();
+        updateHUDUICallback();
 
         while(pirateTracker.TrackBoat)
         {

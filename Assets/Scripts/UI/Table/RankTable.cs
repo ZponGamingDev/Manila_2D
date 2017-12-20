@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -62,6 +62,7 @@ public class RankTable : UIBase
                     elm.onClick += ShowDemonstration;
 					elmsTable.Add(stat.Value.color, elm);
                     elm.winnerCrown.enabled = false;
+                    elm.CurrentRanking = iPlayer + 1;
 				}
 			}
 			else
@@ -88,7 +89,7 @@ public class RankTable : UIBase
         for (int iPlayer = 0; iPlayer < num; ++iPlayer)
         {
             RankStat? s1 = GameManager.Singleton.GetPlayerStat(iPlayer);
-            if (!s1.HasValue)
+			if (!s1.HasValue)
             {
                 Debug.LogError("PLAYER STAT IS NULL !!!");
                 return;
@@ -105,16 +106,17 @@ public class RankTable : UIBase
 
                 if (s2.Value.pts > s1.Value.pts)
                 {
-                    elmsTable[s2.Value.color].gameObject.transform.SetSiblingIndex(iPlayer);
-                    elmsTable[s1.Value.color].gameObject.transform.SetSiblingIndex(ptr);
+                    //elmsTable[s2.Value.color].gameObject.transform.SetSiblingIndex(iPlayer);
+                    //elmsTable[s1.Value.color].gameObject.transform.SetSiblingIndex(ptr);
 
                     elmsTable[s2.Value.color].CurrentRanking = iPlayer + 1;
                     elmsTable[s1.Value.color].CurrentRanking = ptr + 1;
-                    RankStat? sTemp = s2;
-                    s2 = s1;
-                    s1 = sTemp;
+                    //s1 = GameManager.Singleton.GetPlayerStat(ptr);
+                    //RankStat? sTemp = s2;
+                    //s1 = s2;
+                    //s1 = sTemp;
                 }
-				elmsTable[s2.Value.color].UpdateRank(s2.Value.pts);
+				//elmsTable[s2.Value.color].UpdateRank(s2.Value.pts);
 			}
             elmsTable[s1.Value.color].UpdateRank(s1.Value.pts);
         }

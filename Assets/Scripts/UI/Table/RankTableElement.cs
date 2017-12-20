@@ -27,7 +27,7 @@ public class RankTableElement : EventTriggerListener
 
     public void UpdateRank(int pts)
     {
-        int rankGap = currRank - prevRank;
+        int rankGap = prevRank - currRank;
 
         if(rankGap < 0)
         {
@@ -43,6 +43,8 @@ public class RankTableElement : EventTriggerListener
 		}
 
         rankPoints.text = "積分: " + pts.ToString();
+        prevRank = currRank;
+        transform.SetSiblingIndex(currRank - 1);
     }
 
     public override void OnPointerClick(PointerEventData data)

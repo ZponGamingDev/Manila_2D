@@ -39,7 +39,7 @@ public class PirateTracker : MonoBehaviour
             yield break;
         }
 
-        if (boat.isShifted || boat.IsProtected())
+        if (boat.isShifted || boat.IsProtected() || boat.OnLineNumber != 13)
 			yield break;
 
 		trackBoat = true;

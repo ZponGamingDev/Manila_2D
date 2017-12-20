@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -124,12 +124,13 @@ public class UIManager : SingletonBase<UIManager>
 
 		if (timerText == null)
 		{
-			//GameObject go = ResourceManager.Singleton.LoadResource<GameObject>(PathConfig.ObjPath("Timer"));
-			//GameObject timer = Instantiate(go, uiCanvas.transform);
+			GameObject go = ResourceManager.Singleton.LoadResource<GameObject>(PathConfig.ObjPath("Timer"));
+			GameObject timer = Instantiate(go, uiCanvas.transform);
+			timerText = GameObject.FindWithTag("Timer").GetComponent<Text>();
+            /*
 			GameObject timerGO = GameObject.FindWithTag("Timer");
-			//Text script = GameObject.FindWithTag("Timer").GetComponent<Text>();
             if (timerGO != null)
-                timerText = timerGO.GetComponent<Text>();
+                timerText = timerGO.GetComponent<Text>();*/
 		}
     }
 

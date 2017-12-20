@@ -24,8 +24,9 @@ public class InvestmentManager : SingletonBase<InvestmentManager>
 {
     private Dictionary<GoodType, Color> goodsColorTable = new Dictionary<GoodType, Color>();
     private Dictionary<GoodType, int> goodsSharePriceTable = new Dictionary<GoodType, int>();
+	private Dictionary<GoodType, int> goodRiseTimes = new Dictionary<GoodType, int>();
 
-    public int numOfStartHoldStock = 3;
+	public int numOfStartHoldStock = 3;
 
     public Player Banker
     {
@@ -119,6 +120,9 @@ public class InvestmentManager : SingletonBase<InvestmentManager>
 
     public int GetSharePrice(GoodType good)
     {
+        if (goodRiseTimes[good] <= 1)
+            return 5;
+        
         return goodsSharePriceTable[good];
     }
 
@@ -139,8 +143,11 @@ public class InvestmentManager : SingletonBase<InvestmentManager>
         RemovePirate(0);
 		RemovePirate(1);
         confirmedInvestments.Clear();
-        mapInvestmentResetFunc();
-        mapInvestmentResetFunc = null;
+        if (mapInvestmentResetCallbackFunc != null)
+        {
+            mapInvestmentResetCallbackFunc();
+            mapInvestmentResetCallbackFunc = null;
+        }
         mapInvestmentConfirmFunc = null;
         numOfBoatOnTomb = 0;
         numOfBoatOnHarbor = 0;
@@ -172,6 +179,10 @@ public class InvestmentManager : SingletonBase<InvestmentManager>
         goodsSharePriceTable.Add(GoodType.PADDY, 5);
         goodsSharePriceTable.Add(GoodType.JADE, 5);
         goodsSharePriceTable.Add(GoodType.TOMATO, 5);
+        goodRiseTimes.Add(GoodType.SILK, 0);
+		goodRiseTimes.Add(GoodType.PADDY, 0);
+		goodRiseTimes.Add(GoodType.JADE, 0);
+		goodRiseTimes.Add(GoodType.TOMATO, 0);
         GameManager.Singleton.AddSharePriceRiseEvent(SharePriceRise);
     }
 
@@ -179,11 +190,15 @@ public class InvestmentManager : SingletonBase<InvestmentManager>
     {
         int price = goodsSharePriceTable[good];
 
-        if(price > 5)
-            price += 10;
-        else
-            price += 5;
-        
+        if (goodRiseTimes[good] > 0)
+        {
+            if (price > 5)
+                price += 10;
+            else
+                price += 5;
+        }
+
+        goodRiseTimes[good]++;
         goodsSharePriceTable[good] = price;
     }
 
@@ -219,7 +234,7 @@ public class InvestmentManager : SingletonBase<InvestmentManager>
         }
     }
     private MapInvestmentCallback mapInvestmentConfirmFunc;
-    private MapInvestmentCallback mapInvestmentResetFunc;
+    private MapInvestmentCallback mapInvestmentResetCallbackFunc;
 
 	public void SetFeedbackData(MapInvestmentData? investment)
     {
@@ -244,7 +259,7 @@ public class InvestmentManager : SingletonBase<InvestmentManager>
     {
         mapInvestmentConfirmFunc = null;
         mapInvestmentConfirmFunc += confirm;
-        mapInvestmentResetFunc += reset;
+        mapInvestmentResetCallbackFunc += reset;
     }
 
     public void ShowMapInvestmentInfo(MapInvestmentData? investment)

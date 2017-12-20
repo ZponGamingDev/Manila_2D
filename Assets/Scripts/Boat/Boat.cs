@@ -307,6 +307,9 @@ public class Boat : MonoBehaviour
 
     public void InvestorFeedback()
     {
+        if (investors.Count < 1)
+            return;
+        
 		int interest = reward / investors.Count;
         for (int i = 0; i < investors.Count; ++i)
         {
@@ -335,7 +338,9 @@ public class Boat : MonoBehaviour
         Vector2 cp2 = new Vector2(harbor.x, cpY);
 
         course.SetCourseDataD3(transform.position, cp1, cp2, harbor);
-    }
+		InvestmentManager.Singleton.EnterHarbor();
+        //Protect();
+	}
 
     private void GoToTomb()
     {
@@ -345,7 +350,9 @@ public class Boat : MonoBehaviour
         Vector2 cp2 = new Vector2(tomb.x, cpY);
 
         course.SetCourseDataD3(transform.position, cp1, cp2, tomb);
-    }
+		InvestmentManager.Singleton.EnterTomb();
+		//Protect();
+	}
 
     private void GoToLine()
     {
@@ -368,7 +375,6 @@ public class Boat : MonoBehaviour
                 {
                     GoToTomb();
                     isLandOnTomb = true;
-                    InvestmentManager.Singleton.EnterTomb();
 				}
             }
             else
@@ -376,9 +382,8 @@ public class Boat : MonoBehaviour
         }
         else
         {
-            GoToHarbor();
-            isLandingOnHarbor = true;
-            InvestmentManager.Singleton.EnterHarbor();
+			isLandingOnHarbor = true;
+			GoToHarbor();
         }
     }
 

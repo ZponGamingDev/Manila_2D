@@ -12,7 +12,6 @@ public class Destination : MapInvestmentBase
 
     void Awake()
     {
-        //rect = new RectTransform();
         rect = GetComponent<RectTransform>();
         cost.fontSize = 30;
         reward.fontSize = 30;
@@ -36,7 +35,13 @@ public class Destination : MapInvestmentBase
 
     protected override void Reset()
     {
-        base.Reset();
+		//base.Reset();
+		for (int i = 0; i < playerSpots.Length; ++i)
+		{
+			playerSpots[i].color = Color.white;
+		}
+
+		iSpot = 0;
     }
 
     protected override void Feedback(Player player)
@@ -71,6 +76,16 @@ public class Destination : MapInvestmentBase
 
     public override void OnPointerClick(PointerEventData eventData)
     {
+        if(gameObject.name.Contains("Tomb"))
+        {
+            if (index < InvestmentManager.Singleton.NumOfBoatOnTomb)
+                return;
+        }
+        else
+        {
+            if (index < InvestmentManager.Singleton.NumOfBoatOnHarbor)
+				return;
+        }
         base.OnPointerClick(eventData);
     }
 }

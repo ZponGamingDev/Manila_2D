@@ -94,6 +94,7 @@ public class Pirates : MapInvestmentBase
     private void RefuseRobbery()
     {
 		UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
+        GameManager.Singleton.ShowBoat();
 		if(iPirate < 1)
         {
             iRequest = 1;
@@ -101,10 +102,9 @@ public class Pirates : MapInvestmentBase
 
             if (pirate != null)
                 pirate.Feedback();
-            else
-                Debug.LogError("NULL EXCEPTION at Pirates.cs 71 line.");
             iRequest = 0;
 		}
+        InvestmentManager.Singleton.GetPirate(iPirate).AddFeedbackListener(Feedback);
 	}
 
     private void AgreeToShare()
@@ -116,8 +116,8 @@ public class Pirates : MapInvestmentBase
 
             if(pirate != null)
 				pirate.Feedback();
-            else
-                Debug.LogError("Pirate is null at Pirates.cs 86 line.");
+            //else
+            //    Debug.LogError("Pirate is null at Pirates.cs 86 line.");
         }
 	}
 
