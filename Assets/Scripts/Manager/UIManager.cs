@@ -71,8 +71,7 @@ public class UIManager : SingletonBase<UIManager>
 		{
             pair.Value.GameOverClear();
 		}
-        uiScriptDict.Clear();
-        uiScriptDict = null;
+
         Destroy(uiMask.gameObject);
         Destroy(timerText.transform.parent.gameObject);
 	}
@@ -106,6 +105,7 @@ public class UIManager : SingletonBase<UIManager>
 
     public void OnLoadScene()
     {
+
         uiScriptDict.Clear();
 
         if (uiCanvas == null)
@@ -127,10 +127,6 @@ public class UIManager : SingletonBase<UIManager>
 			GameObject go = ResourceManager.Singleton.LoadResource<GameObject>(PathConfig.ObjPath("Timer"));
 			GameObject timer = Instantiate(go, uiCanvas.transform);
 			timerText = GameObject.FindWithTag("Timer").GetComponent<Text>();
-            /*
-			GameObject timerGO = GameObject.FindWithTag("Timer");
-            if (timerGO != null)
-                timerText = timerGO.GetComponent<Text>();*/
 		}
     }
 
@@ -144,6 +140,11 @@ public class UIManager : SingletonBase<UIManager>
 
         float t = Mathf.Round(time * 10.0f) / 10.0f;
         timerText.text = t.ToString();
+    }
+
+    public bool IsMaskOpen()
+    {
+        return uiMask.enabled;
     }
 
     public void OpenMask()
@@ -299,19 +300,6 @@ public class UIManager : SingletonBase<UIManager>
         //obj = null;
     }
 
-    public void InitialUI(UIType type)
-    {
-        if (uiScriptDict.ContainsKey(type))
-        {
-            UIBase script = uiScriptDict[type];
-            ShowUI(script);
-        }
-        else
-        {
-            GetUIScript(type, InitialUI);
-        }
-    }
-
     public void ShowUI(UIType type)
     {
         if (uiScriptDict.ContainsKey(type))
@@ -332,11 +320,6 @@ public class UIManager : SingletonBase<UIManager>
         }
         else
             GetUIScript(type, CloseUI);
-    }
-
-    private void InitialUI(UIBase script)
-    {
-        script.Initial();
     }
 
     private void ShowUI(UIBase script)

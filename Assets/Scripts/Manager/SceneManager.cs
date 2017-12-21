@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ManilaFSM;
@@ -54,12 +54,12 @@ public class SceneManager : SingletonBase<SceneManager>
 
     void Awake()
     {
-        DontDestroyOnLoad(gameObject);
+		fsm = new SceneFSM();
+		DontDestroyOnLoad(gameObject);
 	}
 
     void Start()
     {
-		fsm = new SceneFSM();
         StartCoroutine(fsm.Current.Active());
 	}
 

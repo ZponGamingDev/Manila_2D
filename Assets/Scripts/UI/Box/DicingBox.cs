@@ -20,7 +20,6 @@ public class DicingBox : UIBase
     // Animation trigger
 	private bool throwingTrigger = false;
     private bool clickTrigger = false;
-    private bool closeTrigger = false;
 
     // Animation state
     private string show = "DicingPageShowUI";
@@ -50,8 +49,6 @@ public class DicingBox : UIBase
 
     public override void GameOverClear()
     {
-        //Destroy(Dic);
-        //DicingPageDataSystem.Singleton.
         rollings.Clear();
         numbers.Clear();
         rollings = null;
@@ -65,20 +62,21 @@ public class DicingBox : UIBase
 
     void Update()
     {
-        if(throwingTrigger)
-            rollingTimer += Time.deltaTime;
+        //if(throwingTrigger)
+        //    rollingTimer += Time.deltaTime;
 
-        if(closeTrigger)
-            animationTimer += Time.deltaTime;
+        //if(closeTrigger)
+        //    animationTimer += Time.deltaTime;
     }
 
     private IEnumerator Rolling()
     {
         int rollingIdx = 0;
 
-        while (rollingTimer < 1.0f)
+		throwingTrigger = true;
+		while (rollingTimer < 1.0f)
         {
-            throwingTrigger = true;
+			rollingTimer += Time.deltaTime;
             Sprite sprite = rollings[rollingIdx++];
 
             for (int i = 0; i < dices.Length; ++i)
@@ -112,6 +110,9 @@ public class DicingBox : UIBase
 
     private void Throw()
     {
+        if (throwingTrigger)
+            return;
+        
         StartCoroutine(Rolling());
     }
 
@@ -131,7 +132,6 @@ public class DicingBox : UIBase
     protected override IEnumerator OnUIBaseEnd()
     {
 		clickTrigger = false;
-		throwingTrigger = false;
 		rollingTimer = 0.0f;
 
         yield return StartCoroutine(base.OnUIBaseEnd());
@@ -154,16 +154,15 @@ public class DicingBox : UIBase
 
     private IEnumerator PlayCloseAnimation(float s)
     {
-        closeTrigger = true;
-
         while(animationTimer < s)
         {
-            yield return null;
+			animationTimer += Time.deltaTime;
+			yield return null;
         }
 
 		anim.Play(close);
         animationTimer = 0.0f;
-        closeTrigger = false;
+        throwingTrigger = false;
         GameManager.Singleton.ShowBoat();
         base.CloseUI();
     }

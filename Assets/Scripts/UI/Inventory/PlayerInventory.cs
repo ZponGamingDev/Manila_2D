@@ -23,6 +23,9 @@ public class PlayerInventory : UIBase
 
     private void PassRound()
     {
+        if (UIManager.Singleton.IsMaskOpen())
+            return;
+        
         CloseUI();
         GameManager.Singleton.PlayerFinishRoundPlay();
     }

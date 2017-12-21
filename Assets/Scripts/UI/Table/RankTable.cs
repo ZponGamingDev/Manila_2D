@@ -106,17 +106,9 @@ public class RankTable : UIBase
 
                 if (s2.Value.pts > s1.Value.pts)
                 {
-                    //elmsTable[s2.Value.color].gameObject.transform.SetSiblingIndex(iPlayer);
-                    //elmsTable[s1.Value.color].gameObject.transform.SetSiblingIndex(ptr);
-
                     elmsTable[s2.Value.color].CurrentRanking = iPlayer + 1;
                     elmsTable[s1.Value.color].CurrentRanking = ptr + 1;
-                    //s1 = GameManager.Singleton.GetPlayerStat(ptr);
-                    //RankStat? sTemp = s2;
-                    //s1 = s2;
-                    //s1 = sTemp;
                 }
-				//elmsTable[s2.Value.color].UpdateRank(s2.Value.pts);
 			}
             elmsTable[s1.Value.color].UpdateRank(s1.Value.pts);
         }

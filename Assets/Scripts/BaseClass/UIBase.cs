@@ -24,7 +24,6 @@ public class UIBase : MonoBehaviour
     public virtual void GameOverClear()
     {
         Destroy(this.gameObject);
-        GC.Collect();
     }
 
     /// <summary>

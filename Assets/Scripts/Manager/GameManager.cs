@@ -22,23 +22,16 @@ public enum GameState
 
 public class GameManager : SingletonBase<GameManager>
 {
-    public delegate void SharePriceRiseEvent(GoodType good);
-    private SharePriceRiseEvent riseEvent;
-    public void AddSharePriceRiseEvent(SharePriceRiseEvent riseEvent)
-    {
-        this.riseEvent += riseEvent;
-    }
+	public int numOfPlayer = 4;
+	public int startMoney = 20;
+	public int startBiddingAmount = 5;
 
-    public Player CurrentPlayer
-    {
-        get
-        {
-            return currentPlayer;
-        }
-    }
-    private Player currentPlayer = null;
-    private List<Player> players = new List<Player>();
-    private List<Player> ranking = new List<Player>();
+	private bool response = false;
+	public void Response()
+	{
+		response = true;
+	}
+
     private GameObject map = null;
 
     public GameState CurrentState
@@ -49,10 +42,6 @@ public class GameManager : SingletonBase<GameManager>
         }
     }
     private GameState currentState = GameState.NONE;
-
-    public int numOfPlayer = 4;
-    public int startMoney = 20;
-    public int startBiddingAmount = 5;
 
     #region HUDUI Update
     public delegate void UpdateHUDUICallback();
@@ -67,34 +56,15 @@ public class GameManager : SingletonBase<GameManager>
     private UpdateHUDUICallback updateHUDUICallback;
     #endregion
 
-    private int leftMovementVal = 0;
-    private int midMovementVal = 0;
-    private int rightMovementVal = 0;
+    #region Positions
 
-#region Positions
-    /// <summary>
-    /// World space vector of game line position.
-    /// </summary>
     private List<Vector2> gameLines = new List<Vector2>();
-    /// <summary>
-    /// Gets the game line vec2.
-    /// </summary>
-    /// <returns>The game line vec2.</returns>
-    /// <param name="glNum">Number.</param>
     public Vector2 GetGameLineVec2(int glNum)
     {
         return gameLines[glNum - 1];
     }
 
-    /// <summary>
-    /// World space vector of course point position.
-    /// </summary>
     private List<Vector2> coursePoints = new List<Vector2>();
-    /// <summary>
-    /// Gets the course point vec2.
-    /// </summary>
-    /// <returns>The course point vec2.</returns>
-    /// <param name="num">Number.</param>
     public Vector2 GetCoursePointVec2(int num)
     {
         return coursePoints[num];
@@ -105,25 +75,17 @@ public class GameManager : SingletonBase<GameManager>
     /// Left(0), Middle(1), Right(2)
     /// </summary>
     private List<Vector2> startPositions = new List<Vector2>();
-    /// <summary>
-    /// Gets the start position vec2.
-    /// </summary>
-    /// <returns>The start position vec2.</returns>
-    /// <param name="num">Number.</param>
     public Vector2 GetStartPositionVec2(int num)
     {
         return startPositions[num];
     }
+
     /// <summary>
     /// World space vector of harbor position.
     /// Left(0), Middle(1), Right(2)
     /// </summary>
     private List<Vector2> harborPositions = new List<Vector2>();
     private int iHarbor = 0;
-    /// <summary>
-    /// Gets the harbor position vec2.
-    /// </summary>
-    /// <returns>The harbor vec2.</returns>
     public Vector2 GetHarborVec2()
     {
         return harborPositions[iHarbor++];
@@ -135,15 +97,11 @@ public class GameManager : SingletonBase<GameManager>
     /// </summary>
     private List<Vector2> tombPositions = new List<Vector2>();
     private int iTomb = 0;
-    /// <summary>
-    /// Gets the tomb vec2.
-    /// </summary>
-    /// <returns>The tomb vec2.</returns>
 	public Vector2 GetTombVec2()
     {
         return tombPositions[iTomb++];
     }
-#endregion
+    #endregion
 
     public Player GameSetBoss
     {
@@ -163,10 +121,6 @@ public class GameManager : SingletonBase<GameManager>
     }
     private Player gameWinner = null;
 
-    private bool showInfoBar = false;
-    private float infoBarTimer = 0.0f;
-
-    // Playing queue
     private Queue<Player> gameSetQueue = new Queue<Player>();
 
     public PirateTracker PirateTracker
@@ -178,14 +132,17 @@ public class GameManager : SingletonBase<GameManager>
     }
     private PirateTracker pirateTracker;
 
+    public bool _Debug = false;
     void Start()
     {
-        //StartCoroutine(KeyInPlayersName());
-        //UIManager.Singleton.ShowUI(UIType.RANK_TABLE);
-        UIManager.Singleton.OnLoadScene();
-        StartCoroutine(StartGame());
+        if (_Debug)
+        {
+            UIManager.Singleton.OnLoadScene();
+            StartCoroutine(StartGame());
+        }
     }
 
+    #region Reset Function
     private void RoundReset()
     {
         leftMovementVal = midMovementVal = rightMovementVal = 0;
@@ -231,13 +188,14 @@ public class GameManager : SingletonBase<GameManager>
 
 		Destroy(pirateTracker);
 
-        UIManager.Singleton.GameOverClear();
-        InvestmentManager.Singleton.GameOverClear();
-		UIManager.Release();
-		InvestmentManager.Release();
-		ResourceManager.Release();
-		System.GC.Collect();
+        //UIManager.Singleton.GameOverClear();
+        //InvestmentManager.Singleton.GameOverClear();
+		//UIManager.Release();
+		//InvestmentManager.Release();
+		//ResourceManager.Release();
+		//System.GC.Collect();
 	}
+    #endregion
 
     public void LoadGameSetting(int numOfPlayer, int money)
     {
@@ -247,11 +205,27 @@ public class GameManager : SingletonBase<GameManager>
 
     public IEnumerator StartGame()
 	{
+        yield return StartCoroutine(GamePreparation());
+        yield return StartCoroutine(GameLoop());
+	}
+
+    private IEnumerator GamePreparation()
+    {
 		yield return StartCoroutine(KeyInPlayersName());
 		InstantiateGameplayObj();
-		LoadGameData();
+		LoadPositionData();
 		CreatePlayer();
-        yield return StartCoroutine(GameLoop());
+	}
+
+	private IEnumerator KeyInPlayersName()
+	{
+		UIManager.Singleton.ShowUI(UIType.INPUT_PLAYER_NAME_BOX);
+		while (!response)
+		{
+			yield return null;
+		}
+		UIManager.Singleton.CloseUI(UIType.INPUT_PLAYER_NAME_BOX);
+		response = false;
 	}
 
     private void InstantiateGameplayObj()
@@ -264,28 +238,21 @@ public class GameManager : SingletonBase<GameManager>
 		pirateTracker = Instantiate(go).GetComponent<PirateTracker>();
     }
 
-    private void LoadGameData()
+    private void LoadPositionData()
     {
         PositionDataSystem.Singleton.LoadPositionData(gameLines, startPositions, harborPositions, tombPositions, coursePoints);
     }
 
-    private bool response = false;
-    public void Response()
-    {
-        response = true;
-    }
-
-    private IEnumerator KeyInPlayersName()
-    {
-		UIManager.Singleton.ShowUI(UIType.INPUT_PLAYER_NAME_BOX);
-		while (!response)
+    #region Players
+    public Player CurrentPlayer
+	{
+		get
 		{
-			yield return null;
+			return currentPlayer;
 		}
-		UIManager.Singleton.CloseUI(UIType.INPUT_PLAYER_NAME_BOX);
-		response = false;
-    }
-
+	}
+	private Player currentPlayer = null;
+	private List<Player> players = new List<Player>();
     private void CreatePlayer()
     {
         for (int playerIdx = 0; playerIdx < numOfPlayer; ++playerIdx)
@@ -295,7 +262,6 @@ public class GameManager : SingletonBase<GameManager>
             player.Earn(startMoney);
             player.GenerateRandomStock();
             players.Add(player);
-            ranking.Add(player);
         }
     }
 
@@ -321,25 +287,20 @@ public class GameManager : SingletonBase<GameManager>
 
         return stat;
     }
+    #endregion
 
     private void GameOver()
     {
-        UIManager.Singleton.GameOverClear();
-        GameManager.Singleton.GameOverClear();
-        //InvestmentManager.Singleton.GameOverClear()
+		GameManager.Singleton.GameOverClear();
+		UIManager.Singleton.GameOverClear();
+        InvestmentManager.Singleton.GameOverClear();
 
-        //Wait A 1.0f clear
-
-		GameManager.Release();
+        GameManager.Release();
         UIManager.Release();
 		InvestmentManager.Release();
 		ResourceManager.Release();
-    }
 
-    void Update()
-    {
-        if (showInfoBar)
-            infoBarTimer += Time.deltaTime;
+        System.GC.Collect();
     }
 
     #region GameLoop
@@ -375,16 +336,18 @@ public class GameManager : SingletonBase<GameManager>
         yield return StartCoroutine(ShowGameStateInfo(currentState, 1.5f));
 
 		GameSetReset();
-        GameOverCheck();
+        GameWinnerCheck();
 
 		yield return StartCoroutine(ShowMoneyTable());
 		yield return StartCoroutine(ShowRankTable());
 
+        if (_Debug)
+            gameWinner = players[0];
         if (gameWinner != null)
         {
-            //GameOverClear();
-            GameOver();
-            yield return StartCoroutine(ShowGameStateInfo(GameState.GAME_OVER, 1.5f));
+			yield return StartCoroutine(ShowGameStateInfo(GameState.GAME_OVER, 1.5f));
+			GameOver();
+
             SceneManager.Singleton.GoToNextSceneAsync(SceneCommand.END);
 		}
         else
@@ -393,31 +356,48 @@ public class GameManager : SingletonBase<GameManager>
             StartCoroutine(GameLoop());
         }
     }
-    #endregion
 
-    private IEnumerator ShowMoneyTable()
-    {
-        UIManager.Singleton.ShowUI(UIType.MONEY_TABLE);
-        while(!response)
-        {
+	private IEnumerator ShowGameStateInfo(GameState state, float limit)
+	{
+		HideBoat();
+		currentState = state;
+		UIManager.Singleton.ShowUI(UIType.INFO_BAR);
+
+		float infoBarTimer = 0.0f;
+		while (infoBarTimer < limit)
+		{
+            infoBarTimer += Time.deltaTime;
             yield return null;
-        }
-        response = false;
-        UIManager.Singleton.CloseUI(UIType.MONEY_TABLE);
+		}
+
+		UIManager.Singleton.CloseUI(UIType.INFO_BAR);
+		ShowBoat();
 	}
 
-    private IEnumerator ShowRankTable()
-    {
-        UIManager.Singleton.ShowUI(UIType.RANK_TABLE);
+	private IEnumerator ShowMoneyTable()
+	{
+		UIManager.Singleton.ShowUI(UIType.MONEY_TABLE);
 		while (!response)
 		{
 			yield return null;
 		}
 		response = false;
-        UIManager.Singleton.CloseUI(UIType.RANK_TABLE);
-    }
+		UIManager.Singleton.CloseUI(UIType.MONEY_TABLE);
+	}
 
-    #region Game Info Update Function
+	private IEnumerator ShowRankTable()
+	{
+		UIManager.Singleton.ShowUI(UIType.RANK_TABLE);
+		while (!response)
+		{
+			yield return null;
+		}
+		response = false;
+		UIManager.Singleton.CloseUI(UIType.RANK_TABLE);
+	}
+    #endregion
+
+    #region Game Update Function
     private void GetWinner()
     {
         int winnerPt = int.MinValue;
@@ -442,7 +422,7 @@ public class GameManager : SingletonBase<GameManager>
         }
     }
 
-    private void GameOverCheck()
+    private void GameWinnerCheck()
     {
         int pTomato = InvestmentManager.Singleton.GetSharePrice(GoodType.TOMATO);
         int pSilk = InvestmentManager.Singleton.GetSharePrice(GoodType.SILK);
@@ -451,6 +431,14 @@ public class GameManager : SingletonBase<GameManager>
 
         if(pTomato == 30 || pSilk == 30 || pPaddy == 30 || pJade == 30)
             GetWinner();
+	}
+
+	public delegate void SharePriceRiseEvent(GoodType good);
+	private SharePriceRiseEvent riseEvent;
+
+	public void AddSharePriceRiseEvent(SharePriceRiseEvent riseEvent)
+	{
+		this.riseEvent += riseEvent;
 	}
 
     private void UpdateSharePrice()
@@ -466,41 +454,6 @@ public class GameManager : SingletonBase<GameManager>
 		}
     }
     #endregion
-
-    private IEnumerator ShowGameStateInfo(GameState state, float limit)
-    {
-        HideBoat();
-        currentState = state;
-        UIManager.Singleton.ShowUI(UIType.INFO_BAR);
-        showInfoBar = true;
-
-        while (infoBarTimer < limit)
-        {
-            yield return null;
-        }
-
-        showInfoBar = false;
-        infoBarTimer = 0.0f;
-        UIManager.Singleton.CloseUI(UIType.INFO_BAR);
-        ShowBoat();
-    }
-
-    private IEnumerator ThrowDices()
-    {
-        UIManager.Singleton.ShowUI(UIType.DICING_BOX);
-
-        if (UIManager.Singleton.OnUIBaseStart == null || UIManager.Singleton.OnUIBaseEnd == null)
-        {
-            Debug.LogError("DicingBox's delegate(onPageStart or onPageEnd) function is null.");
-            yield break;
-        }
-
-		yield return StartCoroutine(UIManager.Singleton.OnUIBaseStart());
-
-		UIManager.Singleton.CloseUI(UIType.DICING_BOX);
-
-        yield return StartCoroutine(UIManager.Singleton.OnUIBaseEnd());
-    }
 
     #region Boss Function
     private void ArrangeGameSetQueue()
@@ -588,8 +541,8 @@ public class GameManager : SingletonBase<GameManager>
 	{
 		currentPlayer = gameSetBoss;
 
-		UIManager.Singleton.OpenMask();
 		UIManager.Singleton.ShowUI(UIType.PLAYER_INVENTORY);
+		UIManager.Singleton.OpenMask();
 		UIManager.Singleton.ShowUI(UIType.BOAT_TABLE);
 
 		yield return StartCoroutine(UIManager.Singleton.OnUIBaseStart());
@@ -624,6 +577,10 @@ public class GameManager : SingletonBase<GameManager>
     #region Boat
     //LEFT,MID,RIGHT
     public float boatSpeed = 1.0f;
+
+	private int leftMovementVal = 0;
+	private int midMovementVal = 0;
+	private int rightMovementVal = 0;
     private Boat[] boats = new Boat[3];
 
     public void SpawnBoat(GoodType good, int num, int shift)
@@ -731,59 +688,16 @@ public class GameManager : SingletonBase<GameManager>
 
         return false;
     }
-    #endregion
 
-	private int iRoundPlayer = 0;
-    private bool currentPlayerRoundOver = false;
-	public void PlayerFinishRoundPlay()
-    {
-        iRoundPlayer++;
-        currentPlayerRoundOver = true;
-    }
-
-    private IEnumerator PlayerInvestment()
-    {
-        //if(UIManager.Singleton.OnUIBaseStart != null)
-        //    yield return StartCoroutine(UIManager.Singleton.OnUIBaseStart());
-        
-        while (!currentPlayerRoundOver)
-        {
-            yield return null;
-        }
-
-        //if(UIManager.Singleton.OnUIBaseEnd != null)
-        //    yield return StartCoroutine(UIManager.Singleton.OnUIBaseEnd());
-    }
-
-    private IEnumerator PlayerRoundOver()
-    {
-		WaitForSeconds interval = new WaitForSeconds(1.0f);
-		UIManager.Singleton.ChangePlayerInfo();
-		UIManager.Singleton.CloseUI(UIType.PLAYER_INVENTORY);
-        UIManager.Singleton.OpenMask();
-
-        yield return interval;
-
-		currentPlayerRoundOver = false;
-		gameSetQueue.Enqueue(currentPlayer);
-        //UIManager.Singleton.CloseMask();
-    }
+	public void RobbedBoatLeaves()
+	{
+		pirateTracker.UnTrackBoat();
+	}
+	#endregion
 
 	#region ROUND PLAY
-    private IEnumerator MapInvestmentFeedback()
-	{
-		UIManager.Singleton.RemoveAllUIBaseCallback();
-		for (int playerIdx = 0; playerIdx < players.Count; ++playerIdx)
-		{
-			players[playerIdx].Feedback();
-			if (UIManager.Singleton.OnUIBaseStart != null && UIManager.Singleton.OnUIBaseEnd != null)
-			{
-				yield return StartCoroutine(UIManager.Singleton.OnUIBaseStart());
-				yield return StartCoroutine(UIManager.Singleton.OnUIBaseEnd());
-			}
-			UIManager.Singleton.RemoveAllUIBaseCallback();
-		}
-	}
+	private int iRoundPlayer = 0;
+	private bool currentPlayerRoundOver = false;
 
     private IEnumerator RoundPlay()
     {
@@ -801,14 +715,6 @@ public class GameManager : SingletonBase<GameManager>
             yield return StartCoroutine(PlayerInvestment());
             yield return StartCoroutine(PlayerRoundOver());
 		}
-
-        /*
-        MapInvestmentFeedback();
-		if (UIManager.Singleton.OnUIBaseStart != null && UIManager.Singleton.OnUIBaseEnd != null)
-		{
-			yield return StartCoroutine(UIManager.Singleton.OnUIBaseStart());
-			yield return StartCoroutine(UIManager.Singleton.OnUIBaseEnd());
-		}*/
 
         yield return StartCoroutine(MapInvestmentFeedback());
 
@@ -835,12 +741,66 @@ public class GameManager : SingletonBase<GameManager>
 
         RoundReset();
     }
-#endregion
 
-    public void RobbedBoatLeaves()
-    {
-        pirateTracker.UnTrackBoat();
-    }
+	public void PlayerFinishRoundPlay()
+	{
+		iRoundPlayer++;
+		currentPlayerRoundOver = true;
+	}
+
+	private IEnumerator PlayerInvestment()
+	{
+		while (!currentPlayerRoundOver)
+		{
+			yield return null;
+		}
+	}
+
+	private IEnumerator PlayerRoundOver()
+	{
+		WaitForSeconds interval = new WaitForSeconds(1.0f);
+		UIManager.Singleton.ChangePlayerInfo();
+		UIManager.Singleton.CloseUI(UIType.PLAYER_INVENTORY);
+		UIManager.Singleton.OpenMask();
+
+		yield return interval;
+
+		currentPlayerRoundOver = false;
+		gameSetQueue.Enqueue(currentPlayer);
+	}
+
+	private IEnumerator ThrowDices()
+	{
+		UIManager.Singleton.ShowUI(UIType.DICING_BOX);
+
+		if (UIManager.Singleton.OnUIBaseStart == null || UIManager.Singleton.OnUIBaseEnd == null)
+		{
+			Debug.LogError("DicingBox's delegate(onPageStart or onPageEnd) function is null.");
+			yield break;
+		}
+
+		yield return StartCoroutine(UIManager.Singleton.OnUIBaseStart());
+
+		UIManager.Singleton.CloseUI(UIType.DICING_BOX);
+
+		yield return StartCoroutine(UIManager.Singleton.OnUIBaseEnd());
+	}
+
+	private IEnumerator MapInvestmentFeedback()
+	{
+		UIManager.Singleton.RemoveAllUIBaseCallback();
+		for (int playerIdx = 0; playerIdx < players.Count; ++playerIdx)
+		{
+			players[playerIdx].Feedback();
+			if (UIManager.Singleton.OnUIBaseStart != null && UIManager.Singleton.OnUIBaseEnd != null)
+			{
+				yield return StartCoroutine(UIManager.Singleton.OnUIBaseStart());
+				yield return StartCoroutine(UIManager.Singleton.OnUIBaseEnd());
+			}
+			UIManager.Singleton.RemoveAllUIBaseCallback();
+		}
+	}
+	#endregion
 
 	private void BackToGameMenu()
     {
