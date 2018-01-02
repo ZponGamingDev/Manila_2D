@@ -40,4 +40,10 @@ public class GoodInvestmentDataSystem : DataSystemBase<GoodInvestmentDataSystem>
 
         return ParseEachInvestmentCost(csvData[key]["Costs"]);
     }
+
+    public int GetReward(string key)
+    {
+		string reward = csvData[key]["Reward"];
+        return int.Parse(reward);
+	}
 }

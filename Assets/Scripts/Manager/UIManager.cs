@@ -78,19 +78,8 @@ public class UIManager : SingletonBase<UIManager>
 
     void Awake()
     {
-		DontDestroyOnLoad(gameObject);
+        DontDestroyOnLoad(Singleton.gameObject);
         uiCanvas = FindObjectOfType<Canvas>();
-            //DontDestroyOnLoad(uiCanvas.gameObject);
-        /*
-        if(uiMask == null)
-            uiMask = GameObject.FindWithTag("UIMask").GetComponent<Image>();
-
-        if(timerText == null)
-        {
-            GameObject go = ResourceManager.Singleton.LoadResource<GameObject>(PathConfig.ObjPath("Timer"));
-            GameObject timer = Instantiate(go, uiCanvas.transform);
-            timerText = GameObject.FindWithTag("Timer").GetComponent<Text>();
-		}*/
     }
 
     void Start()
@@ -105,7 +94,6 @@ public class UIManager : SingletonBase<UIManager>
 
     public void OnLoadScene()
     {
-
         uiScriptDict.Clear();
 
         if (uiCanvas == null)
@@ -114,6 +102,11 @@ public class UIManager : SingletonBase<UIManager>
             if(script != null)
                 uiCanvas = script;
         }
+
+
+        //ManilaSceneBase.SceneBase scene = SceneManager.Singleton.CurrentScene as GameplayScene;
+        //if (scene == null)
+         //   return;
 
         if (uiMask == null)
         {
@@ -124,9 +117,12 @@ public class UIManager : SingletonBase<UIManager>
 
 		if (timerText == null)
 		{
-			GameObject go = ResourceManager.Singleton.LoadResource<GameObject>(PathConfig.ObjPath("Timer"));
-			GameObject timer = Instantiate(go, uiCanvas.transform);
-			timerText = GameObject.FindWithTag("Timer").GetComponent<Text>();
+            GameObject go = GameObject.FindWithTag("Timer");
+            if (go != null)
+            {
+                timerText = go.GetComponent<Text>();
+                CloseTimer();
+            }
 		}
     }
 

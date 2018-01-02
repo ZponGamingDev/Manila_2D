@@ -132,6 +132,11 @@ public class GameManager : SingletonBase<GameManager>
     }
     private PirateTracker pirateTracker;
 
+    void Awake()
+    {
+        DontDestroyOnLoad(Singleton.gameObject);
+    }
+
     public bool _Debug = false;
     void Start()
     {
@@ -187,20 +192,13 @@ public class GameManager : SingletonBase<GameManager>
         gameLines = startPositions = harborPositions = tombPositions = null;
 
 		Destroy(pirateTracker);
-
-        //UIManager.Singleton.GameOverClear();
-        //InvestmentManager.Singleton.GameOverClear();
-		//UIManager.Release();
-		//InvestmentManager.Release();
-		//ResourceManager.Release();
-		//System.GC.Collect();
 	}
     #endregion
 
     public void LoadGameSetting(int numOfPlayer, int money)
     {
-        this.numOfPlayer = numOfPlayer;
-        startMoney = money;
+        Singleton.numOfPlayer = numOfPlayer;
+        Singleton.startMoney = money;
     }
 
     public IEnumerator StartGame()
@@ -303,6 +301,7 @@ public class GameManager : SingletonBase<GameManager>
         System.GC.Collect();
     }
 
+    Coroutine currentCoroutine;
     #region GameLoop
     private IEnumerator GameLoop()
     {
@@ -341,8 +340,9 @@ public class GameManager : SingletonBase<GameManager>
 		yield return StartCoroutine(ShowMoneyTable());
 		yield return StartCoroutine(ShowRankTable());
 
-        if (_Debug)
-            gameWinner = players[0];
+        //if (_Debug)
+        //    gameWinner = players[0];
+        
         if (gameWinner != null)
         {
 			yield return StartCoroutine(ShowGameStateInfo(GameState.GAME_OVER, 1.5f));
@@ -478,7 +478,7 @@ public class GameManager : SingletonBase<GameManager>
     {
         int win = 0;
         int pool = int.MinValue;
-        int equal = 0;
+        List<int> equalIdxs = new List<int>();
 
         for (int i = 0; i < players.Count; ++i)
         {
@@ -490,49 +490,40 @@ public class GameManager : SingletonBase<GameManager>
                 win = i;
             }
 
-			if (amount == pool)
-				equal++;
+            if (amount == pool)
+                equalIdxs.Add(i);
         }
 
-        if (equal == players.Count)
-            win = Random.Range(0, equal);
+        win = equalIdxs[Random.Range(0, equalIdxs.Count)];
 
         return players[win];
     }
 
     private IEnumerator BossBiddingRound()
     {
-        if (players.Count < 1)
+		if (players.Count < 1)
             yield break;
 
-        int iBid = 0;
 		UIManager.Singleton.OpenMask();
 
-        currentPlayer = players[iBid];
-
-        while (gameSetBoss == null)
+        int iBid = 0; 
+        while (iBid < numOfPlayer)
         {
-            UIManager.Singleton.ShowUI(UIType.BIDDING_PAGE);
+			currentPlayer = players[iBid];
+
+			UIManager.Singleton.ShowUI(UIType.BIDDING_PAGE);
             yield return StartCoroutine(UIManager.Singleton.OnUIBaseStart());
-
-			int amount = currentPlayer.GetBiddingAmount();
-            iBid++;
-
 			UIManager.Singleton.CloseUI(UIType.BIDDING_PAGE);
 			yield return StartCoroutine(UIManager.Singleton.OnUIBaseEnd());
-			yield return StartCoroutine(ShowGameStateInfo(GameState.BIDDING_COMPLETE, 1.0f));
 
-            if(iBid < numOfPlayer)
-				currentPlayer = players[iBid];
-            else
-            {
-				currentPlayer = null;
-				gameSetBoss = BossBiddingWinner();
-                gameSetBoss.Pay(gameSetBoss.GetBiddingAmount());
-				ArrangeGameSetQueue();
-            }
+			yield return StartCoroutine(ShowGameStateInfo(GameState.BIDDING_COMPLETE, 1.0f));
+			iBid++;
 		}
-        //yield return StartCoroutine(UIManager.Singleton.OnUIBaseEnd());
+
+		currentPlayer = null;
+		gameSetBoss = BossBiddingWinner();
+		gameSetBoss.Pay(gameSetBoss.GetBiddingAmount());
+		ArrangeGameSetQueue();
 
         UIManager.Singleton.CloseMask();
 	}
@@ -632,6 +623,17 @@ public class GameManager : SingletonBase<GameManager>
 		rightMovementVal = right;
 	}
 
+    public int GetMovementValue(int index)
+    {
+        if (index == 0)
+            return leftMovementVal;
+
+        if (index == 1)
+            return midMovementVal;
+
+        return rightMovementVal;
+    }
+
 	public void ShiftBoat(BoatAnchor anchor, int shift)
 	{
         UIManager.Singleton.OpenMask();
@@ -650,13 +652,13 @@ public class GameManager : SingletonBase<GameManager>
 
 	private IEnumerator BoatMoving(Boat boat, int movement)
 	{
-        WaitForSeconds interval = new WaitForSeconds(boatSpeed * Time.fixedDeltaTime);
+        WaitForSeconds interval = new WaitForSeconds(boatSpeed * Time.fixedDeltaTime * movement);
 
-        while(IsAnyBoatMoving())
-        {
-            yield return null;
-        }
-		boat.move(movement);
+        //while(IsAnyBoatMoving())
+        //{
+        //    yield return null;
+        //}
+		boat.Move(movement);
 
 		while (boat.IsMoving)
 		{
@@ -667,10 +669,14 @@ public class GameManager : SingletonBase<GameManager>
             boat.isShifted = false;
         else
         {
-            // For The Pirate
-            while(pirateTracker.TrackBoat)
+            while (!boat.IsLandOnHarbor && !boat.IsLandOnTomb && !boat.IsProtected())
             {
                 yield return null;
+            }
+
+            while (boat.IsMoving)
+            {
+                yield return interval;
             }
         }
 	}
@@ -720,19 +726,19 @@ public class GameManager : SingletonBase<GameManager>
 
 		yield return StartCoroutine(ThrowDices());
 
-        if (!boats[0].IsLandOnHarbor)
-            yield return StartCoroutine(BoatMoving(boats[0], 10));
+		updateHUDUICallback();
+
+		if (!boats[0].IsLandOnHarbor)
+            yield return StartCoroutine(BoatMoving(boats[0], 3));
             //yield return StartCoroutine(BoatMoving(boats[0], leftMovementVal));
 
         if (!boats[1].IsLandOnHarbor)
-            yield return StartCoroutine(BoatMoving(boats[1], 4));
+            yield return StartCoroutine(BoatMoving(boats[1], 3));
             //yield return StartCoroutine(BoatMoving(boats[1], midMovementVal));
 
         if(!boats[2].IsLandOnHarbor)
-			//yield return StartCoroutine(BoatMoving(boats[2], 1));
+			//yield return StartCoroutine(BoatMoving(boats[2], 5));
 		    yield return StartCoroutine(BoatMoving(boats[2], rightMovementVal));
-
-        updateHUDUICallback();
 
         while(pirateTracker.TrackBoat)
         {

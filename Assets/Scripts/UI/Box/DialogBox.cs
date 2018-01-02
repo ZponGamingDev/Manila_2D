@@ -57,9 +57,9 @@ public class DialogBox : UIBase
         content.text = DialogBoxDataSystem.Singleton.GetBoxContent();
         yesBtnLabel.text = DialogBoxDataSystem.Singleton.GetYesBtnLabel();
         noBtnLabel.text = DialogBoxDataSystem.Singleton.GetNoBtnLabel();
+        title.color = UIManager.Singleton.DialogBoxColor;
 
         base.ShowUI();
-        //gameObject.SetActive(true);
     }
 
     public override void  CloseUI()

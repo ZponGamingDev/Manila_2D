@@ -17,7 +17,7 @@ public class GameMenuScene : SceneBase
 		Canvas canvas = UIManager.Singleton.UICanvas;
 
 		UIManager.Singleton.ShowUI(UIType.INITIAL_INFO_PAGE);
-		yield return new WaitForSeconds(2.0f);
+		yield return new WaitForSeconds(1.5f);
 
         UIManager.Singleton.CloseUI(UIType.INITIAL_INFO_PAGE);
         UIManager.Singleton.ShowUI(UIType.GAME_MENU_PAGE);
@@ -35,7 +35,8 @@ public class GameMenuScene : SceneBase
         }
 
 		UIManager.Singleton.OnLoadScene();
-		GameManager.Singleton.LoadGameSetting(4, 20);
+        //UIManager.Singleton.CloseTimer();
+		//GameManager.Singleton.LoadGameSetting(4, 20);
 	}
 
     public override IEnumerator UnloadScene()

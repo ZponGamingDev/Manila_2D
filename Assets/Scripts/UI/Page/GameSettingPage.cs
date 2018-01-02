@@ -35,7 +35,9 @@ public class GameSettingPage : UIBase
         int numOfPlayer = int.Parse(playerNumber.text);
         int money = int.Parse(moneyValue.text);
 
-        GameManager.Singleton.LoadGameSetting(numOfPlayer, money);
+		//GameManager.Singleton.LoadGameSetting(numOfPlayer, money);
+		GameManager.Singleton.numOfPlayer = numOfPlayer;
+		GameManager.Singleton.startMoney = money;
         UIManager.Singleton.ShowUI(UIType.GAME_MENU_PAGE);
     }
 

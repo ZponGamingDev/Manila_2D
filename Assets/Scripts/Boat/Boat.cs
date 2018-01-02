@@ -114,13 +114,15 @@ public class Boat : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
+            if (IsMoving || GameManager.Singleton.CurrentState == GameState.BOSS_PICK_BOAT)
+				return;
+
             Vector3 mos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Vector2 dir2D = new Vector2(transform.position.x - mos.x, transform.position.y - mos.y);
 
             dir2D.Normalize();
-
             RaycastHit2D hit = Physics2D.Raycast(mos, Vector2.right, 1.0f, mask);
-            if (hit.collider != null/* && !isLandingOnHarbor && !isLandOnTomb*/)
+            if (hit.collider != null)
             {
                 Boat clicked = hit.collider.transform.parent.GetComponent<Boat>();
                 if (clicked != this)
@@ -207,7 +209,7 @@ public class Boat : MonoBehaviour
 		GoToHarbor();
 		isLandingOnHarbor = true;
 		GameManager.Singleton.ShowBoat();
-		GameManager.Singleton.RobbedBoatLeaves();
+		//GameManager.Singleton.RobbedBoatLeaves();
 		UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
     }
 
@@ -218,7 +220,7 @@ public class Boat : MonoBehaviour
 		GoToTomb();
 		isLandOnTomb = true;
         GameManager.Singleton.ShowBoat();
-		GameManager.Singleton.RobbedBoatLeaves();
+		//GameManager.Singleton.RobbedBoatLeaves();
 		UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
 	}
 
@@ -309,6 +311,9 @@ public class Boat : MonoBehaviour
     {
         if (investors.Count < 1)
             return;
+
+        if (reward == 0)
+            reward = GoodInvestmentDataSystem.Singleton.GetReward(goodType.ToString());
         
 		int interest = reward / investors.Count;
         for (int i = 0; i < investors.Count; ++i)
@@ -369,7 +374,7 @@ public class Boat : MonoBehaviour
         {
             if (GameManager.Singleton.CurrentState == GameState.FINAL)
             {
-                if (isShifted || onLineNumber == 13)
+                if (!isShifted && !protect && onLineNumber == 13)
                     GoToLine();
                 else
                 {
@@ -387,7 +392,7 @@ public class Boat : MonoBehaviour
         }
     }
 
-    public void move(int movement)
+    public void Move(int movement)
     {
         moveTrigger = true;
         onLineNumber += movement;

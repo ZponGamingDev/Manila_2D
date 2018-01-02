@@ -21,8 +21,6 @@ public class GameplayScene : SceneBase
     public override IEnumerator LoadScene()
     {
         AsyncOperation asyncLoad = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(name);
-        UnityEngine.SceneManagement.Scene scene = UnityEngine.SceneManagement.SceneManager.GetSceneByBuildIndex(2);
-        UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(GameManager.Singleton.gameObject, scene);
 
         while(!asyncLoad.isDone)
         {

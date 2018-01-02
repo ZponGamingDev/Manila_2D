@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-#if DEBUG
+//#if DEBUG
 [CustomEditor(typeof(Course))]
 public class CourseInspector : Editor
 {
@@ -39,9 +39,7 @@ public class CourseInspector : Editor
         Handles.color = Color.red;
 
         if (course.path || course.direction)
-        {
             Draw();
-        }
     }
 
     private Vector2 GetPoint(int index)
@@ -86,4 +84,4 @@ public class CourseInspector : Editor
         }
     }
 }
-#endif
+//#endif

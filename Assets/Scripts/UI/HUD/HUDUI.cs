@@ -29,9 +29,9 @@ public class HUDUI : UIBase
 
     public void UpdateUIInfos()
     {
-        int left = GameManager.Singleton.GetBoat(0).OnLineNumber;
-        int mid = GameManager.Singleton.GetBoat(1).OnLineNumber;
-        int right = GameManager.Singleton.GetBoat(2).OnLineNumber;
+        int left = GameManager.Singleton.GetBoat(0).OnLineNumber + GameManager.Singleton.GetMovementValue(0);
+        int mid = GameManager.Singleton.GetBoat(1).OnLineNumber + GameManager.Singleton.GetMovementValue(1);
+        int right = GameManager.Singleton.GetBoat(2).OnLineNumber + GameManager.Singleton.GetMovementValue(2);
 
         leftLineNumber.text = left.ToString();
         midLineNumber.text = mid.ToString();

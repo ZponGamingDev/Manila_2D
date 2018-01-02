@@ -52,10 +52,18 @@ public class SceneManager : SingletonBase<SceneManager>
     [HideInInspector]
     public SceneFSM fsm;
 
+    public SceneBase CurrentScene
+    {
+        get
+        {
+            return fsm.Current;
+        }
+    }
+
     void Awake()
     {
 		fsm = new SceneFSM();
-		DontDestroyOnLoad(gameObject);
+        DontDestroyOnLoad(Singleton.gameObject);
 	}
 
     void Start()

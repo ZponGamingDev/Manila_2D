@@ -109,7 +109,6 @@ public class BiddingPage : UIBase
 
         SetupBidding();
         UIManager.Singleton.ShowTimer();
-		//biddingAmountText.enabled = true;
 
 		while (!playerCompleteBidding)
         {

@@ -8,10 +8,10 @@ public class PirateTracker : MonoBehaviour
     {
         get
         {
-            return boat;
+            return detectedBoat;
         }
     }
-    private Boat boat = null;
+    private Boat detectedBoat = null;
 
     public bool TrackBoat
     {
@@ -25,26 +25,34 @@ public class PirateTracker : MonoBehaviour
     public void UnTrackBoat()
     {
         trackBoat = false;
+        detectedBoat = null;
     }
 
     private IEnumerator WaitOtherBoatMoving(Collider2D collision)
     {
+        //if (trackBoat)
+        //    yield break;
+
 		Player p0 = InvestmentManager.Singleton.GetPirate(0);
 		Player p1 = InvestmentManager.Singleton.GetPirate(1);
-		boat = collision.GetComponentInParent<Boat>();
+		detectedBoat = collision.GetComponentInParent<Boat>();
+
+        if (detectedBoat == null)
+            yield break;
 
         if (p0 == null && p1 == null)
         {
-            boat.Protect();
+            detectedBoat.Protect();
             yield break;
         }
 
-        if (boat.isShifted || boat.IsProtected() || boat.OnLineNumber != 13)
-			yield break;
+        if (detectedBoat.isShifted || detectedBoat.IsProtected() || detectedBoat.OnLineNumber != 13)
+            yield break;
 
 		trackBoat = true;
 
-		while (GameManager.Singleton.IsAnyBoatMoving())
+		//while (GameManager.Singleton.IsAnyBoatMoving())
+        while(detectedBoat.IsMoving)
 		{
 			yield return null;
 		}
@@ -58,24 +66,6 @@ public class PirateTracker : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         StartCoroutine(WaitOtherBoatMoving(collision));
-
-        /*
-		Player p0 = InvestmentManager.Singleton.GetPirate(0);
-		Player p1 = InvestmentManager.Singleton.GetPirate(1);
-		if (p0 == null && p1 == null)
-			return;
-
-        boat = collision.GetComponentInParent<Boat>();
-        //boat = collision.GetComponent<Boat>();
-
-        if (boat.isShifted || boat.IsRobbed)
-            return;
-
-        trackBoat = true;
-        if (p0 != null)
-            p0.Feedback();
-        else if (p1 != null)
-            p1.Feedback();*/
     }
 
     private void OnTriggerExit2D(Collider2D collision)

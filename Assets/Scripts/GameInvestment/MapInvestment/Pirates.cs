@@ -36,6 +36,7 @@ public class Pirates : MapInvestmentBase
     {
         iRequest = 0;
         iPirate = 0;
+        isSharing = false;
         base.Reset();
     }
 
@@ -92,9 +93,11 @@ public class Pirates : MapInvestmentBase
     }
 
     private void RefuseRobbery()
-    {
+    {		
 		UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
         GameManager.Singleton.ShowBoat();
+
+		/*
 		if(iPirate < 1)
         {
             iRequest = 1;
@@ -102,14 +105,37 @@ public class Pirates : MapInvestmentBase
 
             if (pirate != null)
                 pirate.Feedback();
-            iRequest = 0;
+            else
+				GameManager.Singleton.PirateTracker.DetectedBoat.Protect();
+            
+			iRequest = 0;
 		}
-        InvestmentManager.Singleton.GetPirate(iPirate).AddFeedbackListener(Feedback);
+        else
+			GameManager.Singleton.PirateTracker.DetectedBoat.Protect();*/
+		GameManager.Singleton.PirateTracker.DetectedBoat.Protect();
+		InvestmentManager.Singleton.GetPirate(iPirate).AddFeedbackListener(Feedback);
+
+        if (GameManager.Singleton.CurrentState == GameState.FINAL)
+        {
+
+            if (!isSharing)
+                GameManager.Singleton.PirateTracker.DetectedBoat.Move(0);
+            else
+            {
+                //UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
+                CommitRobbery();
+            }
+        }
 	}
 
+    bool isSharing = false;
     private void AgreeToShare()
     {
         UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
+        GameManager.Singleton.ShowBoat();
+		iRequest = 1;
+        isSharing = true;
+		/*
 		{
             iRequest = 1;
             Player pirate = InvestmentManager.Singleton.GetPirate(iPirate);
@@ -118,27 +144,18 @@ public class Pirates : MapInvestmentBase
 				pirate.Feedback();
             //else
             //    Debug.LogError("Pirate is null at Pirates.cs 86 line.");
-        }
+        }*/
 	}
 
     private void RefuseToShare()
     {
-        RobberyDone();
+        //RobberyDone();
+        CommitRobbery();
 		iRequest = 1;
 	}
 
     private void SharingRequest(Color color)
     {
-		/*
-		Player pirate = InvestmentManager.Singleton.GetPirate(1);
-		if (pirate != null)
-		{
-			UIManager.Singleton.RegisterDialogBoxData(pirate.GetPlayerColor(), requests[2], AgreeToShare, RefuseToShare);
-			UIManager.Singleton.ShowUI(UIType.DIALOG_BOX);
-		}
-		else
-			GameManager.Singleton.BoatisRobbed();
-			*/
 		UIManager.Singleton.RegisterDialogBoxData(color, requests[2], AgreeToShare, RefuseToShare);
 		UIManager.Singleton.ShowUI(UIType.DIALOG_BOX);
     }

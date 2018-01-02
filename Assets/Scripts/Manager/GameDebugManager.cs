@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameDebugManager : SingletonBase<GameDebugManager>
+public class GameDebugManager : MonoBehaviour
 {
-    
+    public void BossPass()
+    {
+        
+    }
 }
