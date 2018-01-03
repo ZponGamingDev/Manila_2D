@@ -209,7 +209,7 @@ public class Boat : MonoBehaviour
 		GoToHarbor();
 		isLandingOnHarbor = true;
 		GameManager.Singleton.ShowBoat();
-		//GameManager.Singleton.RobbedBoatLeaves();
+		GameManager.Singleton.RobbedBoatLeaves();
 		UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
     }
 
@@ -220,7 +220,7 @@ public class Boat : MonoBehaviour
 		GoToTomb();
 		isLandOnTomb = true;
         GameManager.Singleton.ShowBoat();
-		//GameManager.Singleton.RobbedBoatLeaves();
+		GameManager.Singleton.RobbedBoatLeaves();
 		UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
 	}
 
@@ -289,21 +289,27 @@ public class Boat : MonoBehaviour
             investments.Clear();
         }
 
-        if(iPirate > 0)
-        {
-			UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
-			UIManager.Singleton.RegisterDialogBoxData(pirate.GetPlayerColor(), key, RobToHarbor, RobToTomb);
-			UIManager.Singleton.ShowUI(UIType.DIALOG_BOX);
-        }
-
-        if (pirate != null)
-        {
+		if (pirate != null)
+		{
 			investments.Add(new GoodInvestmentRecord(investors.Count, pirate.GetPlayerColor()));
 			investors.Add(pirate);
-            isRobbed = true;
-        }
-        else
-            Debug.LogError("Pirate is null at Boat.cs 184 line.");
+			isRobbed = true;
+		}
+		else
+			Debug.LogError("Pirate is null at Boat.cs 184 line.");
+
+        /*
+        if(iPirate > 0)
+        {
+            pirate = InvestmentManager.Singleton.GetPirate(0);
+			InvestmentManager.Singleton.RemovePirate(0);
+		}
+		*/
+
+		UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
+        UIManager.Singleton.RegisterDialogBoxData(pirate.GetPlayerColor(), key, RobToHarbor, RobToTomb);
+	    UIManager.Singleton.ShowUI(UIType.DIALOG_BOX);
+
     }
     #endregion
 

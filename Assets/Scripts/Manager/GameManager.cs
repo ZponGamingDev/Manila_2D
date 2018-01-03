@@ -567,7 +567,7 @@ public class GameManager : SingletonBase<GameManager>
 
     #region Boat
     //LEFT,MID,RIGHT
-    public float boatSpeed = 1.0f;
+    public float boatSpeed = 2.0f;
 
 	private int leftMovementVal = 0;
 	private int midMovementVal = 0;
@@ -652,12 +652,10 @@ public class GameManager : SingletonBase<GameManager>
 
 	private IEnumerator BoatMoving(Boat boat, int movement)
 	{
+        if (boat.IsLandOnTomb || boat.IsLandOnHarbor)
+            yield break;;
+        
         WaitForSeconds interval = new WaitForSeconds(boatSpeed * Time.fixedDeltaTime * movement);
-
-        //while(IsAnyBoatMoving())
-        //{
-        //    yield return null;
-        //}
 		boat.Move(movement);
 
 		while (boat.IsMoving)
@@ -728,17 +726,17 @@ public class GameManager : SingletonBase<GameManager>
 
 		updateHUDUICallback();
 
-		if (!boats[0].IsLandOnHarbor)
+		//if (!boats[0].IsLandOnHarbor)
             yield return StartCoroutine(BoatMoving(boats[0], 3));
             //yield return StartCoroutine(BoatMoving(boats[0], leftMovementVal));
 
-        if (!boats[1].IsLandOnHarbor)
+        //if (!boats[1].IsLandOnHarbor)
             yield return StartCoroutine(BoatMoving(boats[1], 3));
             //yield return StartCoroutine(BoatMoving(boats[1], midMovementVal));
 
-        if(!boats[2].IsLandOnHarbor)
-			//yield return StartCoroutine(BoatMoving(boats[2], 5));
-		    yield return StartCoroutine(BoatMoving(boats[2], rightMovementVal));
+        //if(!boats[2].IsLandOnHarbor)
+			yield return StartCoroutine(BoatMoving(boats[2], 1));
+		    //yield return StartCoroutine(BoatMoving(boats[2], rightMovementVal));
 
         while(pirateTracker.TrackBoat)
         {

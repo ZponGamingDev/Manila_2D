@@ -30,24 +30,31 @@ public class PirateTracker : MonoBehaviour
 
     private IEnumerator WaitOtherBoatMoving(Collider2D collision)
     {
-        //if (trackBoat)
-        //    yield break;
+		//if (trackBoat)
+		//    yield break;
+
+		detectedBoat = collision.GetComponentInParent<Boat>();
+		if (detectedBoat == null)
+			yield break;
+
+		if (detectedBoat.isShifted || detectedBoat.IsProtected() || detectedBoat.OnLineNumber != 13)
+			yield break;
 
 		Player p0 = InvestmentManager.Singleton.GetPirate(0);
 		Player p1 = InvestmentManager.Singleton.GetPirate(1);
-		detectedBoat = collision.GetComponentInParent<Boat>();
-
-        if (detectedBoat == null)
-            yield break;
-
         if (p0 == null && p1 == null)
         {
             detectedBoat.Protect();
+            if (GameManager.Singleton.CurrentState == GameState.FINAL)
+            {
+                detectedBoat.Move(0);
+                while (detectedBoat.IsMoving)
+                {
+                    yield return null;
+                }
+            }
             yield break;
         }
-
-        if (detectedBoat.isShifted || detectedBoat.IsProtected() || detectedBoat.OnLineNumber != 13)
-            yield break;
 
 		trackBoat = true;
 
@@ -70,6 +77,6 @@ public class PirateTracker : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        trackBoat = false;
+        //trackBoat = false;
     }
 }
