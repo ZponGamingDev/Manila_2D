@@ -30,9 +30,6 @@ public class PirateTracker : MonoBehaviour
 
     private IEnumerator WaitOtherBoatMoving(Collider2D collision)
     {
-		//if (trackBoat)
-		//    yield break;
-
 		detectedBoat = collision.GetComponentInParent<Boat>();
 		if (detectedBoat == null)
 			yield break;
@@ -73,10 +70,5 @@ public class PirateTracker : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         StartCoroutine(WaitOtherBoatMoving(collision));
-    }
-
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        //trackBoat = false;
     }
 }

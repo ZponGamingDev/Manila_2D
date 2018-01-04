@@ -202,114 +202,97 @@ public class Boat : MonoBehaviour
 	/// </summary>
 	public bool isShifted = false;
 
-    private void RobToHarbor()
+    private void RobbedToHarbor()
     {
 		course.Reset();
 		moveTrigger = true;
 		GoToHarbor();
+		Protect();
 		isLandingOnHarbor = true;
 		GameManager.Singleton.ShowBoat();
 		GameManager.Singleton.RobbedBoatLeaves();
 		UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
     }
 
-    private void RobToTomb()
+    private void RobbedToTomb()
     {
 		course.Reset();
 		moveTrigger = true;
 		GoToTomb();
+        Protect();
 		isLandOnTomb = true;
         GameManager.Singleton.ShowBoat();
 		GameManager.Singleton.RobbedBoatLeaves();
 		UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
 	}
 
-    public void SecondRoundRobbed(int iPirate, string key)
+    public void SecondRoundRobbed(Player pirate, ref DialogCallback goToHarbor, ref DialogCallback goToTomb)
     {
-		Player pirate = InvestmentManager.Singleton.GetPirate(iPirate);
-		if (pirate == null)
-			Debug.LogError("Pirate is null at Boat.cs 186 line.");
-
-		UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
-		UIManager.Singleton.RegisterDialogBoxData(pirate.GetPlayerColor(), key, RobToHarbor, RobToTomb);
-        UIManager.Singleton.ShowUI(UIType.DIALOG_BOX);
-		//if (GameManager.Singleton.CurrentState == GameState.SECOND)
+		int totalInvestment = (goodType == GoodType.JADE) ? 4 : 3;
+		if (!investors.Contains(pirate))
 		{
-			int totalInvestment = (goodType == GoodType.JADE) ? 4 : 3;
-			if (!investors.Contains(pirate))
+			if (investors.Count < totalInvestment)
 			{
-				if (investors.Count < totalInvestment)
-				{
-					investments.Add(new GoodInvestmentRecord(investors.Count, pirate.GetPlayerColor()));
-					investors.Add(pirate);
-				}
-				else
-				{
-					int random = Random.Range(0, totalInvestment);
-                    int index = investments[random].index;
-
-					investors[random] = pirate;
-					investments.RemoveAt(random);
-					investments.Add(new GoodInvestmentRecord(index, pirate.GetPlayerColor()));
-				}
+				investments.Add(new GoodInvestmentRecord(investors.Count, pirate.GetPlayerColor()));
+				investors.Add(pirate);
 			}
 			else
 			{
-				if (investors.Count < totalInvestment)
-				{
-					investments.Add(new GoodInvestmentRecord(investors.Count, pirate.GetPlayerColor()));
-					investors.Add(pirate);
-				}
-				else
-				{
-					int random = 0;
-                    do
-                    {
-                        random = Random.Range(0, totalInvestment);
-                    } while (investors[random] == pirate);
+				int random = Random.Range(0, totalInvestment);
+                int index = investments[random].index;
 
-					int index = investments[random].index;
-					investors[random] = pirate;
-					investments.RemoveAt(random);
-					investments.Add(new GoodInvestmentRecord(index, pirate.GetPlayerColor()));
-				}
+				investors[random] = pirate;
+				investments.RemoveAt(random);
+				investments.Add(new GoodInvestmentRecord(index, pirate.GetPlayerColor()));
 			}
 		}
+		else
+		{
+			if (investors.Count < totalInvestment)
+			{
+				investments.Add(new GoodInvestmentRecord(investors.Count, pirate.GetPlayerColor()));
+				investors.Add(pirate);
+			}
+			else
+			{
+				int random = 0;
+                do{
+                    random = Random.Range(0, totalInvestment);
+                }while (investors[random] == pirate);
+
+				int index = investments[random].index;
+				investors[random] = pirate;
+				investments.RemoveAt(random);
+				investments.Add(new GoodInvestmentRecord(index, pirate.GetPlayerColor()));
+			}
+		}
+
+        goToHarbor += RobbedToHarbor;
+        goToTomb += RobbedToTomb;
     }
 
-    public void FinalRoundRobbed(int iPirate, string key)
+    public void FinalRoundRobbed(Player pirate, ref DialogCallback goToHarbor, ref DialogCallback goToTomb)
     {
-		Player pirate = InvestmentManager.Singleton.GetPirate(iPirate);
-        if (pirate == null)
-            Debug.LogError("Pirate is null at Boat.cs 186 line.");
-
         if (!isRobbed)
         {
             investors.Clear();
             investments.Clear();
-        }
-
-		if (pirate != null)
-		{
-			investments.Add(new GoodInvestmentRecord(investors.Count, pirate.GetPlayerColor()));
-			investors.Add(pirate);
 			isRobbed = true;
 		}
-		else
-			Debug.LogError("Pirate is null at Boat.cs 184 line.");
 
+	    investments.Add(new GoodInvestmentRecord(investors.Count, pirate.GetPlayerColor()));
+		investors.Add(pirate);
+
+        goToHarbor += RobbedToHarbor;
+        goToTomb += RobbedToTomb;
         /*
-        if(iPirate > 0)
+        if(key != null)
         {
-            pirate = InvestmentManager.Singleton.GetPirate(0);
-			InvestmentManager.Singleton.RemovePirate(0);
-		}
-		*/
-
-		UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
-        UIManager.Singleton.RegisterDialogBoxData(pirate.GetPlayerColor(), key, RobToHarbor, RobToTomb);
-	    UIManager.Singleton.ShowUI(UIType.DIALOG_BOX);
-
+			UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
+			UIManager.Singleton.RegisterDialogBoxData(pirate.GetPlayerColor(), key, RobToHarbor, RobToTomb);
+			UIManager.Singleton.ShowUI(UIType.DIALOG_BOX);   
+        }
+        */
     }
     #endregion
 

@@ -9,7 +9,6 @@ public class ResourceManager : SingletonBase<ResourceManager>
 
     void Awake()
     {
-        //uiBaseDataSystem = new UIBaseDataSystem();
         DontDestroyOnLoad(Singleton.gameObject);
     }
 

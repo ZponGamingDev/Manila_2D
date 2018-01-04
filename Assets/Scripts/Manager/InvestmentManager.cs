@@ -47,6 +47,7 @@ public class InvestmentManager : SingletonBase<InvestmentManager>
     {
         return pirates[iPirate];
     }
+
     public void AddPirate(Player player)
     {
         if (pirates[0] == null)
@@ -54,11 +55,16 @@ public class InvestmentManager : SingletonBase<InvestmentManager>
         else
             pirates[1] = player;
     }
+
     public void RemovePirate(int iPirate)
     {
         pirates[iPirate] = null;
     }
-    public bool pirateRobBoat = false;
+
+    public void RemoveAllPirates()
+    {
+        pirates[0] = pirates[1] = null;
+    }
 
 	private Dictionary<string, bool> boatOnDestination = new Dictionary<string, bool>();
 
