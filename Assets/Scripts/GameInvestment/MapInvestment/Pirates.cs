@@ -56,18 +56,30 @@ public class Pirates : MapInvestmentBase
         base.OnPointerClick(eventData);
     }
 
+	DialogCallback goToHarbor = null;
+	DialogCallback goToTomb = null;
+    private void DestinationRequest(Color c, string request)
+    {
+		UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
+		UIManager.Singleton.RegisterDialogBoxData(currentPirate.GetPlayerColor(), requests[iRequest + 3], goToHarbor, goToTomb);
+		UIManager.Singleton.ShowUI(UIType.DIALOG_BOX);
+    }
+
     private void SecondRoundRobbery()
     {
         // One boat robbed by one pirate.
-        DialogCallback goToHarbor = null;
-        DialogCallback goToTomb = null;
+        //DialogCallback goToHarbor = null;
+        //DialogCallback goToTomb = null;
 
+        Color c = currentPirate.GetPlayerColor();
+        string request = requests[iRequest + 3];
 		Boat boat = GameManager.Singleton.PirateTracker.DetectedBoat;
         boat.SecondRoundRobbed(currentPirate, ref goToHarbor, ref goToTomb);
 
-        UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
-        UIManager.Singleton.RegisterDialogBoxData(currentPirate.GetPlayerColor(), requests[iRequest + 3], goToHarbor, goToTomb);
-		UIManager.Singleton.ShowUI(UIType.DIALOG_BOX);
+        DestinationRequest(c, request);
+        //UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
+        //UIManager.Singleton.RegisterDialogBoxData(currentPirate.GetPlayerColor(), requests[iRequest + 3], goToHarbor, goToTomb);
+		//UIManager.Singleton.ShowUI(UIType.DIALOG_BOX);
 
         InvestmentManager.Singleton.RemovePirate(iPirate++);
         iRequest = iPirate;
@@ -75,8 +87,6 @@ public class Pirates : MapInvestmentBase
 
     private void FinalRoundRobbery()
     {
-		DialogCallback goToHarbor = null;
-		DialogCallback goToTomb = null;
         string request = null;
         Color? c = null;
 
@@ -84,10 +94,9 @@ public class Pirates : MapInvestmentBase
 
 		if(iPirate > 0)
         {
-            request = (sharing) ? requests[3] : requests[4];
+            request = (sharing) ? requests[3] : requests[iRequest + 3];
             c = (sharing) ? InvestmentManager.Singleton.GetPirate(0).GetPlayerColor() 
                                                     : currentPirate.GetPlayerColor();
-            
             boat.FinalRoundRobbed(currentPirate, ref goToHarbor, ref goToTomb);
             InvestmentManager.Singleton.RemoveAllPirates();
         }
@@ -108,14 +117,15 @@ public class Pirates : MapInvestmentBase
                 boat.FinalRoundRobbed(currentPirate, ref goToHarbor,  ref goToTomb);
                 InvestmentManager.Singleton.RemovePirate(0);
             }
-            iPirate = iRequest = 1;
+			iPirate = iRequest = 1;
 		}
 
         if(request != null)
-        {          
-            UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
-            UIManager.Singleton.RegisterDialogBoxData(c.Value, request, goToHarbor, goToTomb);
-			UIManager.Singleton.ShowUI(UIType.DIALOG_BOX);
+        {
+            DestinationRequest(c.Value, request);
+			//UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
+			//UIManager.Singleton.RegisterDialogBoxData(c.Value, request, goToHarbor, goToTomb);
+			//UIManager.Singleton.ShowUI(UIType.DIALOG_BOX);
 		}
     }
 
@@ -154,7 +164,15 @@ public class Pirates : MapInvestmentBase
     private void RefuseToShare()
     {
         sharing = false;
-        CommitRobbery();
+        Color c = currentPirate.GetPlayerColor();
+        string request = requests[3];
+
+        DestinationRequest(c, request);
+		//UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
+		//UIManager.Singleton.RegisterDialogBoxData(c, request, goToHarbor, goToTomb);
+		//UIManager.Singleton.ShowUI(UIType.DIALOG_BOX);
+
+		InvestmentManager.Singleton.RemovePirate(0);
 	}
 
     private void SharingRequest(Color color)

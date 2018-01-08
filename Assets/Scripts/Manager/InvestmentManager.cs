@@ -56,6 +56,14 @@ public class InvestmentManager : SingletonBase<InvestmentManager>
             pirates[1] = player;
     }
 
+    public void RemovePirate(Player p)
+    {
+        if (pirates[0] == p)
+            pirates[0] = null;
+        else
+            pirates[1] = null;
+    }
+
     public void RemovePirate(int iPirate)
     {
         pirates[iPirate] = null;
@@ -146,8 +154,9 @@ public class InvestmentManager : SingletonBase<InvestmentManager>
     public void GameSetReset()
     {
         banker = null;
-        RemovePirate(0);
-		RemovePirate(1);
+        //RemovePirate(0);
+		//RemovePirate(1);
+        RemoveAllPirates();
         confirmedInvestments.Clear();
         if (mapInvestmentResetCallbackFunc != null)
         {

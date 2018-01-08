@@ -283,6 +283,8 @@ public class Boat : MonoBehaviour
 	    investments.Add(new GoodInvestmentRecord(investors.Count, pirate.GetPlayerColor()));
 		investors.Add(pirate);
 
+        goToHarbor = null;
+        goToTomb = null;
         goToHarbor += RobbedToHarbor;
         goToTomb += RobbedToTomb;
         /*

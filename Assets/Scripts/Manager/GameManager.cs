@@ -378,17 +378,19 @@ public class GameManager : SingletonBase<GameManager>
 
     private IEnumerator ShowHarborBoatInvestment()
     {
-        WaitForSeconds interval = new WaitForSeconds(2.0f);
+		ShowBoat();
+		WaitForSeconds interval = new WaitForSeconds(2.0f);
 
         for (int iBoat = 0; iBoat < boats.Length; ++iBoat)
         {
-            if(boats[iBoat].IsLandOnHarbor)
+            //if(boats[iBoat].IsLandOnHarbor)
             {
                 InvestmentManager.Singleton.SetInterestedBoatGood(boats[iBoat]);
 				UIManager.Singleton.ShowUI(UIType.GOOD_INVESTMENT_PAGE);
                 yield return interval;
             }
         }
+        HideBoat();
     }
 
 	private IEnumerator ShowMoneyTable()
@@ -716,7 +718,7 @@ public class GameManager : SingletonBase<GameManager>
 	}
 	#endregion
 
-	#region ROUND PLAY
+	#region Round Play
 	private int iRoundPlayer = 0;
 	private bool currentPlayerRoundOver = false;
 
@@ -744,11 +746,11 @@ public class GameManager : SingletonBase<GameManager>
 		updateHUDUICallback();
 
 		//if (!boats[0].IsLandOnHarbor)
-            yield return StartCoroutine(BoatMoving(boats[0], 5));
+            yield return StartCoroutine(BoatMoving(boats[0], 3));
             //yield return StartCoroutine(BoatMoving(boats[0], leftMovementVal));
 
         //if (!boats[1].IsLandOnHarbor)
-            yield return StartCoroutine(BoatMoving(boats[1], 5));
+            yield return StartCoroutine(BoatMoving(boats[1], 3));
             //yield return StartCoroutine(BoatMoving(boats[1], midMovementVal));
 
         //if(!boats[2].IsLandOnHarbor)

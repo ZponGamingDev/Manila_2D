@@ -2,9 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class BossBuyStockPage : UIBase, IPointerClickHandler
 {
+    //public EventTriggerListener title;
+    //public Text titleLabel;
+    //public Text demonstration;
+    public EventTriggerListener label;
+    public EventTriggerListener demonstration;
+    private Text labelText;
+    private Text demonstrationText;
+
     public BuyStockElm tomato;
     public BuyStockElm silk;
     public BuyStockElm paddy;
@@ -17,6 +26,13 @@ public class BossBuyStockPage : UIBase, IPointerClickHandler
     private bool buyingDone = false;
     private float alpha = 150.0f / 255.0f;
 
+    void Awake()
+    {
+        labelText = label.GetComponent<Text>();
+        demonstrationText = demonstration.GetComponent<Text>();
+        //demonstrationText.enabled = false;
+    }
+
     void Start()
     {
 		tomato.good = GoodType.TOMATO;
@@ -24,8 +40,10 @@ public class BossBuyStockPage : UIBase, IPointerClickHandler
 		paddy.good = GoodType.PADDY;
 		jade.good = GoodType.JADE;
 
+        label.onEnter += EnterTitleLabel;
+        demonstration.onExit += ExitTitleDemonstration;
+
         buy.onClick += BuyStock;
-        //sell.onClick += SellStock;
 
         cancelIcon.onClick += Pass;
 		tomato.onClick += OnClickStock;
@@ -50,6 +68,18 @@ public class BossBuyStockPage : UIBase, IPointerClickHandler
         ResetPage();
         base.GameOverClear();
     }
+
+    private void EnterTitleLabel()
+    {
+        labelText.enabled = false;
+        demonstrationText.enabled = true;
+    }
+
+    private void ExitTitleDemonstration()
+    {
+        labelText.enabled = true;
+        demonstrationText.enabled = false;
+	}
 
     private BuyStockElm GetClickedStock()
     {
@@ -153,6 +183,9 @@ public class BossBuyStockPage : UIBase, IPointerClickHandler
     public override void ShowUI()
     {
         DelegatePageCallback();
+        Player boss = GameManager.Singleton.GameSetBoss;
+        labelText.color  = demonstrationText.color = boss.GetPlayerColor();
+        demonstrationText.text = "船老大: " + boss.GetPlayerName();
         base.ShowUI();
     }
 

@@ -103,10 +103,12 @@ public class UIManager : SingletonBase<UIManager>
                 uiCanvas = script;
         }
 
-
-        //ManilaSceneBase.SceneBase scene = SceneManager.Singleton.CurrentScene as GameplayScene;
-        //if (scene == null)
-         //   return;
+        if (!GameManager.Singleton._Debug)
+        {
+            ManilaSceneBase.SceneBase scene = SceneManager.Singleton.CurrentScene as GameplayScene;
+            if (scene == null)
+                return;
+        }
 
         if (uiMask == null)
         {

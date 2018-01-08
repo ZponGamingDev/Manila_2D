@@ -34,7 +34,8 @@ public class PirateTracker : MonoBehaviour
 		if (detectedBoat == null)
 			yield break;
 
-		if (detectedBoat.isShifted || detectedBoat.IsProtected() || detectedBoat.OnLineNumber != 13)
+        if (detectedBoat.isShifted || detectedBoat.IsRobbed 
+            || detectedBoat.IsProtected() || detectedBoat.OnLineNumber != 13)
 			yield break;
 
 		Player p0 = InvestmentManager.Singleton.GetPirate(0);
