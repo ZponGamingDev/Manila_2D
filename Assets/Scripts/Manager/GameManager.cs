@@ -383,7 +383,7 @@ public class GameManager : SingletonBase<GameManager>
 
         for (int iBoat = 0; iBoat < boats.Length; ++iBoat)
         {
-            //if(boats[iBoat].IsLandOnHarbor)
+            if(boats[iBoat].IsLandOnHarbor)
             {
                 InvestmentManager.Singleton.SetInterestedBoatGood(boats[iBoat]);
 				UIManager.Singleton.ShowUI(UIType.GOOD_INVESTMENT_PAGE);

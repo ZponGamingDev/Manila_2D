@@ -46,4 +46,12 @@ public class GoodInvestmentDataSystem : DataSystemBase<GoodInvestmentDataSystem>
 		string reward = csvData[key]["Reward"];
         return int.Parse(reward);
 	}
+
+    public string GetGoodName(GoodType good)
+    {
+        string key = good.ToString();
+
+        //return csvData[key][Language];
+        return csvData[key]["Chinese"];
+    }
 }

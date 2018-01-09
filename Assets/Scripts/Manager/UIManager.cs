@@ -21,8 +21,9 @@ public enum UIType
     PLAYER_INVENTORY,
     INPUT_PLAYER_NAME_BOX,
     MONEY_TABLE,
-	RANK_TABLE,
+    RANK_TABLE,
     HUD_UI,
+    ICON_MENU,
 }
 
 public delegate IEnumerator UIBaseCallback();

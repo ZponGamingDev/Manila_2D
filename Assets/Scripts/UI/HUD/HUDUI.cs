@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class HUDUI : UIBase
 {
+    public EventTriggerListener gameIconMenuBtn;
     public Text tips;
 
     public Text leftLineNumber;
@@ -12,6 +13,11 @@ public class HUDUI : UIBase
     public Text rightLineNumber;
 
     private float tipTimer = 0.0f;
+
+    void Start()
+    {
+        gameIconMenuBtn.onClick += ShowIconMenu;
+    }
 
     void Update()
     {
@@ -36,6 +42,18 @@ public class HUDUI : UIBase
         leftLineNumber.text = left.ToString();
         midLineNumber.text = mid.ToString();
         rightLineNumber.text = right.ToString();
+    }
+
+    private void ShowIconMenu()
+    {
+        int rVal = (int)GameState.FIRST + (int)GameState.SECOND + (int)GameState.FINAL;
+        int bit = (int)GameManager.Singleton.CurrentState & rVal;
+
+        if (bit != 0)
+        {
+            CloseUI();
+            UIManager.Singleton.ShowUI(UIType.ICON_MENU);
+        }
     }
 
     public override void ShowUI()

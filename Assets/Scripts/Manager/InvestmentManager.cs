@@ -154,8 +154,6 @@ public class InvestmentManager : SingletonBase<InvestmentManager>
     public void GameSetReset()
     {
         banker = null;
-        //RemovePirate(0);
-		//RemovePirate(1);
         RemoveAllPirates();
         confirmedInvestments.Clear();
         if (mapInvestmentResetCallbackFunc != null)
@@ -318,11 +316,4 @@ public class InvestmentManager : SingletonBase<InvestmentManager>
     }
 
 	#endregion
-
-	public void Reset()
-	{
-		//CurrentMapInvestmentData = null;
-		//mapInvestmentConfirm = null;
-		confirmedInvestments.Clear();
-	}
 }

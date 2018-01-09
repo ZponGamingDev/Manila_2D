@@ -1,4 +1,4 @@
-"(Rows, Cols) = (19, 2)",,,,,,
+"(Rows, Cols) = (20, 2)",,,,,,
 ,Key,Script,,,,
 ,INITIAL_INFO_PAGE,InitialInfoPage,,,,
 ,GAME_MENU_PAGE,GameMenu,,,,
@@ -18,6 +18,6 @@
 ,MONEY_TABLE,MoneyTable,,,,
 ,RANK_TABLE,RankTable,,,,
 ,HUD_UI,HUDUI,,,,
-,,,,,,
+,ICON_MENU,IconMenu,,,,
 ,,,,,,
 ,,,,,,

@@ -16,6 +16,8 @@ public class GoodInvestmentPage : UIBase
     public GoodInvestment[] goods;
     private GoodInvestment currentPlayerSelected = null;
 
+    public Text demoText;
+
     private Animation anim;
     private string show = "GoodInvestmentPageShow";
     private string close = "GoodInvestmentPageClose";
@@ -59,8 +61,12 @@ public class GoodInvestmentPage : UIBase
     private void SetPageView()
     {
         string[] costs = GoodInvestmentDataSystem.Singleton.GetGoodInvestmentData();
-        rewardAmountBackground.color = InvestmentManager.Singleton.PlayerInterestedGoodColor;
+		demoText.color = rewardAmountBackground.color = InvestmentManager.Singleton.PlayerInterestedGoodColor;
         rewardAmount.text = InvestmentManager.Singleton.PlayerInterestedBoat.Reward.ToString();
+
+        demoText.text 
+                = GoodInvestmentDataSystem.Singleton.GetGoodName(InvestmentManager.Singleton.PlayerInterestedBoat.goodType)
+                + "商船上的投資玩家";
 
         if (costs.Length < goods.Length)
         {
