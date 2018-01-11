@@ -61,7 +61,7 @@ public class Pirates : MapInvestmentBase
     private void DestinationRequest(Color c, string request)
     {
 		UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
-		UIManager.Singleton.RegisterDialogBoxData(currentPirate.GetPlayerColor(), requests[iRequest + 3], goToHarbor, goToTomb);
+		UIManager.Singleton.RegisterDialogBoxData(currentPirate.GetPlayerColor(), request, goToHarbor, goToTomb);
 		UIManager.Singleton.ShowUI(UIType.DIALOG_BOX);
     }
 
@@ -145,6 +145,7 @@ public class Pirates : MapInvestmentBase
         GameManager.Singleton.ShowBoat();
 		GameManager.Singleton.PirateTracker.DetectedBoat.Protect();
 
+        sharing = false;
         currentPirate.AddFeedbackListener(Feedback);
 	}
 

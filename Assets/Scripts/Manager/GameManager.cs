@@ -586,7 +586,7 @@ public class GameManager : SingletonBase<GameManager>
 
     #region Boat
     //LEFT,MID,RIGHT
-    public float boatSpeed = 2.0f;
+    public float boatSpeed = 2.5f;
 
 	private int leftMovementVal = 0;
 	private int midMovementVal = 0;

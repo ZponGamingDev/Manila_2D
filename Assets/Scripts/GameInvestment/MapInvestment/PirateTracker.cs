@@ -28,48 +28,57 @@ public class PirateTracker : MonoBehaviour
         detectedBoat = null;
     }
 
-    private IEnumerator WaitOtherBoatMoving(Collider2D collision)
+    private IEnumerator RoutineDetection(Collider2D collision)
     {
 		detectedBoat = collision.GetComponentInParent<Boat>();
-		if (detectedBoat == null)
-			yield break;
+        //if (detectedBoat == null)
+        //	yield break;
 
-        if (detectedBoat.isShifted || detectedBoat.IsRobbed 
-            || detectedBoat.IsProtected() || detectedBoat.OnLineNumber != 13)
-			yield break;
-
-		Player p0 = InvestmentManager.Singleton.GetPirate(0);
-		Player p1 = InvestmentManager.Singleton.GetPirate(1);
-        if (p0 == null && p1 == null)
+        if (detectedBoat != null)
         {
-            detectedBoat.Protect();
-            if (GameManager.Singleton.CurrentState == GameState.FINAL)
+            bool boatState = detectedBoat.isShifted
+                                         || detectedBoat.IsRobbed
+                                         || detectedBoat.IsProtected()
+                                         || detectedBoat.OnLineNumber != 13;
+
+            if (!boatState)
             {
-                detectedBoat.Move(0);
-                while (detectedBoat.IsMoving)
+                //yield break;
+
+                Player p0 = InvestmentManager.Singleton.GetPirate(0);
+                Player p1 = InvestmentManager.Singleton.GetPirate(1);
+                if (p0 == null && p1 == null)
                 {
-                    yield return null;
+                    detectedBoat.Protect();
+                    if (GameManager.Singleton.CurrentState == GameState.FINAL)
+                    {
+                        detectedBoat.Move(0);
+                        while (detectedBoat.IsMoving)
+                        {
+                            yield return null;
+                        }
+                    }
+                    //yield break;
+                }
+                else
+                {
+                    trackBoat = true;
+                    while (detectedBoat.IsMoving)
+                    {
+                        yield return null;
+                    }
+
+                    if (p0 != null)
+                        p0.Feedback();
+                    else if (p1 != null)
+                        p1.Feedback();
                 }
             }
-            yield break;
         }
-
-		trackBoat = true;
-
-		//while (GameManager.Singleton.IsAnyBoatMoving())
-        while(detectedBoat.IsMoving)
-		{
-			yield return null;
-		}
-
-		if (p0 != null)
-			p0.Feedback();
-		else if (p1 != null)
-			p1.Feedback();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        StartCoroutine(WaitOtherBoatMoving(collision));
+        StartCoroutine(RoutineDetection(collision));
     }
 }

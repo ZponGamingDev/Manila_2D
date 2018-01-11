@@ -154,6 +154,7 @@ public class UIManager : SingletonBase<UIManager>
 
     public void CloseMask()
     {
+        uiMask.transform.SetAsFirstSibling();
         uiMask.enabled = false;
     }
 
