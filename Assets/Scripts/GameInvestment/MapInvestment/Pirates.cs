@@ -61,7 +61,7 @@ public class Pirates : MapInvestmentBase
     private void DestinationRequest(Color c, string request)
     {
 		UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
-		UIManager.Singleton.RegisterDialogBoxData(currentPirate.GetPlayerColor(), request, goToHarbor, goToTomb);
+		UIManager.Singleton.RegisterDialogBoxData(c, request, goToHarbor, goToTomb);
 		UIManager.Singleton.ShowUI(UIType.DIALOG_BOX);
     }
 
@@ -121,12 +121,7 @@ public class Pirates : MapInvestmentBase
 		}
 
         if(request != null)
-        {
             DestinationRequest(c.Value, request);
-			//UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
-			//UIManager.Singleton.RegisterDialogBoxData(c.Value, request, goToHarbor, goToTomb);
-			//UIManager.Singleton.ShowUI(UIType.DIALOG_BOX);
-		}
     }
 
     private void CommitRobbery()
@@ -169,9 +164,6 @@ public class Pirates : MapInvestmentBase
         string request = requests[3];
 
         DestinationRequest(c, request);
-		//UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
-		//UIManager.Singleton.RegisterDialogBoxData(c, request, goToHarbor, goToTomb);
-		//UIManager.Singleton.ShowUI(UIType.DIALOG_BOX);
 
 		InvestmentManager.Singleton.RemovePirate(0);
 	}

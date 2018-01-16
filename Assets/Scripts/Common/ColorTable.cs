@@ -11,7 +11,7 @@ static public class ColorTable
     static Color c_DARK_OLIVE_GREEN = new Color(85.0f / 255.0f, 107.0f / 255.0f, 47.0f / 255.0f, 1.0f);
     static Color c_DARK_GOLDEN_ROD = new Color(184.0f / 255.0f, 134.0f / 255.0f, 11.0f / 255.0f, 1.0f);
     static Color c_ORANGE = new Color(1.0f, 165.0f / 255.0f, 0.0f, 1.0f);
-    static Color c_DEEP_SKY_BLUE = new Color(0.0f, 199.0f / 255.0f, 1.0f, 1.0f);
+    static Color c_DEEP_SKY_BLUE = new Color(0.0f, 191.0f / 255.0f, 1.0f, 1.0f);
 
     public static Color GetPlayerSignColor(int iColor)
     {
@@ -28,9 +28,9 @@ static public class ColorTable
             //break;
             case 3:
                 return c_DARK_GOLDEN_ROD;
-            case 4 :
-                return c_ORANGE;
-            case 5:
+            //case 4 :
+            //    return c_ORANGE;
+            case 4:
                 return c_DEEP_SKY_BLUE;                
         }
 

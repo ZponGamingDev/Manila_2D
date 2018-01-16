@@ -73,10 +73,11 @@ public class SceneManager : SingletonBase<SceneManager>
 
     public void GoToNextSceneAsync(SceneCommand command)
     {
-        StartCoroutine(NextSceneAsync(command));
+		StartCoroutine(fsm.Current.UnloadScene());
+		StartCoroutine(NextSceneAsync(command));
     }
 
-    public IEnumerator NextSceneAsync(SceneCommand command)
+    private IEnumerator NextSceneAsync(SceneCommand command)
     {
         fsm.MoveNext(command);
 		yield return StartCoroutine(fsm.Current.LoadScene());

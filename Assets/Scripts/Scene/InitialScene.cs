@@ -7,8 +7,6 @@ using ManilaSceneBase;
 
 public class InitialScene : SceneBase
 {
-    private InitialInfoPage script;
-
     public InitialScene(string name, int index)
     {
         this.name = name;
@@ -33,11 +31,10 @@ public class InitialScene : SceneBase
 
     public override IEnumerator UnloadScene()
     {
-        AsyncOperation asyncUnload = UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(name);
-        while(!asyncUnload.isDone)
-        {
-            yield return null;
-        }
+        UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(name);
+        System.GC.Collect();
+
+        yield return null;
     }
 
     public override void LoadSceneInitialObj()

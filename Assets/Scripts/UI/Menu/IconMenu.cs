@@ -13,12 +13,14 @@ public class IconMenu : UIBase
     
     public override void ShowUI()
     {
+        GameManager.Singleton.HideBoat();
         base.ShowUI();
     }
 
     public override void CloseUI()
     {
         base.CloseUI();
+        GameManager.Singleton.ShowBoat();
 		UIManager.Singleton.ShowUI(UIType.HUD_UI);
 	}
 }

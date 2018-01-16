@@ -43,7 +43,7 @@ public class UIBase : MonoBehaviour
 	/// <returns>Base function is yield return null.</returns>
     protected virtual IEnumerator OnUIBaseEnd()
 	{
-        System.GC.Collect();
+        //System.GC.Collect();
         yield return null;
 	}
 

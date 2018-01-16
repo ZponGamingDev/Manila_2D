@@ -174,6 +174,8 @@ public class GameManager : SingletonBase<GameManager>
 
 		UIManager.Singleton.GameSetReset();
 		InvestmentManager.Singleton.GameSetReset();
+
+        System.GC.Collect();
     }
 
     private void GameOverClear()
@@ -388,6 +390,7 @@ public class GameManager : SingletonBase<GameManager>
                 InvestmentManager.Singleton.SetInterestedBoatGood(boats[iBoat]);
 				UIManager.Singleton.ShowUI(UIType.GOOD_INVESTMENT_PAGE);
                 yield return interval;
+                UIManager.Singleton.CloseUI(UIType.GOOD_INVESTMENT_PAGE);
             }
         }
         HideBoat();
@@ -746,16 +749,16 @@ public class GameManager : SingletonBase<GameManager>
 		updateHUDUICallback();
 
 		//if (!boats[0].IsLandOnHarbor)
-            yield return StartCoroutine(BoatMoving(boats[0], 3));
-            //yield return StartCoroutine(BoatMoving(boats[0], leftMovementVal));
+            //yield return StartCoroutine(BoatMoving(boats[0], 3));
+        yield return StartCoroutine(BoatMoving(boats[0], leftMovementVal));
 
         //if (!boats[1].IsLandOnHarbor)
-            yield return StartCoroutine(BoatMoving(boats[1], 3));
-            //yield return StartCoroutine(BoatMoving(boats[1], midMovementVal));
+            //yield return StartCoroutine(BoatMoving(boats[1], 3));
+        yield return StartCoroutine(BoatMoving(boats[1], midMovementVal));
 
         //if(!boats[2].IsLandOnHarbor)
-			yield return StartCoroutine(BoatMoving(boats[2], 1));
-		    //yield return StartCoroutine(BoatMoving(boats[2], rightMovementVal));
+			//yield return StartCoroutine(BoatMoving(boats[2], 1));
+		yield return StartCoroutine(BoatMoving(boats[2], rightMovementVal));
 
         while(pirateTracker.TrackBoat)
         {
