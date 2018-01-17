@@ -154,6 +154,8 @@ public class GameManager : SingletonBase<GameManager>
         iRoundPlayer = 0;
         UIManager.Singleton.RoundReset();
         InvestmentManager.Singleton.RoundReset();
+
+        System.GC.Collect();
     }
 
     private void GameSetReset()
@@ -345,7 +347,7 @@ public class GameManager : SingletonBase<GameManager>
 		yield return StartCoroutine(ShowRankTable());
 
         //if (_Debug)
-        //    gameWinner = players[0];
+            //gameWinner = players[0];
         
         if (gameWinner != null)
         {

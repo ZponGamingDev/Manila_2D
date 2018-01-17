@@ -68,13 +68,18 @@ public class UIManager : SingletonBase<UIManager>
 
     public void GameOverClear()
     {
+        /*
 		foreach (KeyValuePair<UIType, UIBase> pair in uiScriptDict)
 		{
             pair.Value.GameOverClear();
 		}
+        
 
         Destroy(uiMask.gameObject);
         Destroy(timerText.transform.parent.gameObject);
+        */
+
+        uiScriptDict.Clear();
 	}
 
     void Awake()
@@ -284,6 +289,7 @@ public class UIManager : SingletonBase<UIManager>
     {
         string path = PathConfig.UIPath(type);
         GameObject obj = ResourceManager.Singleton.LoadResource<GameObject>(path);
+
         if (obj)
         {
             GameObject instance = Instantiate(obj, uiCanvas.transform) as GameObject;
@@ -293,9 +299,7 @@ public class UIManager : SingletonBase<UIManager>
             func(script);
         }
         else
-        {
             Debug.LogError("Can't load the gameobject");
-        }
 
         //obj = null;
     }

@@ -31,11 +31,9 @@ public class GameplayScene : SceneBase
 
     public override IEnumerator UnloadScene()
     {
-        yield return null;
-    }
+		UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(name);
+		System.GC.Collect();
 
-    public override void LoadSceneInitialObj()
-    {
-        throw new NotImplementedException();
+        yield return null;
     }
 }

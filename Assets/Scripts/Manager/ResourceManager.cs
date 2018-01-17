@@ -1,12 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class ResourceManager : SingletonBase<ResourceManager>
 {
-    //static public ResourceManager Singleton;
-    //private UIBaseDataSystem uiBaseDataSystem = null;
-
     void Awake()
     {
         DontDestroyOnLoad(Singleton.gameObject);

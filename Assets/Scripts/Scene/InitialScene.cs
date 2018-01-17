@@ -36,13 +36,4 @@ public class InitialScene : SceneBase
 
         yield return null;
     }
-
-    public override void LoadSceneInitialObj()
-    {
-		//UIManager.Singleton.ShowUI(UIType.INITIAL_INFO_PAGE);
-
-		//GameObject ui = ResourceManager.Singleton.LoadResource<GameObject>(PathConfig.UIPath(UIType.INITIAL_INFO_PAGE));
-		//GameObject.Instantiate(ui, UIManager.Singleton.UICanvas.transform);
-		//script = ui.GetComponent<InitialInfoPage>();
-	}
 }

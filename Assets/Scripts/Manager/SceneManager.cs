@@ -22,7 +22,7 @@ public class SceneFSM : FSMBase<SceneBase, SceneCommand>
 	{
         transitions.Add(new StateTransition(_InitialScene, SceneCommand.OPEN), _GameMenuScene);
         transitions.Add(new StateTransition(_GameMenuScene, SceneCommand.START), _GameplayScene);
-        transitions.Add(new StateTransition(_GameplayScene, SceneCommand.END), _InitialScene);
+        transitions.Add(new StateTransition(_GameplayScene, SceneCommand.END), _GameMenuScene);
 
         Current = _InitialScene;
 	}

@@ -34,21 +34,14 @@ public class GameMenuScene : SceneBase
             yield return null;
         }
 
-        System.GC.Collect();
 		UIManager.Singleton.OnLoadScene();
-        //UIManager.Singleton.CloseTimer();
-		//GameManager.Singleton.LoadGameSetting(4, 20);
 	}
 
     public override IEnumerator UnloadScene()
     {
         UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(name);
         System.GC.Collect();
-        yield return null;
-    }
 
-    public override void LoadSceneInitialObj()
-    {
-        //UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(UIManager.Singleton.gameObject, scene);
+        yield return null;
     }
 }
