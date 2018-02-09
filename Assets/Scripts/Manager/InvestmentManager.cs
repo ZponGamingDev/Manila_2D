@@ -196,7 +196,7 @@ public class InvestmentManager : SingletonBase<InvestmentManager>
 		goodRiseTimes.Add(GoodType.PADDY, 0);
 		goodRiseTimes.Add(GoodType.JADE, 0);
 		goodRiseTimes.Add(GoodType.TOMATO, 0);
-        GameManager.Singleton.AddSharePriceRiseEvent(SharePriceRise);
+        GameManager.Singleton.RegisterSharePriceRiseEvent(SharePriceRise);
     }
 
     private void SharePriceRise(GoodType good)

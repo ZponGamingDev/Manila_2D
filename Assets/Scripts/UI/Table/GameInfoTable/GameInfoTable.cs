@@ -191,7 +191,7 @@ public class GameInfoTable : UIBase
     {
         UIManager.Singleton.AddBossSignListener(ChangeBossSignInfo);
         UIManager.Singleton.AddCurrentPlayerInfoListener(ChangePlayerInfo);
-        GameManager.Singleton.AddSharePriceRiseEvent(SharePriceRise);
+        GameManager.Singleton.RegisterSharePriceRiseEvent(SharePriceRise);
 
 		tomatoCol.good = GoodType.TOMATO;
 		silkCol.good = GoodType.SILK;

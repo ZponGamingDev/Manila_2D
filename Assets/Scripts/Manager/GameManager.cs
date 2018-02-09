@@ -23,9 +23,12 @@ public enum GameState
 public class GameManager : SingletonBase<GameManager>
 {
 	public int numOfPlayer = 4;
-	public int startMoney = 20;
+	public int startMoney = 30;
 	public int startBiddingAmount = 5;
 
+    /// <summary>
+    /// The response to GameManager.
+    /// </summary>
 	private bool response = false;
 	public void Response()
 	{
@@ -43,6 +46,7 @@ public class GameManager : SingletonBase<GameManager>
     }
     private GameState currentState = GameState.NONE;
 
+    /*
     #region HUDUI Update
     public delegate void UpdateHUDUICallback();
     public UpdateHUDUICallback UpdateHUDUI
@@ -54,7 +58,7 @@ public class GameManager : SingletonBase<GameManager>
         }
     }
     private UpdateHUDUICallback updateHUDUICallback;
-    #endregion
+    #endregion*/
 
     #region Positions
 
@@ -306,7 +310,8 @@ public class GameManager : SingletonBase<GameManager>
     }
 
     Coroutine currentCoroutine;
-    #region GameLoop
+
+    #region GameLoop relative function
     private IEnumerator GameLoop()
     {
 		UIManager.Singleton.ShowUI(UIType.HUD_UI);
@@ -341,7 +346,7 @@ public class GameManager : SingletonBase<GameManager>
 		yield return StartCoroutine(ShowHarborBoatInvestment());
 
 		GameSetReset();
-        GameWinnerCheck();
+        CheckGameWinner();
 
 		yield return StartCoroutine(ShowMoneyTable());
 		yield return StartCoroutine(ShowRankTable());
@@ -363,6 +368,12 @@ public class GameManager : SingletonBase<GameManager>
         }
     }
 
+    /// <summary>
+    /// Shows the game state info(Info Bar).
+    /// </summary>
+    /// <returns>The game state info.</returns>
+    /// <param name="state">State.</param>
+    /// <param name="limit">Limit.</param>
 	private IEnumerator ShowGameStateInfo(GameState state, float limit)
 	{
 		HideBoat();
@@ -380,6 +391,10 @@ public class GameManager : SingletonBase<GameManager>
 		ShowBoat();
 	}
 
+    /// <summary>
+    /// Open Good Investment Page.
+    /// </summary>
+    /// <returns>The harbor boat investment.</returns>
     private IEnumerator ShowHarborBoatInvestment()
     {
 		ShowBoat();
@@ -398,6 +413,10 @@ public class GameManager : SingletonBase<GameManager>
         HideBoat();
     }
 
+    /// <summary>
+    /// Show player's money.
+    /// </summary>
+    /// <returns>The money table.</returns>
 	private IEnumerator ShowMoneyTable()
 	{
 		UIManager.Singleton.ShowUI(UIType.MONEY_TABLE);
@@ -409,6 +428,10 @@ public class GameManager : SingletonBase<GameManager>
 		UIManager.Singleton.CloseUI(UIType.MONEY_TABLE);
 	}
 
+    /// <summary>
+    /// Show player's rank.
+    /// </summary>
+    /// <returns>The rank table.</returns>
 	private IEnumerator ShowRankTable()
 	{
 		UIManager.Singleton.ShowUI(UIType.RANK_TABLE);
@@ -421,8 +444,8 @@ public class GameManager : SingletonBase<GameManager>
 	}
     #endregion
 
-    #region Game Update Function
-    private void GetWinner()
+    #region Update Game Function
+    private void SetGameWinner()
     {
         int winnerPt = int.MinValue;
         for (int iPlayer = 0; iPlayer < numOfPlayer; ++iPlayer)
@@ -446,7 +469,7 @@ public class GameManager : SingletonBase<GameManager>
         }
     }
 
-    private void GameWinnerCheck()
+    private void CheckGameWinner()
     {
         int pTomato = InvestmentManager.Singleton.GetSharePrice(GoodType.TOMATO);
         int pSilk = InvestmentManager.Singleton.GetSharePrice(GoodType.SILK);
@@ -454,17 +477,20 @@ public class GameManager : SingletonBase<GameManager>
         int pJade = InvestmentManager.Singleton.GetSharePrice(GoodType.JADE);
 
         if(pTomato == 30 || pSilk == 30 || pPaddy == 30 || pJade == 30)
-            GetWinner();
+            SetGameWinner();
 	}
 
 	public delegate void SharePriceRiseEvent(GoodType good);
 	private SharePriceRiseEvent riseEvent;
 
-	public void AddSharePriceRiseEvent(SharePriceRiseEvent riseEvent)
+	public void RegisterSharePriceRiseEvent(SharePriceRiseEvent riseEvent)
 	{
 		this.riseEvent += riseEvent;
 	}
 
+    /// <summary>
+    /// Updates the share price.
+    /// </summary>
     private void UpdateSharePrice()
     {
 		for (int iBoat = 0; iBoat < boats.Length; ++iBoat)
@@ -477,9 +503,24 @@ public class GameManager : SingletonBase<GameManager>
 			}
 		}
     }
+
+	public delegate void UpdateHUDUICallback();
+	public UpdateHUDUICallback UpdateHUDUI
+	{
+		set
+		{
+			if (updateHUDUICallback == null)
+				updateHUDUICallback += value;
+		}
+	}
+	private UpdateHUDUICallback updateHUDUICallback;
     #endregion
 
     #region Boss Function
+
+    /// <summary>
+    /// Arranges the gameset queue.
+    /// </summary>
     private void ArrangeGameSetQueue()
     {
         int index = players.IndexOf(gameSetBoss);
@@ -498,6 +539,10 @@ public class GameManager : SingletonBase<GameManager>
         }
     }
 
+    /// <summary>
+    /// Get the boss of gameset.
+    /// </summary>
+    /// <returns>The bidding winner.</returns>
     private Player BossBiddingWinner()
     {
         int win = 0;
@@ -523,6 +568,10 @@ public class GameManager : SingletonBase<GameManager>
         return players[win];
     }
 
+    /// <summary>
+    /// Boss of gameset bidding process.
+    /// </summary>
+    /// <returns>The bidding round.</returns>
     private IEnumerator BossBiddingRound()
     {
 		if (players.Count < 1)
@@ -552,6 +601,10 @@ public class GameManager : SingletonBase<GameManager>
         UIManager.Singleton.CloseMask();
 	}
 
+    /// <summary>
+    /// Boss of the gameset pick one boat.
+    /// </summary>
+    /// <returns>The pick boat.</returns>
 	private IEnumerator BossPickBoat()
 	{
 		currentPlayer = gameSetBoss;
@@ -573,6 +626,10 @@ public class GameManager : SingletonBase<GameManager>
 		UIManager.Singleton.CloseMask();
 	}
 
+    /// <summary>
+    /// Boss of the gameset buy a stock.
+    /// </summary>
+    /// <returns>The buy stock.</returns>
 	private IEnumerator BossBuyStock()
 	{
 		HideBoat();
@@ -590,14 +647,28 @@ public class GameManager : SingletonBase<GameManager>
     #endregion
 
     #region Boat
-    //LEFT,MID,RIGHT
     public float boatSpeed = 2.5f;
 
+    // Left boat movement.
 	private int leftMovementVal = 0;
+
+    // Middle boat movement value.
 	private int midMovementVal = 0;
+
+    // Right boat movement value.
 	private int rightMovementVal = 0;
+
+    /// <summary>
+    /// 0->Left, 1->Middle, 2->Right.
+    /// </summary>
     private Boat[] boats = new Boat[3];
 
+    /// <summary>
+    /// Spawns the boat on map.
+    /// </summary>
+    /// <param name="good">Good.</param>
+    /// <param name="num">Number.</param>
+    /// <param name="shift">Shift.</param>
     public void SpawnBoat(GoodType good, int num, int shift)
     {
         Sprite sprite = ResourceManager.Singleton.LoadSprite(PathConfig.BoatSprite(good));
@@ -614,6 +685,9 @@ public class GameManager : SingletonBase<GameManager>
             StartCoroutine(BoatMoving(boats[num], shift));
     }
 
+    /// <summary>
+    /// Shows the boat.
+    /// </summary>
     public void ShowBoat()
     {
         if (boats[0] != null && boats[1] != null && boats[2] != null)
@@ -624,6 +698,9 @@ public class GameManager : SingletonBase<GameManager>
         }
     }
 
+    /// <summary>
+    /// Hides the boat.
+    /// </summary>
     public void HideBoat()
     {
 		if (boats[0] != null && boats[1] != null && boats[2] != null)
@@ -640,6 +717,12 @@ public class GameManager : SingletonBase<GameManager>
         return boat;
     }
 
+    /// <summary>
+    /// Sets the movement value of boats.
+    /// </summary>
+    /// <param name="left">Left.</param>
+    /// <param name="middle">Middle.</param>
+    /// <param name="right">Right.</param>
 	public void SetMovementValue(int left, int middle, int right)
 	{
 		leftMovementVal = left;
@@ -647,6 +730,11 @@ public class GameManager : SingletonBase<GameManager>
 		rightMovementVal = right;
 	}
 
+    /// <summary>
+    /// Gets the movement value of boats.
+    /// </summary>
+    /// <returns>The movement value.</returns>
+    /// <param name="index">Index.</param>
     public int GetMovementValue(int index)
     {
         if (index == 0)
@@ -658,6 +746,11 @@ public class GameManager : SingletonBase<GameManager>
         return rightMovementVal;
     }
 
+    /// <summary>
+    /// Function of MapInvestment(Shift +1/-1 or +2/-2).
+    /// </summary>
+    /// <param name="anchor">Anchor.</param>
+    /// <param name="shift">Shift.</param>
 	public void ShiftBoat(BoatAnchor anchor, int shift)
 	{
         UIManager.Singleton.OpenMask();
