@@ -215,6 +215,10 @@ public class InvestmentManager : SingletonBase<InvestmentManager>
         goodsSharePriceTable[good] = price;
     }
 
+    /// <summary>
+    /// InvestmentManager sell a stock to the boss of round.
+    /// </summary>
+    /// <param name="good">Good.</param>
     public void SellStockToBoss(GoodType good)
     {
         int price = goodsSharePriceTable[good];
@@ -224,6 +228,10 @@ public class InvestmentManager : SingletonBase<InvestmentManager>
         UIManager.Singleton.ChangePlayerInfo();
     }
 
+    /// <summary>
+    /// InvestmentManager buy a stock from current player in the round.
+    /// </summary>
+    /// <param name="good">Good.</param>
     public void BuyStockFromPlayer(GoodType good)
     {
 		Player player = GameManager.Singleton.CurrentPlayer;
@@ -246,8 +254,8 @@ public class InvestmentManager : SingletonBase<InvestmentManager>
             return mapInvestmentConfirmFunc;
         }
     }
-    private MapInvestmentCallback mapInvestmentConfirmFunc;
-    private MapInvestmentCallback mapInvestmentResetCallbackFunc;
+    private MapInvestmentCallback mapInvestmentConfirmFunc; // Callback function to confirm MapInvestment.
+    private MapInvestmentCallback mapInvestmentResetCallbackFunc;   // Reset MapInvestment state to initialization.
 
 	public void SetFeedbackData(MapInvestmentData? investment)
     {
@@ -262,6 +270,10 @@ public class InvestmentManager : SingletonBase<InvestmentManager>
     }
 	private List<MapInvestmentData?> confirmedInvestments = new List<MapInvestmentData?>();
 
+    /// <summary>
+    /// Gets the current MapInvestment data(Player select).
+    /// </summary>
+    /// <value>The current map investment data.</value>
 	public MapInvestmentData? CurrentMapInvestmentData
     {
         get;

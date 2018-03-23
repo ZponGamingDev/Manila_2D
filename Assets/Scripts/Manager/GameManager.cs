@@ -810,6 +810,9 @@ public class GameManager : SingletonBase<GameManager>
         return false;
     }
 
+    /// <summary>
+    /// PirateTrack remove robbed boat.
+    /// </summary>
 	public void RobbedBoatLeaves()
 	{
 		pirateTracker.UnTrackBoat();
@@ -817,9 +820,14 @@ public class GameManager : SingletonBase<GameManager>
 	#endregion
 
 	#region Round Play
-	private int iRoundPlayer = 0;
-	private bool currentPlayerRoundOver = false;
 
+	private int iRoundPlayer = 0;   //Current player number in each round.
+	private bool currentPlayerRoundOver = false;    //Does current player finish his round play?
+
+    /// <summary>
+    /// Each round process.
+    /// </summary>
+    /// <returns>The play.</returns>
     private IEnumerator RoundPlay()
     {
         UIManager.Singleton.RemoveAllUIBaseCallback();
@@ -869,6 +877,10 @@ public class GameManager : SingletonBase<GameManager>
 		currentPlayerRoundOver = true;
 	}
 
+    /// <summary>
+    /// Wait for current player make a investment.
+    /// </summary>
+    /// <returns>The investment.</returns>
 	private IEnumerator PlayerInvestment()
 	{
 		while (!currentPlayerRoundOver)
@@ -890,6 +902,10 @@ public class GameManager : SingletonBase<GameManager>
 		gameSetQueue.Enqueue(currentPlayer);
 	}
 
+    /// <summary>
+    /// Current player click button to throw dices.
+    /// </summary>
+    /// <returns>The dices.</returns>
 	private IEnumerator ThrowDices()
 	{
 		UIManager.Singleton.ShowUI(UIType.DICING_BOX);
@@ -907,6 +923,10 @@ public class GameManager : SingletonBase<GameManager>
 		yield return StartCoroutine(UIManager.Singleton.OnUIBaseEnd());
 	}
 
+    /// <summary>
+    /// Execute feedback of MapInvestment.
+    /// </summary>
+    /// <returns>The investment feedback.</returns>
 	private IEnumerator MapInvestmentFeedback()
 	{
 		UIManager.Singleton.RemoveAllUIBaseCallback();
