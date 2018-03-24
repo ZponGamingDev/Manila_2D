@@ -114,7 +114,7 @@ public class Boat : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            if (IsMoving || GameManager.Singleton.CurrentState == GameState.BOSS_PICK_BOAT)
+            if (IsMoving || GameManager.Singleton.CurrentGameState == GameState.BOSS_PICK_BOAT)
 				return;
 
             Vector3 mos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -363,7 +363,7 @@ public class Boat : MonoBehaviour
         course.Reset();
         if (onLineNumber < 14)
         {
-            if (GameManager.Singleton.CurrentState == GameState.FINAL)
+            if (GameManager.Singleton.CurrentGameState == GameState.FINAL)
             {
                 if (!isShifted && !protect && onLineNumber == 13)
                     GoToLine();

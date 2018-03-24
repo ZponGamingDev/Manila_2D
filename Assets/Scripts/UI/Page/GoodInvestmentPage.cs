@@ -99,7 +99,7 @@ public class GoodInvestmentPage : UIBase
 
     private void OnGoodInvestmentClick(GoodInvestment investment)
     {
-        if (GameManager.Singleton.CurrentState == GameState.SET_OVER)
+        if (GameManager.Singleton.CurrentGameState == GameState.SET_OVER)
             return;
         
         if (InvestmentManager.Singleton.PlayerInterestedBoat.IsLandOnHarbor ||
@@ -169,7 +169,7 @@ public class GoodInvestmentPage : UIBase
 
     public void CancelInvestment()
     {
-		if (GameManager.Singleton.CurrentState == GameState.SET_OVER)
+		if (GameManager.Singleton.CurrentGameState == GameState.SET_OVER)
 			return;
         CloseUI();
         GameManager.Singleton.ShowBoat();
@@ -177,7 +177,7 @@ public class GoodInvestmentPage : UIBase
 
     public void ConfirmInvestment()
     {
-		if (GameManager.Singleton.CurrentState == GameState.SET_OVER)
+		if (GameManager.Singleton.CurrentGameState == GameState.SET_OVER)
 			return;
         
         if (InvestmentManager.Singleton.PlayerInterestedBoat.IsRobbed)

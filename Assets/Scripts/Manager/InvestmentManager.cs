@@ -257,21 +257,22 @@ public class InvestmentManager : SingletonBase<InvestmentManager>
     private MapInvestmentCallback mapInvestmentConfirmFunc; // Callback function to confirm MapInvestment.
     private MapInvestmentCallback mapInvestmentResetCallbackFunc;   // Reset MapInvestment state to initialization.
 
-	public void SetFeedbackData(MapInvestmentData? investment)
+	public void SetShiftFeedback(MapInvestmentData? investment)
     {
-        if(confirmedInvestments.Contains(investment))
-        {
-            CurrentMapInvestmentData = investment;
-        }
-        else
-        {
-            CurrentMapInvestmentData = null;
-        }
+        boatshift = investment;
     }
+
+    public MapInvestmentData? GetShiftFeedbackData()
+    {
+        return boatshift;
+    }
+    private MapInvestmentData? boatshift;
+
+
 	private List<MapInvestmentData?> confirmedInvestments = new List<MapInvestmentData?>();
 
     /// <summary>
-    /// Gets the current MapInvestment data(Player select).
+    /// Get the current MapInvestment data(Player select).
     /// </summary>
     /// <value>The current map investment data.</value>
 	public MapInvestmentData? CurrentMapInvestmentData
@@ -297,35 +298,29 @@ public class InvestmentManager : SingletonBase<InvestmentManager>
         confirmedInvestments.Add(investment);
     }
 
-    public void CancelMapInvestment()
+    public void CancelMapInvestment()   //Refuse to complete the selected investment.
     {
         confirmedInvestments.Remove(CurrentMapInvestmentData);
         CurrentMapInvestmentData = null;
     }
     #endregion
 
-    #region Wait player response @ the dialog box.
-
+    #region Response @ the dialog box.
     public void Response()
     {
-        playerResponse = true;
+        response = true;
     }
-    public bool GetPlayerResponse()
-    {
-        return playerResponse;
-    }
-    private bool playerResponse = false;
+    private bool response = false;
 
     public IEnumerator WaitInvestmentDialogReseponse()
     {
         UIManager.Singleton.ShowUI(UIType.DIALOG_BOX);
-        while (!playerResponse)
+        while (!response)
         {
             yield return null;
         }
         UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
-        playerResponse = false;
+        response = false;
     }
-
 	#endregion
 }

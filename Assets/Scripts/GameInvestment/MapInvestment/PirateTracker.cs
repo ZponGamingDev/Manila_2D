@@ -50,7 +50,7 @@ public class PirateTracker : MonoBehaviour
                 if (p0 == null && p1 == null)
                 {
                     detectedBoat.Protect();
-                    if (GameManager.Singleton.CurrentState == GameState.FINAL)
+                    if (GameManager.Singleton.CurrentGameState == GameState.FINAL)
                     {
                         detectedBoat.Move(0);
                         while (detectedBoat.IsMoving)

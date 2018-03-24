@@ -12,6 +12,9 @@ public enum SceneCommand
     END
 }
 
+/// <summary>
+/// Scene finite state machine.
+/// </summary>
 public class SceneFSM : FSMBase<SceneBase, SceneCommand>
 {
 	private SceneBase _InitialScene = new InitialScene("InitialScene", 0); 
@@ -47,6 +50,9 @@ public class SceneFSM : FSMBase<SceneBase, SceneCommand>
     }
 }
 
+/// <summary>
+/// Scene manager control the loading between two scenes.
+/// </summary>
 public class SceneManager : SingletonBase<SceneManager> 
 {
     [HideInInspector]

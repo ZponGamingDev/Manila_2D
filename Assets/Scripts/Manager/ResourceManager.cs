@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// Resource manager control the process of resources.
+/// </summary>
 public class ResourceManager : SingletonBase<ResourceManager>
 {
     void Awake()

@@ -44,11 +44,11 @@ public class InfoBar : UIBase
     public override void ShowUI()
     {
         //transform.SetAsLastSibling();
-        string state = GameManager.Singleton.CurrentState.ToString();
+        string state = GameManager.Singleton.CurrentGameState.ToString();
         infoText.text = InfoBarDataSystem.Singleton.GetInfoBarData(state);
 
 
-        GameState lVal = GameState.BIDDING_COMPLETE & GameManager.Singleton.CurrentState;
+        GameState lVal = GameState.BIDDING_COMPLETE & GameManager.Singleton.CurrentGameState;
 
         if(lVal == GameState.BIDDING_COMPLETE)
         {

@@ -113,8 +113,8 @@ public class RankTable : UIBase
             elmsTable[s1.Value.color].UpdateRank(s1.Value.pts);
         }
 
-        if (GameManager.Singleton.Winner != null)
-            elmsTable[GameManager.Singleton.Winner.GetPlayerColor()].winnerCrown.enabled = true;
+        if (GameManager.Singleton.GameWinner != null)
+            elmsTable[GameManager.Singleton.GameWinner.GetPlayerColor()].winnerCrown.enabled = true;
     }
 
     public override void ShowUI()

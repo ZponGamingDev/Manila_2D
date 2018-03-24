@@ -30,6 +30,9 @@ public delegate IEnumerator UIBaseCallback();
 public delegate void DialogCallback();
 public delegate void PageButtonCallback();
 
+/// <summary>
+/// UIManager controls ui behavior.
+/// </summary>
 public class UIManager : SingletonBase<UIManager>
 {
     //static public UIManager Singleton;
@@ -44,12 +47,15 @@ public class UIManager : SingletonBase<UIManager>
             return uiCanvas;
         }
     }
-    private Canvas uiCanvas;
-    private Image uiMask;
-    private Text timerText;
+    private Canvas uiCanvas;    //Canvas
+    private Image uiMask;   //UIMask avoid ui from clicking.
+    private Text timerText; //Show time info.
 
-    private Dictionary<UIType, UIBase> uiScriptDict = new Dictionary<UIType, UIBase>();
+    private Dictionary<UIType, UIBase> uiScriptDict = new Dictionary<UIType, UIBase>(); //Record ui script called by UIManager.
 
+    /// <summary>
+    /// Reset ui data when round is over.
+    /// </summary>
     public void RoundReset()
     {
         foreach(KeyValuePair<UIType, UIBase> pair in uiScriptDict)
@@ -58,6 +64,9 @@ public class UIManager : SingletonBase<UIManager>
         }
     }
 
+    /// <summary>
+    /// Reset ui data when GameSet is over.
+    /// </summary>
     public void GameSetReset()
     {
 		foreach (KeyValuePair<UIType, UIBase> pair in uiScriptDict)
@@ -66,6 +75,9 @@ public class UIManager : SingletonBase<UIManager>
 		}
     }
 
+    /// <summary>
+    /// Clear ui data when game is over.
+    /// </summary>
     public void GameOverClear()
     {
         /*
@@ -98,6 +110,9 @@ public class UIManager : SingletonBase<UIManager>
         //ResetTimer();
     }
 
+    /// <summary>
+    /// Called on SceneManager load scene.
+    /// </summary>
     public void OnLoadScene()
     {
         uiScriptDict.Clear();
@@ -162,7 +177,6 @@ public class UIManager : SingletonBase<UIManager>
         uiMask.transform.SetAsFirstSibling();
         uiMask.enabled = false;
     }
-
 
     public void ResetTimer()
     {
@@ -271,6 +285,11 @@ public class UIManager : SingletonBase<UIManager>
     }
     private UIBaseCallback onUIbaseEnd = null;
 
+    /// <summary>
+    /// Registers the UIBase callback.
+    /// </summary>
+    /// <param name="start">Start callback function.</param>
+    /// <param name="end">End callback function.</param>
     public void RegisterUIBaseCallback(UIBaseCallback start, UIBaseCallback end)
     {
         RemoveAllUIBaseCallback();

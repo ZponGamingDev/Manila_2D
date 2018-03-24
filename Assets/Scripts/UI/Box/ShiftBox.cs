@@ -46,15 +46,17 @@ public class ShiftBox : UIBase
             Debug.LogError("Error");
         }
 
-        playerSign.color = GameManager.Singleton.CurrentPlayer.GetPlayerColor();
+        playerSign.color = playerSign.color;//GameManager.Singleton.CurrentPlayer.GetPlayerColor();
 
         //anchor = (BoatAnchor)System.Enum.Parse(typeof(BoatAnchor), boat.selectedOption.text);
         boat.selectedOption.text = BoatAnchor.LEFT.ToString();
         boat.SetItem(BoatAnchor.LEFT.ToString(), BoatAnchor.MIDDLE.ToString(), BoatAnchor.RIGHT.ToString());
 
-
-		string plus = "+" + InvestmentManager.Singleton.CurrentMapInvestmentData.Value.reward.ToString();
-        string minus = "-" + InvestmentManager.Singleton.CurrentMapInvestmentData.Value.reward.ToString();
+        ManilaMapInvestment.MapInvestmentData? data = InvestmentManager.Singleton.GetShiftFeedbackData();
+        string plus = "+" + data.Value.reward.ToString();
+        //InvestmentManager.Singleton.CurrentMapInvestmentData.Value.reward.ToString();
+        string minus = "-" + data.Value.reward.ToString();
+            //InvestmentManager.Singleton.CurrentMapInvestmentData.Value.reward.ToString();
         shift.selectedOption.text = plus;
         shift.SetItem(plus, minus);
 

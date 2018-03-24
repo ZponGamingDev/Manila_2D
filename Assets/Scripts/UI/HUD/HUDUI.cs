@@ -47,7 +47,7 @@ public class HUDUI : UIBase
     private void ShowIconMenu()
     {
         int rVal = (int)GameState.FIRST + (int)GameState.SECOND + (int)GameState.FINAL;
-        int bit = (int)GameManager.Singleton.CurrentState & rVal;
+        int bit = (int)GameManager.Singleton.CurrentGameState & rVal;
 
         if (bit != 0)
         {

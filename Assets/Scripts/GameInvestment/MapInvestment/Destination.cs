@@ -46,7 +46,7 @@ public class Destination : MapInvestmentBase
 
     protected override void Feedback(Player player)
     {
-        if (GameManager.Singleton.CurrentState != GameState.SET_OVER)
+        if (GameManager.Singleton.CurrentGameState != GameState.SET_OVER)
             return;
         
         int val = 0;

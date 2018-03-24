@@ -22,13 +22,14 @@ public enum GameState
 
 public class GameManager : SingletonBase<GameManager>
 {
-	public int numOfPlayer = 4;
-	public int startMoney = 30;
-	public int startBiddingAmount = 5;
+	public int numOfPlayer = 4; //Number of player.
+	public int startMoney = 30; //Player money at the beginning.
+	public int defaultBiddingAmount = 5;  //Amount of default bidding money.
+	private Queue<Player> gameSetQueue = new Queue<Player>();
 
-    /// <summary>
-    /// The response to GameManager.
-    /// </summary>
+	/// <summary>
+	/// The response to GameManager.
+	/// </summary>
 	private bool response = false;
 	public void Response()
 	{
@@ -37,45 +38,31 @@ public class GameManager : SingletonBase<GameManager>
 
     private GameObject map = null;
 
-    public GameState CurrentState
+    public GameState CurrentGameState
     {
         get
         {
-            return currentState;
+            return currentGameState;
         }
     }
-    private GameState currentState = GameState.NONE;
-
-    /*
-    #region HUDUI Update
-    public delegate void UpdateHUDUICallback();
-    public UpdateHUDUICallback UpdateHUDUI
-    {
-        set
-        {
-            if(updateHUDUICallback == null)
-                updateHUDUICallback += value;
-        }
-    }
-    private UpdateHUDUICallback updateHUDUICallback;
-    #endregion*/
+    private GameState currentGameState = GameState.NONE;
 
     #region Positions
 
-    private List<Vector2> gameLines = new List<Vector2>();
+    private List<Vector2> gameLines = new List<Vector2>();  //Game line.
     public Vector2 GetGameLineVec2(int glNum)
     {
         return gameLines[glNum - 1];
     }
 
-    private List<Vector2> coursePoints = new List<Vector2>();
+    private List<Vector2> coursePoints = new List<Vector2>(); //Bezier curve control pts.
     public Vector2 GetCoursePointVec2(int num)
     {
         return coursePoints[num];
     }
 
     /// <summary>
-    /// World space vector of start position.
+    /// Start position (World space).
     /// Left(0), Middle(1), Right(2)
     /// </summary>
     private List<Vector2> startPositions = new List<Vector2>();
@@ -85,22 +72,22 @@ public class GameManager : SingletonBase<GameManager>
     }
 
     /// <summary>
-    /// World space vector of harbor position.
+    /// Harbor position (World space).
     /// Left(0), Middle(1), Right(2)
     /// </summary>
     private List<Vector2> harborPositions = new List<Vector2>();
-    private int iHarbor = 0;
+    private int iHarbor = 0;    //Index of harbors.
     public Vector2 GetHarborVec2()
     {
         return harborPositions[iHarbor++];
     }
 
     /// <summary>
-    /// World space vector of tomb position.
+    /// Tomb position (World space).
     /// Left(0), Middle(1), Right(2)
     /// </summary>
     private List<Vector2> tombPositions = new List<Vector2>();
-    private int iTomb = 0;
+    private int iTomb = 0;  //Index of tombs.
 	public Vector2 GetTombVec2()
     {
         return tombPositions[iTomb++];
@@ -116,7 +103,7 @@ public class GameManager : SingletonBase<GameManager>
     }
     private Player gameSetBoss = null;
 
-    public Player Winner
+    public Player GameWinner
     {
         get
         {
@@ -125,8 +112,6 @@ public class GameManager : SingletonBase<GameManager>
     }
     private Player gameWinner = null;
 
-    private Queue<Player> gameSetQueue = new Queue<Player>();
-
     public PirateTracker PirateTracker
     {
         get
@@ -134,7 +119,7 @@ public class GameManager : SingletonBase<GameManager>
             return pirateTracker;
         }
     }
-    private PirateTracker pirateTracker;
+    private PirateTracker pirateTracker;    //Detect boat on the pirate line.
 
     void Awake()
     {
@@ -309,8 +294,6 @@ public class GameManager : SingletonBase<GameManager>
         System.GC.Collect();
     }
 
-    Coroutine currentCoroutine;
-
     #region GameLoop relative function
     private IEnumerator GameLoop()
     {
@@ -336,12 +319,13 @@ public class GameManager : SingletonBase<GameManager>
 
         yield return StartCoroutine(RoundPlay());
 
-		currentState = GameState.SET_OVER;
+		currentGameState = GameState.SET_OVER;
 
 		UpdateSharePrice();
+
         yield return StartCoroutine(MapInvestmentFeedback());
 
-        yield return StartCoroutine(ShowGameStateInfo(currentState, 1.5f));
+        yield return StartCoroutine(ShowGameStateInfo(currentGameState, 1.5f));
 
 		yield return StartCoroutine(ShowHarborBoatInvestment());
 
@@ -377,7 +361,7 @@ public class GameManager : SingletonBase<GameManager>
 	private IEnumerator ShowGameStateInfo(GameState state, float limit)
 	{
 		HideBoat();
-		currentState = state;
+		currentGameState = state;
 		UIManager.Singleton.ShowUI(UIType.INFO_BAR);
 
 		float infoBarTimer = 0.0f;
@@ -649,27 +633,21 @@ public class GameManager : SingletonBase<GameManager>
     #region Boat
     public float boatSpeed = 2.5f;
 
-    // Left boat movement.
-	private int leftMovementVal = 0;
+    private int leftMovementVal = 0;    //Left boat movement value.
 
-    // Middle boat movement value.
-	private int midMovementVal = 0;
+    private int midMovementVal = 0;     //Middle boat movement value.
 
-    // Right boat movement value.
-	private int rightMovementVal = 0;
+	private int rightMovementVal = 0;   // Right boat movement value.
 
-    /// <summary>
-    /// 0->Left, 1->Middle, 2->Right.
-    /// </summary>
-    private Boat[] boats = new Boat[3];
+	private Boat[] boats = new Boat[3]; // 0->Left, 1->Middle, 2->Right.
 
-    /// <summary>
-    /// Spawns the boat on map.
-    /// </summary>
-    /// <param name="good">Good.</param>
-    /// <param name="num">Number.</param>
-    /// <param name="shift">Shift.</param>
-    public void SpawnBoat(GoodType good, int num, int shift)
+	/// <summary>
+	/// Spawns the boat on map.
+	/// </summary>
+	/// <param name="good">Good.</param>
+	/// <param name="num">Number.</param>
+	/// <param name="shift">Shift.</param>
+	public void SpawnBoat(GoodType good, int num, int shift)
     {
         Sprite sprite = ResourceManager.Singleton.LoadSprite(PathConfig.BoatSprite(good));
         GameObject go = ResourceManager.Singleton.LoadResource<GameObject>(PathConfig.ObjPath("Boat"));
@@ -838,7 +816,7 @@ public class GameManager : SingletonBase<GameManager>
             UIManager.Singleton.ChangePlayerInfo();
 			UIManager.Singleton.ShowUI(UIType.PLAYER_INVENTORY);
 
-            if (currentPlayer == gameSetBoss && currentState == GameState.FIRST)
+            if (currentPlayer == gameSetBoss && currentGameState == GameState.FIRST)
                 yield return StartCoroutine(BossBuyStock());
 
             yield return StartCoroutine(PlayerInvestment());
@@ -878,7 +856,7 @@ public class GameManager : SingletonBase<GameManager>
 	}
 
     /// <summary>
-    /// Wait for current player make a investment.
+    /// Wait for current player complete a investment.
     /// </summary>
     /// <returns>The investment.</returns>
 	private IEnumerator PlayerInvestment()
@@ -903,7 +881,7 @@ public class GameManager : SingletonBase<GameManager>
 	}
 
     /// <summary>
-    /// Current player click button to throw dices.
+    /// Boss click button to throw dices.
     /// </summary>
     /// <returns>The dices.</returns>
 	private IEnumerator ThrowDices()
@@ -942,9 +920,4 @@ public class GameManager : SingletonBase<GameManager>
 		}
 	}
 	#endregion
-
-	private void BackToGameMenu()
-    {
-        Destroy(Singleton);
-    }
 }

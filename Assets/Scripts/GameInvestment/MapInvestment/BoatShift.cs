@@ -35,7 +35,7 @@ public class BoatShift : MapInvestmentBase
     {
         int shift = Data.Value.reward;
         Color color = player.GetPlayerColor();
-        InvestmentManager.Singleton.SetFeedbackData(Data);
+        InvestmentManager.Singleton.SetShiftFeedback(Data);
         UIManager.Singleton.ShowUI(UIType.SHIFT_BOX);
         player.RemoveFeedbackListener(Feedback);
         //Reset();

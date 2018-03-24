@@ -128,9 +128,9 @@ public class Pirates : MapInvestmentBase
     {
 		UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
 
-        if (GameManager.Singleton.CurrentState == GameState.SECOND)
+        if (GameManager.Singleton.CurrentGameState == GameState.SECOND)
             SecondRoundRobbery();
-        else if (GameManager.Singleton.CurrentState == GameState.FINAL)
+        else if (GameManager.Singleton.CurrentGameState == GameState.FINAL)
             FinalRoundRobbery();
 	}
 
