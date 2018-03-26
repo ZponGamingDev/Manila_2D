@@ -266,13 +266,13 @@ public class InvestmentManager : SingletonBase<InvestmentManager>
     {
         return boatshift;
     }
-    private MapInvestmentData? boatshift;
+    private MapInvestmentData? boatshift;   //Shifted data.
 
 
 	private List<MapInvestmentData?> confirmedInvestments = new List<MapInvestmentData?>();
 
     /// <summary>
-    /// Get the current MapInvestment data(Player select).
+    /// Get the current MapInvestment data selected by current player.
     /// </summary>
     /// <value>The current map investment data.</value>
 	public MapInvestmentData? CurrentMapInvestmentData
@@ -305,7 +305,7 @@ public class InvestmentManager : SingletonBase<InvestmentManager>
     }
     #endregion
 
-    #region Response @ the dialog box.
+    #region Response of investment completion @ DialogBox.
     public void Response()
     {
         response = true;

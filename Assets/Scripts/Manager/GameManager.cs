@@ -529,7 +529,7 @@ public class GameManager : SingletonBase<GameManager>
     /// <returns>The bidding winner.</returns>
     private Player BossBiddingWinner()
     {
-        int win = 0;
+        int win = -1;
         int pool = int.MinValue;
         List<int> equalIdxs = new List<int>();
 
@@ -541,14 +541,14 @@ public class GameManager : SingletonBase<GameManager>
             {
                 pool = amount;
                 win = i;
+                equalIdxs.Clear();
             }
 
             if (amount == pool)
                 equalIdxs.Add(i);
         }
-
+        
         win = equalIdxs[Random.Range(0, equalIdxs.Count)];
-
         return players[win];
     }
 

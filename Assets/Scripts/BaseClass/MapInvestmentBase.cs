@@ -122,7 +122,6 @@ namespace ManilaMapInvestment
             }
 
 			Vector2 screenPoint = eventData.position;
-			Vector2 local;
 
             if(RectTransformUtility.RectangleContainsScreenPoint(rect, screenPoint, Camera.main))
 			//if (RectTransformUtility.ScreenPointToLocalPointInRectangle(rect, screenPoint,
