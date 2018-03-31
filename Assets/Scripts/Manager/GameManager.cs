@@ -372,7 +372,7 @@ public class GameManager : SingletonBase<GameManager>
 		}
 
 		UIManager.Singleton.CloseUI(UIType.INFO_BAR);
-		ShowBoat();
+		//ShowBoat();
 	}
 
     /// <summary>
@@ -626,7 +626,7 @@ public class GameManager : SingletonBase<GameManager>
 		yield return StartCoroutine(UIManager.Singleton.OnUIBaseEnd());
 
 		UIManager.Singleton.CloseMask();
-		ShowBoat();
+		//ShowBoat();
 	}
     #endregion
 

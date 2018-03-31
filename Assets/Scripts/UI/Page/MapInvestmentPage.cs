@@ -73,7 +73,7 @@ public class MapInvestmentPage : UIBase
 
     public override void CloseUI()
     {
-        GameManager.Singleton.ShowBoat();
+        //GameManager.Singleton.ShowBoat();
         base.CloseUI();
     }
 }

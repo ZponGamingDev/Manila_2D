@@ -118,7 +118,7 @@ public class ShiftBox : UIBase
 
 		response = true;
 		CloseUI();
-        GameManager.Singleton.ShowBoat();
+        //GameManager.Singleton.ShowBoat();
         GameManager.Singleton.ShiftBoat(anchor, shiftValue);
     }
 }

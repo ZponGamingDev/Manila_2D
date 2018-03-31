@@ -59,14 +59,14 @@ public class HUDUI : UIBase
     public override void ShowUI()
     {
         GameManager.Singleton.UpdateHUDUI = UpdateUIInfos;
-        GameManager.Singleton.HideBoat();
+        //GameManager.Singleton.HideBoat();
         transform.SetAsLastSibling();
         base.ShowUI();
     }
 
     public override void CloseUI()
     {
-        GameManager.Singleton.ShowBoat();
+        //GameManager.Singleton.ShowBoat();
         base.CloseUI();
     }
 }

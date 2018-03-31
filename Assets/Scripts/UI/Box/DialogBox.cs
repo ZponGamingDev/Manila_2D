@@ -64,6 +64,7 @@ public class DialogBox : UIBase
 
     public override void  CloseUI()
     {
+        GameManager.Singleton.ShowBoat();
         base.CloseUI();
     }
 }

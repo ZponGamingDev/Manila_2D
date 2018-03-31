@@ -137,7 +137,7 @@ public class Pirates : MapInvestmentBase
     private void RefuseRobbery()
     {		
 		UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
-        GameManager.Singleton.ShowBoat();
+        //GameManager.Singleton.ShowBoat();
 		GameManager.Singleton.PirateTracker.DetectedBoat.Protect();
 
         sharing = false;

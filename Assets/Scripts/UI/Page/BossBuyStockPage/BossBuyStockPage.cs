@@ -192,6 +192,7 @@ public class BossBuyStockPage : UIBase, IPointerClickHandler
     public override void CloseUI()
     {
 		ResetPage();
+        GameManager.Singleton.ShowBoat();
 		base.CloseUI();
     }
 

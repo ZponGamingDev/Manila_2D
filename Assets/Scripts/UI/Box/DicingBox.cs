@@ -163,7 +163,7 @@ public class DicingBox : UIBase
 		anim.Play(close);
         animationTimer = 0.0f;
         throwingTrigger = false;
-        GameManager.Singleton.ShowBoat();
+        //GameManager.Singleton.ShowBoat();
         base.CloseUI();
     }
 

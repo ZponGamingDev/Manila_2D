@@ -62,6 +62,7 @@ public class InfoBar : UIBase
     public override void CloseUI()
     {
 		transform.SetAsFirstSibling();
+        //GameManager.Singleton.ShowBoat();
 		base.CloseUI();
     }
 }

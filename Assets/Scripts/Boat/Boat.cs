@@ -209,7 +209,7 @@ public class Boat : MonoBehaviour
 		GoToHarbor();
 		Protect();
 		isLandingOnHarbor = true;
-		GameManager.Singleton.ShowBoat();
+		//GameManager.Singleton.ShowBoat();
 		GameManager.Singleton.RobbedBoatLeaves();
 		UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
     }
@@ -221,7 +221,7 @@ public class Boat : MonoBehaviour
 		GoToTomb();
         Protect();
 		isLandOnTomb = true;
-        GameManager.Singleton.ShowBoat();
+        //GameManager.Singleton.ShowBoat();
 		GameManager.Singleton.RobbedBoatLeaves();
 		UIManager.Singleton.CloseUI(UIType.DIALOG_BOX);
 	}

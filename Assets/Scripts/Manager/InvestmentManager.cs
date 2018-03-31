@@ -73,7 +73,6 @@ public class InvestmentManager : SingletonBase<InvestmentManager>
     {
         pirates[0] = pirates[1] = null;
     }
-
 	private Dictionary<string, bool> boatOnDestination = new Dictionary<string, bool>();
 
     public int NumOfBoatOnHarbor

@@ -16,7 +16,6 @@ public class RankTable : UIBase
         public string name;
         public Color color;
         public int pts;
-        //public bool isWinner;
     }
 
     private string elmPath = PathConfig.UIElementFolder + "RankTableElement";
@@ -58,7 +57,6 @@ public class RankTable : UIBase
 					elm.nameLabel.text = stat.Value.name;
                     Color c = stat.Value.color;
                     elm.background.color = new Color(c.r, c.g, c.b, elmAlpha);
-                    //elm.rankUpTri.enabled = true;
                     elm.onClick += ShowDemonstration;
 					elmsTable.Add(stat.Value.color, elm);
                     elm.winnerCrown.enabled = false;
@@ -85,10 +83,15 @@ public class RankTable : UIBase
     private void Rank()
     {
         int num = GameManager.Singleton.numOfPlayer;
+        List<RankStat?> stats = new List<RankStat?>();
+        for (int iPlayer = 0; iPlayer < num; ++iPlayer)
+        {
+            stats.Add(GameManager.Singleton.GetPlayerStat(iPlayer));
+        }
 
         for (int iPlayer = 0; iPlayer < num; ++iPlayer)
         {
-            RankStat? s1 = GameManager.Singleton.GetPlayerStat(iPlayer);
+            RankStat? s1 = stats[iPlayer];
 			if (!s1.HasValue)
             {
                 Debug.LogError("PLAYER STAT IS NULL !!!");
@@ -97,7 +100,7 @@ public class RankTable : UIBase
 
             for (int ptr = num - 1; ptr > iPlayer; --ptr)
             {
-                RankStat? s2 = GameManager.Singleton.GetPlayerStat(ptr);
+                RankStat? s2 = stats[ptr];
                 if (!s2.HasValue)
                 {
                     Debug.LogError("PLAYER STAT IS NULL !!!");
@@ -108,6 +111,10 @@ public class RankTable : UIBase
                 {
                     elmsTable[s2.Value.color].CurrentRanking = iPlayer + 1;
                     elmsTable[s1.Value.color].CurrentRanking = ptr + 1;
+
+                    RankStat? stat = s1;
+                    stats[ptr] = s2;
+                    s1 = stat;
                 }
 			}
             elmsTable[s1.Value.color].UpdateRank(s1.Value.pts);

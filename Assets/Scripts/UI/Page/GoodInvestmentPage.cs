@@ -172,7 +172,7 @@ public class GoodInvestmentPage : UIBase
 		if (GameManager.Singleton.CurrentGameState == GameState.SET_OVER)
 			return;
         CloseUI();
-        GameManager.Singleton.ShowBoat();
+        //GameManager.Singleton.ShowBoat();
     }
 
     public void ConfirmInvestment()
@@ -197,7 +197,7 @@ public class GoodInvestmentPage : UIBase
         }
         CloseUI();
         currentPlayerSelected = null;
-		GameManager.Singleton.ShowBoat();
+		//GameManager.Singleton.ShowBoat();
 		GameManager.Singleton.PlayerFinishRoundPlay();
 	}
 }

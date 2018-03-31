@@ -76,6 +76,9 @@ public class UIBase : MonoBehaviour
     public virtual void CloseUI()
     {
         if (gameObject.activeInHierarchy)
-			gameObject.SetActive(false);
+        {
+            gameObject.SetActive(false);
+            GameManager.Singleton.ShowBoat();
+        }
 	}
 }

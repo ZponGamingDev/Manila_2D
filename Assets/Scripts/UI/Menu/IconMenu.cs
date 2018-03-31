@@ -20,7 +20,7 @@ public class IconMenu : UIBase
     public override void CloseUI()
     {
         base.CloseUI();
-        GameManager.Singleton.ShowBoat();
+        //GameManager.Singleton.ShowBoat();
 		UIManager.Singleton.ShowUI(UIType.HUD_UI);
 	}
 }
