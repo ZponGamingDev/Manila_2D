@@ -6,5 +6,7 @@ Board Game Manila
 
 # Manila_GameRule
 
-1.Game Menu
-  -
+Game Menu(遊戲選單)
+  -開始遊戲
+  -遊戲設置
+  -結束遊戲
