@@ -4,7 +4,7 @@ Board Game Manila
 1.Download this project then build it on Unity 2017.3.0f3. </br>
 2.Develop this project on MacOS HighSierra 10.13. 
 
-# Manila_2D Game Menu Introduction (By Keyboard)
+# Manila_2D Game Menu Introduction (Use Keyboard or Mouse)
 
 1. 開始遊戲後會進入遊戲選單，如下圖連結及說明。</br>
 https://i.imgur.com/B6WWsPn.png </br>
@@ -21,7 +21,7 @@ https://i.imgur.com/pIm46Wi.png</br>
  - 每位玩家在遊戲一開始時所擁有的金額。</br>
 5. 選擇結束遊戲並按下Enter來關閉遊戲。
 
-# How To Play(By Mouse)
+# How To Play(Use Mouse)
 1. 進入遊戲後會根據人數一開始會要求玩家自行選擇代表顏色並輸入各自的遊戲名字。</br>
 https://i.imgur.com/FZdqnFP.png</br>
 2. 輸入完畢後，點擊開始遊戲正式進入遊戲畫面。
