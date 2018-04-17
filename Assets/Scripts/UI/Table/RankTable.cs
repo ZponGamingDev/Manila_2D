@@ -92,6 +92,7 @@ public class RankTable : UIBase
         for (int iPlayer = 0; iPlayer < num; ++iPlayer)
         {
             RankStat? s1 = stats[iPlayer];
+
 			if (!s1.HasValue)
             {
                 Debug.LogError("PLAYER STAT IS NULL !!!");
@@ -101,6 +102,7 @@ public class RankTable : UIBase
             for (int ptr = num - 1; ptr > iPlayer; --ptr)
             {
                 RankStat? s2 = stats[ptr];
+
                 if (!s2.HasValue)
                 {
                     Debug.LogError("PLAYER STAT IS NULL !!!");
@@ -112,13 +114,16 @@ public class RankTable : UIBase
                     elmsTable[s2.Value.color].CurrentRanking = iPlayer + 1;
                     elmsTable[s1.Value.color].CurrentRanking = ptr + 1;
 
-                    RankStat? stat = s1;
-                    stats[ptr] = s2;
+                    RankStat? stat = s2;
+                    stats[ptr] = s1;
                     s1 = stat;
                 }
 			}
             elmsTable[s1.Value.color].UpdateRank(s1.Value.pts);
         }
+
+        //for (int iPlayer = 0; iPlayer < num; ++iPlayer)
+        //    elmsTable[stats[iPlayer].Value.color].UpdateRank(stats[iPlayer].Value.pts);
 
         if (GameManager.Singleton.GameWinner != null)
             elmsTable[GameManager.Singleton.GameWinner.GetPlayerColor()].winnerCrown.enabled = true;

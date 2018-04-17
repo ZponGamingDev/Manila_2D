@@ -1,7 +1,5 @@
-﻿﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
+using UnityEngine.EventSystems;
 using ManilaFSM;
 
 [System.Serializable]
@@ -44,7 +42,7 @@ public class GameMenuStateMachine : FSMBase<MenuOption, GameMenuStateMachine.Com
 	}
 }
 
-public class GameMenu : UIBase
+public class GameMenu : UIBase, IPointerDownHandler
 {
     public MenuOption startGame;
     public MenuOption gameSetting;
@@ -136,5 +134,15 @@ public class GameMenu : UIBase
     public override void CloseUI()
     {
         base.CloseUI();
+ 
+    }
+
+    public void OnPointerDown(PointerEventData data)
+    {
+        RectTransform rect = stateMachine.Current.transform as RectTransform;
+
+        // Don't need camera, because canvas is screen space overly in GameMenu scene.
+        if (RectTransformUtility.RectangleContainsScreenPoint(rect, data.position))
+            stateMachine.Current.callbackFunc();
     }
 }

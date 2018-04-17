@@ -112,12 +112,14 @@ public class Boat : MonoBehaviour
 
     void Update()
     {
+        //if (Input.touchCount > 0)
         if (Input.GetMouseButtonDown(0))
         {
             if (IsMoving || GameManager.Singleton.CurrentGameState == GameState.BOSS_PICK_BOAT)
 				return;
 
             Vector3 mos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            //Vector3 mos = Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position);
             Vector2 dir2D = new Vector2(transform.position.x - mos.x, transform.position.y - mos.y);
 
             dir2D.Normalize();

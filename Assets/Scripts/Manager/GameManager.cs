@@ -274,6 +274,7 @@ public class GameManager : SingletonBase<GameManager>
         RankTable.RankStat stat;
         stat.name = player.GetPlayerName();
         stat.color = player.GetPlayerColor();
+
         stat.pts = player.RankPoint;
 
         return stat;
@@ -830,8 +831,8 @@ public class GameManager : SingletonBase<GameManager>
 		updateHUDUICallback();
 
 		//if (!boats[0].IsLandOnHarbor)
-            //yield return StartCoroutine(BoatMoving(boats[0], 3));
-        yield return StartCoroutine(BoatMoving(boats[0], leftMovementVal));
+            yield return StartCoroutine(BoatMoving(boats[0], 14));
+        //yield return StartCoroutine(BoatMoving(boats[0], leftMovementVal));
 
         //if (!boats[1].IsLandOnHarbor)
             //yield return StartCoroutine(BoatMoving(boats[1], 3));

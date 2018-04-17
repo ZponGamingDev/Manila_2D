@@ -74,6 +74,8 @@ public class PirateTracker : MonoBehaviour
                         p1.Feedback();
                 }
             }
+            else
+                UnTrackBoat();
         }
     }
 

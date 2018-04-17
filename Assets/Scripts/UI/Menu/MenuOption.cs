@@ -1,12 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class MenuOption : MonoBehaviour
 {
     public GameObject arrow;
-	public Text label;
+    public Text label;
+
     [HideInInspector]
     public System.Action callbackFunc;
 
@@ -38,5 +37,5 @@ public class MenuOption : MonoBehaviour
         arrowImg.enabled = false;
         arrowAnim.Stop();
         label.color = Color.black;
-	}
+    }
 }
